@@ -17,6 +17,7 @@ public abstract class BasePlant {
     protected Rectangle bounds;   // 碰撞矩形，用于检测是否被击中或被攻击
     public boolean alive = true;  // 存活状态
     protected AnimationClip animation;
+    protected float stateTime = 0f;
 
     /**
      * 构造函数：当一个新植物被创建时调用
@@ -29,6 +30,7 @@ public abstract class BasePlant {
         this.position = new Vector2(x, y);
         this.bounds = new Rectangle(x, y, texture.getWidth(), texture.getHeight());
         this.health = 100; // 默认生命值
+        this.stateTime = 0f;
     }
 
     public BasePlant(Texture texture, AnimationClip animation, float x, float y) {
@@ -37,6 +39,7 @@ public abstract class BasePlant {
         this.position = new Vector2(x, y);
         this.bounds = new Rectangle(x, y, texture.getWidth(), texture.getHeight());
         this.health = 100; // 默认生命值
+        this.stateTime = 0f;
     }
 
     /**
@@ -46,7 +49,7 @@ public abstract class BasePlant {
      * @param delta 距离上一帧的时间差，用于实现平滑的、与帧率无关的动画和计时
      */
     public void update(float delta) {
-        animation.update(delta);
+        stateTime += delta;
     }
 
     /**
@@ -58,7 +61,7 @@ public abstract class BasePlant {
     }
 
     public void drawAnimation(SpriteBatch batch) {
-        batch.draw(animation.getFrame(), position.x, position.y);
+        batch.draw(animation.getFrame(stateTime), position.x, position.y);
     }
 
     /**
