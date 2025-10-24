@@ -47,6 +47,11 @@ public class GameScreen implements Screen, InputProcessor {
     public static final float WORLD_WIDTH = 1400;  // 游戏世界的宽度
     public static final float WORLD_HEIGHT = 600; // 游戏世界的高度
 
+    private float cellWidth = 80;   // 这些数值需要根据你的背景图精确测量
+    private float cellHeight = 98;
+    private float startX = 265;
+    private float startY = 40;
+
     // --- 游戏对象列表 ---
     private final Array<BasePlant> plants;
     private final Array<BaseZombie> zombies;
@@ -88,10 +93,15 @@ public class GameScreen implements Screen, InputProcessor {
         uiStage = new Stage(new FitViewport(WORLD_WIDTH, WORLD_HEIGHT)); // UI使用独立的舞台和视口
         sunLabel = setupUI(); // setupUI方法会创建UI元素并返回sunLabel的引用
 
-        // 4. 初始化游戏网格
+        // 4. 初始化游戏网格及参数
         gridCells = new Rectangle[5][9];
         initializeGrid();
         initializeLawnMowers();
+
+        cellWidth = 80;   // 这些数值需要根据你的背景图精确测量
+        cellHeight = 98;
+        startX = 265;
+        startY = 40;
 
         // 5. 将本类设置为输入处理器，这样touchDown等方法才会被调用
         Gdx.input.setInputProcessor(this);
@@ -130,11 +140,6 @@ public class GameScreen implements Screen, InputProcessor {
      * 初始化草坪的逻辑网格
      */
     private void initializeGrid() {
-        float cellWidth = 80;   // 这些数值需要根据你的背景图精确测量
-        float cellHeight = 98;
-        float startX = 265;
-        float startY = 40;
-
         for (int row = 0; row < 5; row++) {
             for (int col = 0; col < 9; col++) {
                 gridCells[row][col] = new Rectangle(startX + col * cellWidth, startY + row * cellHeight, cellWidth, cellHeight);
@@ -146,7 +151,7 @@ public class GameScreen implements Screen, InputProcessor {
         Texture lawnMowerTexture = assetManager.getTexture("graphics/Screen/car.png");
         for (int row = 0; row < 5; row++) {
             float yPosition = gridCells[row][0].y;
-            lawnMowers.add(new LawnMower(lawnMowerTexture, -20, yPosition + 15));
+            lawnMowers.add(new LawnMower(lawnMowerTexture, startX - cellWidth, yPosition + 15));
         }
     }
 
@@ -173,8 +178,8 @@ public class GameScreen implements Screen, InputProcessor {
         for (BasePlant plant : plants) plant.drawAnimation(game.batch);
         for (BaseZombie zombie : zombies) zombie.drawAnimation(game.batch);
         for (BaseProjectile projectile : projectiles) projectile.draw(game.batch);
-        for (Sun sun : suns) sun.draw(game.batch);
         for (LawnMower lawnMower : lawnMowers) lawnMower.draw(game.batch);
+        for (Sun sun : suns) sun.drawAnimation(game.batch);
         game.batch.end();
 
         // 4. 渲染UI
@@ -192,6 +197,8 @@ public class GameScreen implements Screen, InputProcessor {
         for (BasePlant plant : plants) plant.update(delta);
         for (BaseZombie zombie : zombies) zombie.update(delta);
         for (BaseProjectile projectile : projectiles) projectile.update(delta);
+        for (Sun sun : suns) sun.update(delta);
+        for (LawnMower lawnMower : lawnMowers) lawnMower.update(delta);
 
         // 计时生成僵尸
         zombieSpawnTimer += delta;
@@ -219,7 +226,7 @@ public class GameScreen implements Screen, InputProcessor {
     private void spawnFallingSun() {
         float randomX = com.badlogic.gdx.math.MathUtils.random(50f, WORLD_WIDTH - 50f);
         float randomGroundY = com.badlogic.gdx.math.MathUtils.random(50f, WORLD_HEIGHT - 200f);
-        suns.add(new Sun(assetManager.getTexture("graphics/Screen/Sun.gif"), randomX, WORLD_HEIGHT, randomGroundY));
+        suns.add(new Sun(assetManager.getTexture("graphics/Screen/Sun.gif"), assetManager.getAnimation("Sun"), randomX, WORLD_HEIGHT, randomGroundY));
     }
 
     /**

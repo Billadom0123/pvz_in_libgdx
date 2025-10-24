@@ -5,6 +5,7 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
+import com.example.plantsvszombies.Animation.AnimationClip;
 
 public class Sun {
     public enum SunState {
@@ -15,6 +16,8 @@ public class Sun {
     private final Texture texture;
     private final Rectangle bounds;
     private SunState state;
+    private AnimationClip animation;
+    private float stateTime = 0f;
 
     private final float fallSpeed = 100f;
     private final float groundY;
@@ -28,7 +31,17 @@ public class Sun {
         this.state = SunState.FALLING;
     }
 
+    public Sun(Texture texture, AnimationClip animation, float startX, float startY, float groundY) {
+        this.texture = texture;
+        this.animation = animation;
+        this.position = new Vector2(startX, startY);
+        this.bounds = new Rectangle(startX, startY, texture.getWidth(), texture.getHeight());
+        this.groundY = groundY;
+        this.state = SunState.FALLING;
+    }
+
     public void update(float delta) {
+        stateTime += delta;
         if (state == SunState.FALLING) {
             position.y -= fallSpeed * delta;
             if (position.y <= groundY) {
@@ -46,6 +59,10 @@ public class Sun {
 
     public void draw(SpriteBatch batch) {
         batch.draw(texture, position.x, position.y);
+    }
+
+    public void drawAnimation(SpriteBatch batch) {
+        batch.draw(animation.getFrame(stateTime), position.x, position.y);
     }
 
     public Rectangle getBounds() {

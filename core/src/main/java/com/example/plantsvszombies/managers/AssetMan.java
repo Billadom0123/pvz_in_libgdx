@@ -50,6 +50,7 @@ public class AssetMan {
         assetManager.load("graphics/Cards/card_wallnut.png", Texture.class);
 
         assetManager.load("graphics/Screen/Sun.gif", Texture.class);
+        assetManager.load("graphics/Screen/Sun.png", Texture.class);
         assetManager.load("graphics/Screen/car.png", Texture.class);
     }
 
@@ -63,6 +64,8 @@ public class AssetMan {
 
         loadAnimation("NormalZombie", "graphics/Zombies/Zombie/Zombie.png", 22, 2970);
         loadAnimation("NormalZombieAttack", "graphics/Zombies/Zombie/ZombieAttack.png", 21, 2150);
+
+        loadAnimation("Sun", "graphics/Screen/Sun.png", 29, 2900);
     }
 
     public void loadAnimation(String key, String filepath, int frames, float duration) {
