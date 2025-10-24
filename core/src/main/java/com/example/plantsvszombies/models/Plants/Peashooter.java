@@ -2,6 +2,7 @@ package com.example.plantsvszombies.models.Plants;
 
 
 import com.badlogic.gdx.graphics.Texture;
+import com.example.plantsvszombies.Animation.AnimationClip;
 import com.example.plantsvszombies.models.Projectiles.BaseProjectile;
 import com.example.plantsvszombies.screens.GameScreen;
 
@@ -11,8 +12,8 @@ public class Peashooter extends BasePlant {
     private float shootTimer;
     private static final float SHOOT_INTERVAL = 2.0f; // 每2秒发射一次
 
-    public Peashooter(GameScreen screen, Texture texture, float x, float y) {
-        super(texture, x, y);
+    public Peashooter(GameScreen screen, Texture texture, AnimationClip animation, float x, float y) {
+        super(texture, animation, x, y);
         this.screen = screen;
         this.shootTimer = 0f;
     }
@@ -22,6 +23,7 @@ public class Peashooter extends BasePlant {
      */
     @Override
     public void update(float delta) {
+        super.update(delta);
         shootTimer += delta;
         if (shootTimer >= SHOOT_INTERVAL) {
             shootTimer = 0; // 重置计时器

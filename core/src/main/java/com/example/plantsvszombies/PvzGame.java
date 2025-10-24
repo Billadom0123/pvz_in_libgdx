@@ -21,6 +21,8 @@ public class PvzGame extends Game {
         // 同步阻塞，直到所有资源加载完成
         assetManager.getAssetManager().finishLoading();
 
+        assetManager.loadAnimationAssets();
+
         // 资源加载完毕后，设置并切换到游戏主屏幕
         setScreen(new GameScreen(this));
     }

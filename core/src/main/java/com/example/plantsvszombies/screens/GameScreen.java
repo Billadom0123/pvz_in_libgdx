@@ -17,13 +17,17 @@ import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.viewport.FitViewport;
+import com.example.plantsvszombies.Animation.AnimationClip;
 import com.example.plantsvszombies.PvzGame;
 import com.example.plantsvszombies.managers.AssetMan;
 import com.example.plantsvszombies.managers.GameManager;
+import com.example.plantsvszombies.models.LawnMower;
 import com.example.plantsvszombies.models.Plants.BasePlant;
 import com.example.plantsvszombies.models.Plants.Peashooter;
 import com.example.plantsvszombies.models.Plants.Sunflower;
+import com.example.plantsvszombies.models.Plants.Wallnut;
 import com.example.plantsvszombies.models.Projectiles.BaseProjectile;
+import com.example.plantsvszombies.models.Sun;
 import com.example.plantsvszombies.models.Zombies.BaseZombie;
 import com.example.plantsvszombies.models.Zombies.NormalZombie;
 import com.example.plantsvszombies.ui.PlantCard;
@@ -47,10 +51,13 @@ public class GameScreen implements Screen, InputProcessor {
     private final Array<BasePlant> plants;
     private final Array<BaseZombie> zombies;
     private final Array<BaseProjectile> projectiles;
+    private final Array<Sun> suns;
+    private final Array<LawnMower> lawnMowers;
 
     // --- 游戏逻辑 ---
     private final Rectangle[][] gridCells; // 逻辑网格，用于定位和种植
     private float zombieSpawnTimer;      // 僵尸生成计时器
+    private float sunSpawnTimer;         // 太阳生成计时器
 
     // --- UI 相关 ---
     private final Stage uiStage;      // UI专属的舞台
@@ -74,6 +81,8 @@ public class GameScreen implements Screen, InputProcessor {
         plants = new Array<>();
         zombies = new Array<>();
         projectiles = new Array<>();
+        suns = new Array<>();
+        lawnMowers = new Array<>();
 
         // 3. 初始化UI
         uiStage = new Stage(new FitViewport(WORLD_WIDTH, WORLD_HEIGHT)); // UI使用独立的舞台和视口
@@ -82,6 +91,7 @@ public class GameScreen implements Screen, InputProcessor {
         // 4. 初始化游戏网格
         gridCells = new Rectangle[5][9];
         initializeGrid();
+        initializeLawnMowers();
 
         // 5. 将本类设置为输入处理器，这样touchDown等方法才会被调用
         Gdx.input.setInputProcessor(this);
@@ -98,12 +108,14 @@ public class GameScreen implements Screen, InputProcessor {
         topBar.top().left(); // 对齐到舞台的左上角
 
         // 创建植物卡片
-        PlantCard peashooterCard = new PlantCard(assetManager.getAssetManager().get("graphics/Cards/card_peashooter.png", Texture.class), "Peashooter", 100);
-        PlantCard sunflowerCard = new PlantCard(assetManager.getAssetManager().get("graphics/Cards/card_sunflower.png", Texture.class), "Sunflower", 50);
+        PlantCard peashooterCard = new PlantCard(assetManager.getTexture("graphics/Cards/card_peashooter.png"), "Peashooter", 100);
+        PlantCard sunflowerCard = new PlantCard(assetManager.getTexture("graphics/Cards/card_sunflower.png"), "Sunflower", 50);
+        PlantCard wallnutCard = new PlantCard(assetManager.getTexture("graphics/Cards/card_wallnut.png"), "WallNut", 50);
 
         // 将卡片添加到Table中
         topBar.add(peashooterCard).pad(10);
         topBar.add(sunflowerCard).pad(10);
+        topBar.add(wallnutCard).pad(10);
 
         // 创建太阳标签
         Skin skin = new Skin(Gdx.files.internal("graphics/Skin/uiskin.json"));
@@ -130,6 +142,14 @@ public class GameScreen implements Screen, InputProcessor {
         }
     }
 
+    private void initializeLawnMowers() {
+        Texture lawnMowerTexture = assetManager.getTexture("graphics/Screen/car.png");
+        for (int row = 0; row < 5; row++) {
+            float yPosition = gridCells[row][0].y;
+            lawnMowers.add(new LawnMower(lawnMowerTexture, -20, yPosition + 15));
+        }
+    }
+
     @Override
     public void render(float delta) {
         // 1. 清理屏幕
@@ -148,11 +168,13 @@ public class GameScreen implements Screen, InputProcessor {
 
         game.batch.begin();
         // 绘制背景
-        game.batch.draw(assetManager.getAssetManager().get("graphics/Map/map0.jpg", Texture.class), 0, 0, WORLD_WIDTH, WORLD_HEIGHT);
+        game.batch.draw(assetManager.getTexture("graphics/Map/map0.jpg"), 0, 0, WORLD_WIDTH, WORLD_HEIGHT);
         // 绘制所有游戏对象
-        for (BasePlant plant : plants) plant.draw(game.batch);
+        for (BasePlant plant : plants) plant.drawAnimation(game.batch);
         for (BaseZombie zombie : zombies) zombie.draw(game.batch);
         for (BaseProjectile projectile : projectiles) projectile.draw(game.batch);
+        for (Sun sun : suns) sun.draw(game.batch);
+        for (LawnMower lawnMower : lawnMowers) lawnMower.draw(game.batch);
         game.batch.end();
 
         // 4. 渲染UI
@@ -178,6 +200,12 @@ public class GameScreen implements Screen, InputProcessor {
             zombieSpawnTimer = 0;
         }
 
+        sunSpawnTimer += delta;
+        if (sunSpawnTimer > 12.0f) { // 每12秒生成
+            spawnFallingSun();
+            sunSpawnTimer = 0f;
+        }
+
         // 执行碰撞检测
         checkCollisions();
 
@@ -188,13 +216,19 @@ public class GameScreen implements Screen, InputProcessor {
         checkGameOver();
     }
 
+    private void spawnFallingSun() {
+        float randomX = com.badlogic.gdx.math.MathUtils.random(50f, WORLD_WIDTH - 50f);
+        float randomGroundY = com.badlogic.gdx.math.MathUtils.random(50f, WORLD_HEIGHT - 200f);
+        suns.add(new Sun(assetManager.getTexture("graphics/Screen/Sun.gif"), randomX, WORLD_HEIGHT, randomGroundY));
+    }
+
     /**
      * 在随机一行生成一个僵尸
      */
     private void spawnZombie() {
         int row = com.badlogic.gdx.math.MathUtils.random(0, 4);
         // 在屏幕右侧外生成
-        zombies.add(new NormalZombie(assetManager.getAssetManager().get("graphics/Zombies/Zombie/Zombie.gif", Texture.class), WORLD_WIDTH, gridCells[row][0].y));
+        zombies.add(new NormalZombie(assetManager.getTexture("graphics/Zombies/Zombie/Zombie.gif"), WORLD_WIDTH, gridCells[row][0].y));
     }
 
     /**
@@ -242,6 +276,29 @@ public class GameScreen implements Screen, InputProcessor {
                 z.stopAttacking(); // 让僵尸退出攻击模式，继续前进
             }
         }
+
+        // 3. 僵尸与割草机的碰撞
+        for (LawnMower lm : lawnMowers) {
+            if (lm.getState() == LawnMower.LawnMowerState.READY) {
+                for (BaseZombie z : zombies) {
+                    if (lm.getBounds().overlaps(z.getBounds())) {
+                        lm.activate();
+                        break; // 一个割草机一次只启动一次
+                    }
+                }
+            }
+        }
+
+        // 4. 割草机与僵尸的碰撞
+        for (LawnMower lm : lawnMowers) {
+            if (lm.getState() == LawnMower.LawnMowerState.ACTIVATED) {
+                for (BaseZombie z : zombies) {
+                    if (lm.getBounds().overlaps(z.getBounds())) {
+                        z.alive = false; // 僵尸被大运撞死
+                    }
+                }
+            }
+        }
     }
 
     /**
@@ -266,6 +323,18 @@ public class GameScreen implements Screen, InputProcessor {
                 it.remove();
             }
         }
+        // 移除太阳
+        for (Iterator<Sun> it = suns.iterator(); it.hasNext();) {
+            if (!it.next().active) {
+                it.remove();
+            }
+        }
+        // 移除割草机（如果需要）
+        for (Iterator<LawnMower> it = lawnMowers.iterator(); it.hasNext();) {
+            if (!it.next().active) {
+                it.remove();
+            }
+        }
     }
 
     @Override
@@ -273,8 +342,18 @@ public class GameScreen implements Screen, InputProcessor {
         // --- 第一步：处理UI输入 ---
         Vector3 uiCoords = new Vector3(screenX, screenY, 0);
         uiStage.getViewport().unproject(uiCoords); // 将屏幕坐标转换为UI舞台坐标
-        Actor hitActor = uiStage.hit(uiCoords.x, uiCoords.y, true); // 检测是否点中UI演员
 
+        for (Iterator<Sun> it = suns.iterator(); it.hasNext();) {
+            Sun sun = it.next();
+            if (sun.getBounds().contains(uiCoords.x, uiCoords.y)) {
+                sun.collect();
+                gameManager.addSun(25);
+                it.remove();
+                return true; // 事件被UI处理，结束
+            }
+        }
+
+        Actor hitActor = uiStage.hit(uiCoords.x, uiCoords.y, true); // 检测是否点中UI演员
         if (hitActor instanceof PlantCard) {
             // 如果点中的是植物卡片
             PlantCard card = (PlantCard) hitActor;
@@ -318,14 +397,21 @@ public class GameScreen implements Screen, InputProcessor {
         // 尝试花费太阳
         if (gameManager.spendSun(selectedCard.getCost())) {
             Texture plantTexture;
+            AnimationClip plantAnimation;
             BasePlant newPlant;
             // 根据选中的卡片类型，创建不同的植物实例
             if (selectedCard.plantType.equals("Peashooter")) {
-                plantTexture = assetManager.getAssetManager().get("graphics/Plants/Peashooter/0.gif", Texture.class);
-                newPlant = new Peashooter(this, plantTexture, cell.x, cell.y);
+                plantTexture = assetManager.getTexture("graphics/Plants/Peashooter/0.gif");
+                plantAnimation = assetManager.getAnimation("Peashooter");
+                newPlant = new Peashooter(this, plantTexture, plantAnimation, cell.x, cell.y);
             } else if (selectedCard.plantType.equals("Sunflower")) {
-                plantTexture = assetManager.getAssetManager().get("graphics/Plants/SunFlower/0.gif", Texture.class);
-                newPlant = new Sunflower(plantTexture, cell.x, cell.y);
+                plantTexture = assetManager.getTexture("graphics/Plants/SunFlower/0.gif");
+                plantAnimation = assetManager.getAnimation("SunFlower");
+                newPlant = new Sunflower(plantTexture, plantAnimation, cell.x, cell.y);
+            } else if (selectedCard.plantType.equals("WallNut")) {
+                plantTexture = assetManager.getTexture("graphics/Plants/WallNut/0.gif");
+                plantAnimation = assetManager.getAnimation("WallNut");
+                newPlant = new Wallnut(plantTexture, plantAnimation, cell.x, cell.y); // 这里应该是WallNut类
             } else {
                 return; // 未知的植物类型
             }

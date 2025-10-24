@@ -1,6 +1,7 @@
 package com.example.plantsvszombies.models.Plants;
 
 import com.badlogic.gdx.graphics.Texture;
+import com.example.plantsvszombies.Animation.AnimationClip;
 import com.example.plantsvszombies.managers.GameManager;
 
 public class Sunflower extends BasePlant {
@@ -12,8 +13,14 @@ public class Sunflower extends BasePlant {
         this.sunProduceTimer = 0f;
     }
 
+    public Sunflower(Texture texture, AnimationClip animation, float x, float y) {
+        super(texture, animation, x, y);
+        this.sunProduceTimer = 0f;
+    }
+
     @Override
     public void update(float delta) {
+        super.update(delta);
         sunProduceTimer += delta;
         if (sunProduceTimer >= SUN_PRODUCE_INTERVAL) {
             sunProduceTimer = 0;
