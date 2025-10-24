@@ -11,11 +11,13 @@ public class BaseProjectile {
     private Vector2 position;
     private Texture texture;
     private float speed;
+    private int damage;
     private Rectangle bounds;
     public boolean active = true; // 标记是否存活，用于后续移除
 
-    public BaseProjectile(Texture texture, float x, float y) {
+    public BaseProjectile(Texture texture, int damage, float x, float y) {
         this.texture = texture;
+        this.damage = damage;
         this.position = new Vector2(x, y);
         this.speed = 350f;
         this.bounds = new Rectangle(x, y, texture.getWidth(), texture.getHeight());
@@ -38,5 +40,9 @@ public class BaseProjectile {
 
     public Rectangle getBounds() {
         return bounds;
+    }
+
+    public int getDamage() {
+        return damage;
     }
 }

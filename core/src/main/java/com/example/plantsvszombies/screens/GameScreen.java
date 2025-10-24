@@ -130,10 +130,10 @@ public class GameScreen implements Screen, InputProcessor {
      * 初始化草坪的逻辑网格
      */
     private void initializeGrid() {
-        float cellWidth = 82;   // 这些数值需要根据你的背景图精确测量
+        float cellWidth = 80;   // 这些数值需要根据你的背景图精确测量
         float cellHeight = 98;
-        float startX = 250;
-        float startY = 80;
+        float startX = 265;
+        float startY = 40;
 
         for (int row = 0; row < 5; row++) {
             for (int col = 0; col < 9; col++) {
@@ -171,7 +171,7 @@ public class GameScreen implements Screen, InputProcessor {
         game.batch.draw(assetManager.getTexture("graphics/Map/map0.jpg"), 0, 0, WORLD_WIDTH, WORLD_HEIGHT);
         // 绘制所有游戏对象
         for (BasePlant plant : plants) plant.drawAnimation(game.batch);
-        for (BaseZombie zombie : zombies) zombie.draw(game.batch);
+        for (BaseZombie zombie : zombies) zombie.drawAnimation(game.batch);
         for (BaseProjectile projectile : projectiles) projectile.draw(game.batch);
         for (Sun sun : suns) sun.draw(game.batch);
         for (LawnMower lawnMower : lawnMowers) lawnMower.draw(game.batch);
@@ -228,7 +228,9 @@ public class GameScreen implements Screen, InputProcessor {
     private void spawnZombie() {
         int row = com.badlogic.gdx.math.MathUtils.random(0, 4);
         // 在屏幕右侧外生成
-        zombies.add(new NormalZombie(assetManager.getTexture("graphics/Zombies/Zombie/Zombie.gif"), WORLD_WIDTH, gridCells[row][0].y));
+        Texture zombieTexture = assetManager.getTexture("graphics/Zombies/Zombie/Zombie.gif");
+        AnimationClip zombieAnimation = assetManager.getAnimation("NormalZombie");
+        zombies.add(new NormalZombie(zombieTexture, zombieAnimation, WORLD_WIDTH, gridCells[row][0].y));
     }
 
     /**
@@ -253,8 +255,8 @@ public class GameScreen implements Screen, InputProcessor {
         for (BaseProjectile p : projectiles) {
             for (BaseZombie z : zombies) {
                 // 如果子弹的矩形和僵尸的矩形重叠
-                if (p.getBounds().overlaps(z.getBounds())) {
-                    z.takeDamage(25); // 僵尸掉血
+                if (p.getBounds().overlaps(z.getCenterBounds())) {
+                    z.takeDamage(p.getDamage()); // 僵尸掉血
                     p.active = false;   // 子弹失效
                 }
             }
@@ -265,7 +267,7 @@ public class GameScreen implements Screen, InputProcessor {
             boolean isCurrentlyAttacking = false;
             for (BasePlant p : plants) {
                 // 如果僵尸的矩形和植物的矩形重叠
-                if (z.getBounds().overlaps(p.getBounds())) {
+                if (z.getCenterBounds().overlaps(p.getBounds())) {
                     z.startAttacking(p); // 让僵尸进入攻击模式
                     isCurrentlyAttacking = true;
                     break; // 一个僵尸一次只攻击一个植物
@@ -281,7 +283,7 @@ public class GameScreen implements Screen, InputProcessor {
         for (LawnMower lm : lawnMowers) {
             if (lm.getState() == LawnMower.LawnMowerState.READY) {
                 for (BaseZombie z : zombies) {
-                    if (lm.getBounds().overlaps(z.getBounds())) {
+                    if (lm.getBounds().overlaps(z.getCenterBounds())) {
                         lm.activate();
                         break; // 一个割草机一次只启动一次
                     }
@@ -293,7 +295,7 @@ public class GameScreen implements Screen, InputProcessor {
         for (LawnMower lm : lawnMowers) {
             if (lm.getState() == LawnMower.LawnMowerState.ACTIVATED) {
                 for (BaseZombie z : zombies) {
-                    if (lm.getBounds().overlaps(z.getBounds())) {
+                    if (lm.getBounds().overlaps(z.getCenterBounds())) {
                         z.alive = false; // 僵尸被大运撞死
                     }
                 }

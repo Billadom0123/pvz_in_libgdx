@@ -4,6 +4,7 @@ package com.example.plantsvszombies.models.Plants;
 import com.badlogic.gdx.graphics.Texture;
 import com.example.plantsvszombies.Animation.AnimationClip;
 import com.example.plantsvszombies.models.Projectiles.BaseProjectile;
+import com.example.plantsvszombies.models.Projectiles.Pea;
 import com.example.plantsvszombies.screens.GameScreen;
 
 public class Peashooter extends BasePlant {
@@ -39,6 +40,6 @@ public class Peashooter extends BasePlant {
         float projectileX = position.x + bounds.width;
         float projectileY = position.y + bounds.height / 2;
         // 请求GameScreen在指定位置生成一颗子弹
-        screen.spawnProjectile(new BaseProjectile(screen.getAssetManager().get("graphics/Bullets/PeaNormal/PeaNormal_0.png", Texture.class), projectileX, projectileY));
+        screen.spawnProjectile(new Pea(screen.getAssetManager().get("graphics/Bullets/PeaNormal/PeaNormal_0.png", Texture.class), projectileX, projectileY));
     }
 }

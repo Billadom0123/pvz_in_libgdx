@@ -51,4 +51,12 @@ public class AnimationClip {
     public TextureRegion getFrame(float stateTime) {
         return animation.getKeyFrame(stateTime, true);
     }
+
+    public float getWidth() {
+        return animation.getKeyFrame(0).getRegionWidth();
+    }
+
+    public float getHeight() {
+        return animation.getKeyFrame(0).getRegionHeight();
+    }
 }
