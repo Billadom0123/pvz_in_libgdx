@@ -37,7 +37,7 @@ public class Peashooter extends BasePlant {
     private void fire() {
         // 计算子弹生成的位置（在豌豆射手的嘴部）
         float projectileX = position.x + bounds.width;
-        float projectileY = position.y + bounds.height / 3;
+        float projectileY = position.y + bounds.height / 2;
         // 请求GameScreen在指定位置生成一颗子弹
         screen.spawnProjectile(new BaseProjectile(screen.getAssetManager().get("graphics/Bullets/PeaNormal/PeaNormal_0.png", Texture.class), projectileX, projectileY));
     }
