@@ -8,7 +8,9 @@ import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Rectangle;
+import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.Stage;
@@ -47,10 +49,10 @@ public class GameScreen implements Screen, InputProcessor {
     public static final float WORLD_WIDTH = 1400;  // 游戏世界的宽度
     public static final float WORLD_HEIGHT = 600; // 游戏世界的高度
 
-    private float cellWidth = 80;   // 这些数值需要根据你的背景图精确测量
-    private float cellHeight = 98;
-    private float startX = 265;
-    private float startY = 40;
+    private final float cellWidth = 81;   // 这些数值需要根据你的背景图精确测量
+    private final float cellHeight = 98;
+    private final float startX = 255;
+    private final float startY = 35;
 
     // --- 游戏对象列表 ---
     private final Array<BasePlant> plants;
@@ -97,11 +99,6 @@ public class GameScreen implements Screen, InputProcessor {
         gridCells = new Rectangle[5][9];
         initializeGrid();
         initializeLawnMowers();
-
-        cellWidth = 80;   // 这些数值需要根据你的背景图精确测量
-        cellHeight = 98;
-        startX = 265;
-        startY = 40;
 
         // 5. 将本类设置为输入处理器，这样touchDown等方法才会被调用
         Gdx.input.setInputProcessor(this);
@@ -187,6 +184,18 @@ public class GameScreen implements Screen, InputProcessor {
         uiStage.getViewport().apply(); // 应用UI视口
         uiStage.act(delta); // 更新UI舞台（例如，执行Action）
         uiStage.draw();     // 绘制UI舞台
+//
+//        ShapeRenderer shapeRenderer = new ShapeRenderer();
+//        shapeRenderer.setProjectionMatrix(gameCamera.combined);
+//        shapeRenderer.begin(ShapeRenderer.ShapeType.Line);
+//        shapeRenderer.setColor(1, 0, 0, 1); // 红色边框
+//        for (int row = 0; row < 5; row++) {
+//            for (int col = 0; col < 9; col++) {
+//                Rectangle cell = gridCells[row][col];
+//                shapeRenderer.rect(cell.x, cell.y, cell.width, cell.height);
+//            }
+//        }
+//        shapeRenderer.end();
     }
 
     /**
@@ -349,7 +358,7 @@ public class GameScreen implements Screen, InputProcessor {
     @Override
     public boolean touchDown(int screenX, int screenY, int pointer, int button) {
         // --- 第一步：处理UI输入 ---
-        Vector3 uiCoords = new Vector3(screenX, screenY, 0);
+        Vector2 uiCoords = new Vector2(screenX, screenY);
         uiStage.getViewport().unproject(uiCoords); // 将屏幕坐标转换为UI舞台坐标
 
         for (Iterator<Sun> it = suns.iterator(); it.hasNext();) {
@@ -363,9 +372,8 @@ public class GameScreen implements Screen, InputProcessor {
         }
 
         Actor hitActor = uiStage.hit(uiCoords.x, uiCoords.y, true); // 检测是否点中UI演员
-        if (hitActor instanceof PlantCard) {
+        if (hitActor instanceof PlantCard card) {
             // 如果点中的是植物卡片
-            PlantCard card = (PlantCard) hitActor;
             if (card.isSelected()) { // 如果卡片已经被选中，则取消选中
                 card.deselect();
                 selectedCard = null;
@@ -379,14 +387,12 @@ public class GameScreen implements Screen, InputProcessor {
         // --- 第二步：如果UI未处理，则处理游戏世界输入 ---
         if (selectedCard != null) {
             // 如果当前有选中的卡片，说明玩家想种植
-            Vector3 worldPos = new Vector3(screenX, screenY, 0);
-            gameViewport.getCamera().unproject(worldPos); // 将屏幕坐标转换为游戏世界坐标
 
             // 遍历所有网格，检查点击位置
             for (int row = 0; row < 5; row++) {
                 for (int col = 0; col < 9; col++) {
                     Rectangle cell = gridCells[row][col];
-                    if (cell.contains(worldPos.x, worldPos.y)) {
+                    if (cell.contains(uiCoords.x, uiCoords.y)) {
                         // 在这个格子上种植植物
                         placePlant(cell);
                         return true; // 事件被游戏世界处理，结束
