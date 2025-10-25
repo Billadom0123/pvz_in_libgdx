@@ -49,6 +49,7 @@ public class AssetMan {
         assetManager.load("graphics/Cards/card_sunflower.png", Texture.class);
         assetManager.load("graphics/Cards/card_wallnut.png", Texture.class);
 
+        assetManager.load("graphics/Screen/SeedBank.png", Texture.class);
         assetManager.load("graphics/Screen/Sun.gif", Texture.class);
         assetManager.load("graphics/Screen/Sun.png", Texture.class);
         assetManager.load("graphics/Screen/car.png", Texture.class);

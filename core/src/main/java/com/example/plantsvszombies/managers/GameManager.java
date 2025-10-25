@@ -17,7 +17,7 @@ public class GameManager {
 
     // 私有构造函数，防止外部直接创建实例
     private GameManager() {
-        sun = 5000; // 游戏开始时给予50个太阳
+        sun = 50; // 游戏开始时给予50个太阳
         gameState = GameState.PLAYING;
     }
 

@@ -8,15 +8,14 @@ import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
-import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
-import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
+import com.badlogic.gdx.utils.Align;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.example.plantsvszombies.Animation.AnimationClip;
@@ -111,8 +110,15 @@ public class GameScreen implements Screen, InputProcessor {
      */
     private Label setupUI() {
         Table topBar = new Table(); // 使用Table来布局UI
-        topBar.setFillParent(true); // 填满整个舞台
         topBar.top().left(); // 对齐到舞台的左上角
+        topBar.setPosition(startX - cellWidth, startY + 6 * cellHeight - 15);
+
+        // 创建太阳标签
+        Skin skin = new Skin(Gdx.files.internal("graphics/Skin/uiskin.json"));
+        Label label = new Label(String.valueOf(gameManager.getSun()), skin);
+        label.setAlignment(Align.center);
+        topBar.add(label).width(40).padTop(70).padLeft(20).padRight(15);
+
 
         // 创建植物卡片
         PlantCard peashooterCard = new PlantCard(assetManager.getTexture("graphics/Cards/card_peashooter.png"), "Peashooter", 100);
@@ -120,14 +126,10 @@ public class GameScreen implements Screen, InputProcessor {
         PlantCard wallnutCard = new PlantCard(assetManager.getTexture("graphics/Cards/card_wallnut.png"), "WallNut", 50);
 
         // 将卡片添加到Table中
-        topBar.add(peashooterCard).pad(10);
-        topBar.add(sunflowerCard).pad(10);
-        topBar.add(wallnutCard).pad(10);
+        topBar.add(peashooterCard).pad(1);
+        topBar.add(sunflowerCard).pad(1);
+        topBar.add(wallnutCard).pad(1);
 
-        // 创建太阳标签
-        Skin skin = new Skin(Gdx.files.internal("graphics/Skin/uiskin.json"));
-        Label label = new Label("Sun: " + gameManager.getSun(), skin);
-        topBar.add(label).padLeft(20);
 
         uiStage.addActor(topBar);
         return label;
@@ -171,16 +173,16 @@ public class GameScreen implements Screen, InputProcessor {
         game.batch.begin();
         // 绘制背景
         game.batch.draw(assetManager.getTexture("graphics/Map/map0.jpg"), 0, 0, WORLD_WIDTH, WORLD_HEIGHT);
+        game.batch.draw(assetManager.getTexture("graphics/Screen/SeedBank.png"), startX - cellWidth, startY + 5 * cellHeight - 15, 446, 87); // 绘制种子银行背景
         // 绘制所有游戏对象
         for (BasePlant plant : plants) plant.drawAnimation(game.batch);
         for (BaseZombie zombie : zombies) zombie.drawAnimation(game.batch);
         for (BaseProjectile projectile : projectiles) projectile.draw(game.batch);
         for (LawnMower lawnMower : lawnMowers) lawnMower.draw(game.batch);
-        for (Sun sun : suns) sun.drawAnimation(game.batch);
         game.batch.end();
 
         // 4. 渲染UI
-        sunLabel.setText("Sun: " + gameManager.getSun()); // 更新UI标签
+        sunLabel.setText(String.valueOf(gameManager.getSun())); // 更新UI标签
         uiStage.getViewport().apply(); // 应用UI视口
         uiStage.act(delta); // 更新UI舞台（例如，执行Action）
         uiStage.draw();     // 绘制UI舞台
@@ -206,7 +208,6 @@ public class GameScreen implements Screen, InputProcessor {
         for (BasePlant plant : plants) plant.update(delta);
         for (BaseZombie zombie : zombies) zombie.update(delta);
         for (BaseProjectile projectile : projectiles) projectile.update(delta);
-        for (Sun sun : suns) sun.update(delta);
         for (LawnMower lawnMower : lawnMowers) lawnMower.update(delta);
 
         // 计时生成僵尸
@@ -235,7 +236,15 @@ public class GameScreen implements Screen, InputProcessor {
     private void spawnFallingSun() {
         float randomX = com.badlogic.gdx.math.MathUtils.random(50f, WORLD_WIDTH - 50f);
         float randomGroundY = com.badlogic.gdx.math.MathUtils.random(50f, WORLD_HEIGHT - 200f);
-        suns.add(new Sun(assetManager.getTexture("graphics/Screen/Sun.gif"), assetManager.getAnimation("Sun"), randomX, WORLD_HEIGHT, randomGroundY));
+        Sun sun = new Sun(assetManager.getTexture("graphics/Screen/Sun.gif"), assetManager.getAnimation("Sun"), randomX, WORLD_HEIGHT, randomGroundY);
+        suns.add(sun);
+        uiStage.addActor(sun);
+    }
+
+    public void spawnGeneratedSun(int value, float x, float y) {
+        Sun sun = new Sun(assetManager.getTexture("graphics/Screen/Sun.gif"), assetManager.getAnimation("Sun"), x, y, y - 30);
+        suns.add(sun);
+        uiStage.addActor(sun);
     }
 
     /**
@@ -364,7 +373,7 @@ public class GameScreen implements Screen, InputProcessor {
         for (Iterator<Sun> it = suns.iterator(); it.hasNext();) {
             Sun sun = it.next();
             if (sun.getBounds().contains(uiCoords.x, uiCoords.y)) {
-                sun.collect();
+                sun.collectTo((int) (startX - cellWidth + 10), (int) (startY + 5 * cellHeight + 20)); // 收集太阳
                 gameManager.addSun(25);
                 it.remove();
                 return true; // 事件被UI处理，结束
@@ -422,7 +431,7 @@ public class GameScreen implements Screen, InputProcessor {
             } else if (selectedCard.plantType.equals("Sunflower")) {
                 plantTexture = assetManager.getTexture("graphics/Plants/SunFlower/0.gif");
                 plantAnimation = assetManager.getAnimation("SunFlower");
-                newPlant = new Sunflower(plantTexture, plantAnimation, cell.x, cell.y);
+                newPlant = new Sunflower(this, plantTexture, plantAnimation, cell.x, cell.y);
             } else if (selectedCard.plantType.equals("WallNut")) {
                 plantTexture = assetManager.getTexture("graphics/Plants/WallNut/0.gif");
                 plantAnimation = assetManager.getAnimation("WallNut");

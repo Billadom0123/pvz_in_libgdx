@@ -9,6 +9,7 @@ import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 import com.example.plantsvszombies.Animation.AnimationClip;
+import com.example.plantsvszombies.screens.GameScreen;
 
 public abstract class BasePlant {
     // --- 属性 ---
@@ -20,6 +21,7 @@ public abstract class BasePlant {
     public boolean alive = true;  // 存活状态
     protected AnimationClip animation;
     protected float stateTime;
+    protected GameScreen screen;
 
     protected boolean isHit = false;
     protected float hitStateTime = 0f;
@@ -41,6 +43,17 @@ public abstract class BasePlant {
     }
 
     public BasePlant(Texture texture, AnimationClip animation, float x, float y) {
+        this.texture = texture;
+        this.animation = animation;
+        this.position = new Vector2(x, y);
+        this.bounds = new Rectangle(x, y, texture.getWidth(), texture.getHeight());
+        this.maxHealth = 100;
+        this.health = maxHealth; // 默认生命值
+        this.stateTime = 0f;
+    }
+
+    public BasePlant(GameScreen screen, Texture texture, AnimationClip animation, float x, float y) {
+        this.screen = screen;
         this.texture = texture;
         this.animation = animation;
         this.position = new Vector2(x, y);

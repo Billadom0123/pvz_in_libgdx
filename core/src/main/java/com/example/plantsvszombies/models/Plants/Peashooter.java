@@ -9,7 +9,6 @@ import com.example.plantsvszombies.screens.GameScreen;
 
 public class Peashooter extends BasePlant {
     // 需要一个对GameScreen的引用，这样它才能调用GameScreen的方法来在世界中生成一个子弹实体
-    private final GameScreen screen;
     private float shootTimer;
     private static final float SHOOT_INTERVAL = 2.0f; // 每2秒发射一次
 
