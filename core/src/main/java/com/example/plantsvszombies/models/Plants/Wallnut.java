@@ -6,6 +6,13 @@ import com.example.plantsvszombies.managers.AssetMan;
 
 public class Wallnut extends BasePlant {
 
+    public Wallnut() {
+        super();
+        this.name = "WallNut";
+        this.cost = 50;
+        this.cooldown = 30.0f; // 坚果墙的冷却时间较长
+    }
+
     public Wallnut(Texture texture, AnimationClip animation, float x, float y) {
         super(texture, animation, x, y);
         this.maxHealth = 4000; // 坚果墙的生命值远高于其他植物

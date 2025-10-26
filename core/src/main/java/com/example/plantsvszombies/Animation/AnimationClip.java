@@ -5,9 +5,9 @@ import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 
 public class AnimationClip {
-    private Animation<TextureRegion> animation;
-    private float duration;
-    private int frames;
+    private final Animation<TextureRegion> animation;
+    private final float duration;
+    private final int frames;
 
     public AnimationClip(String filePath, int frames, float duration) {
         Texture texture = new Texture(filePath);
@@ -50,6 +50,10 @@ public class AnimationClip {
 
     public TextureRegion getFrame(float stateTime) {
         return animation.getKeyFrame(stateTime, true);
+    }
+
+    public boolean isAnimationFinished(float stateTime) {
+        return animation.isAnimationFinished(stateTime);
     }
 
     public float getWidth() {

@@ -5,6 +5,7 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
+import com.example.plantsvszombies.managers.AssetMan;
 import com.example.plantsvszombies.screens.GameScreen;
 
 public class LawnMower {
@@ -40,6 +41,7 @@ public class LawnMower {
     public void activate() {
         if (state == LawnMowerState.READY) {
             state = LawnMowerState.ACTIVATED;
+            AssetMan.getInstance().playSound("graphics/audio/lawnmower.ogg", 0.6f);
         }
     }
 

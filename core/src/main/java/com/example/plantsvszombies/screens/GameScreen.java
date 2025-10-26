@@ -5,6 +5,7 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.assets.AssetManager;
+import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
@@ -34,6 +35,7 @@ import com.example.plantsvszombies.models.Zombies.NormalZombie;
 import com.example.plantsvszombies.ui.PlantCard;
 
 import java.util.Iterator;
+import java.util.List;
 
 public class GameScreen implements Screen, InputProcessor {
 
@@ -64,6 +66,8 @@ public class GameScreen implements Screen, InputProcessor {
     private final Rectangle[][] gridCells; // 逻辑网格，用于定位和种植
     private float zombieSpawnTimer;      // 僵尸生成计时器
     private float sunSpawnTimer;         // 太阳生成计时器
+    private boolean firstZombieSpawned = false;
+    private boolean firstWaveSpawned = false;
 
     // --- UI 相关 ---
     private final Stage uiStage;      // UI专属的舞台
@@ -121,9 +125,9 @@ public class GameScreen implements Screen, InputProcessor {
 
 
         // 创建植物卡片
-        PlantCard peashooterCard = new PlantCard(assetManager.getTexture("graphics/Cards/card_peashooter.png"), "Peashooter", 100);
-        PlantCard sunflowerCard = new PlantCard(assetManager.getTexture("graphics/Cards/card_sunflower.png"), "Sunflower", 50);
-        PlantCard wallnutCard = new PlantCard(assetManager.getTexture("graphics/Cards/card_wallnut.png"), "WallNut", 50);
+        PlantCard peashooterCard = new PlantCard(assetManager.getTexture("graphics/Cards/card_peashooter.png"), new Peashooter());
+        PlantCard sunflowerCard = new PlantCard(assetManager.getTexture("graphics/Cards/card_sunflower.png"), new Sunflower());
+        PlantCard wallnutCard = new PlantCard(assetManager.getTexture("graphics/Cards/card_wallnut.png"), new Wallnut());
 
         // 将卡片添加到Table中
         topBar.add(peashooterCard).pad(1);
@@ -256,6 +260,10 @@ public class GameScreen implements Screen, InputProcessor {
         Texture zombieTexture = assetManager.getTexture("graphics/Zombies/Zombie/Zombie.gif");
         AnimationClip zombieAnimation = assetManager.getAnimation("NormalZombie");
         zombies.add(new NormalZombie(zombieTexture, zombieAnimation, WORLD_WIDTH, gridCells[row][0].y));
+        if (!firstZombieSpawned) {
+            firstZombieSpawned = true;
+            assetManager.playSound("graphics/audio/awooga.ogg", 0.6f);
+        }
     }
 
     /**
@@ -281,8 +289,7 @@ public class GameScreen implements Screen, InputProcessor {
             for (BaseZombie z : zombies) {
                 // 如果子弹的矩形和僵尸的矩形重叠
                 if (p.getBounds().overlaps(z.getCenterBounds())) {
-                    z.takeDamage(p.getDamage()); // 僵尸掉血
-                    p.active = false;   // 子弹失效
+                    p.damage(z);
                 }
             }
         }
@@ -373,6 +380,7 @@ public class GameScreen implements Screen, InputProcessor {
         for (Iterator<Sun> it = suns.iterator(); it.hasNext();) {
             Sun sun = it.next();
             if (sun.getBounds().contains(uiCoords.x, uiCoords.y)) {
+                assetManager.playSound("graphics/audio/points.ogg", 0.7f);
                 sun.collectTo((int) (startX - cellWidth + 10), (int) (startY + 5 * cellHeight + 20)); // 收集太阳
                 gameManager.addSun(25);
                 it.remove();
@@ -383,12 +391,20 @@ public class GameScreen implements Screen, InputProcessor {
         Actor hitActor = uiStage.hit(uiCoords.x, uiCoords.y, true); // 检测是否点中UI演员
         if (hitActor instanceof PlantCard card) {
             // 如果点中的是植物卡片
+            // 判断阳光是否足够以及卡片是否在冷却中
+            if (gameManager.getSun() < card.getCost() || card.isOnCooldown()) {
+                assetManager.playSound("graphics/audio/buzzer.ogg", 0.5f);
+                return true; // 太阳不够，点击无效，事件结束
+            }
+
             if (card.isSelected()) { // 如果卡片已经被选中，则取消选中
                 card.deselect();
                 selectedCard = null;
             } else {
                 if (selectedCard != null) selectedCard.deselect(); // 取消之前选中的卡片
                 selectedCard = card; // 选中新卡片
+
+                assetManager.playSound("graphics/audio/seedlift.ogg", 0.5f); // 播放选卡音效
             }
             return true; // 事件被UI处理，结束
         }
@@ -403,6 +419,7 @@ public class GameScreen implements Screen, InputProcessor {
                     Rectangle cell = gridCells[row][col];
                     if (cell.contains(uiCoords.x, uiCoords.y)) {
                         // 在这个格子上种植植物
+                        assetManager.playRandomSound(List.of("graphics/audio/plant1.ogg", "graphics/audio/plant2.ogg"), 0.5f);
                         placePlant(cell);
                         return true; // 事件被游戏世界处理，结束
                     }
@@ -424,15 +441,15 @@ public class GameScreen implements Screen, InputProcessor {
             AnimationClip plantAnimation;
             BasePlant newPlant;
             // 根据选中的卡片类型，创建不同的植物实例
-            if (selectedCard.plantType.equals("Peashooter")) {
+            if (selectedCard.plantInstanceOf(Peashooter.class)) {
                 plantTexture = assetManager.getTexture("graphics/Plants/Peashooter/0.gif");
                 plantAnimation = assetManager.getAnimation("Peashooter");
                 newPlant = new Peashooter(this, plantTexture, plantAnimation, cell.x, cell.y);
-            } else if (selectedCard.plantType.equals("Sunflower")) {
+            } else if (selectedCard.plantInstanceOf(Sunflower.class)) {
                 plantTexture = assetManager.getTexture("graphics/Plants/SunFlower/0.gif");
                 plantAnimation = assetManager.getAnimation("SunFlower");
                 newPlant = new Sunflower(this, plantTexture, plantAnimation, cell.x, cell.y);
-            } else if (selectedCard.plantType.equals("WallNut")) {
+            } else if (selectedCard.plantInstanceOf(Wallnut.class)) {
                 plantTexture = assetManager.getTexture("graphics/Plants/WallNut/0.gif");
                 plantAnimation = assetManager.getAnimation("WallNut");
                 newPlant = new Wallnut(plantTexture, plantAnimation, cell.x, cell.y); // 这里应该是WallNut类
@@ -440,6 +457,7 @@ public class GameScreen implements Screen, InputProcessor {
                 return; // 未知的植物类型
             }
             plants.add(newPlant); // 将新植物添加到世界中
+            selectedCard.resetCooldown();
         }
 
         // 无论种植成功与否，都取消卡片的选择状态
@@ -465,11 +483,21 @@ public class GameScreen implements Screen, InputProcessor {
         return assetManager.getAssetManager();
     }
 
-    @Override public void show() { }
+    @Override public void show() {
+        Music bgMusic = assetManager.getMusic("graphics/audio/UraniwaNi.ogg");
+        bgMusic.setLooping(true);
+        bgMusic.setVolume(0.5f);
+        bgMusic.play();
+    }
+
+    @Override public void dispose() {
+
+        uiStage.dispose();
+    }
+
     @Override public void pause() { }
     @Override public void resume() { }
     @Override public void hide() { }
-    @Override public void dispose() { uiStage.dispose(); }
     @Override public boolean keyDown(int keycode) { return false; }
     @Override public boolean keyUp(int keycode) { return false; }
     @Override public boolean keyTyped(char character) { return false; }

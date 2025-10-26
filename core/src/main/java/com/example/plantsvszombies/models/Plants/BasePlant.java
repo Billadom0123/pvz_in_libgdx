@@ -3,9 +3,7 @@ package com.example.plantsvszombies.models.Plants;
 
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Texture;
-import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 import com.example.plantsvszombies.Animation.AnimationClip;
@@ -15,6 +13,10 @@ public abstract class BasePlant {
     // --- 属性 ---
     protected Vector2 position; // 位置 (使用Vector2更专业)
     protected Texture texture;    // 纹理 (贴图)
+    protected String name;        // 植物名称
+    protected int cost;        // 种植成本
+    protected float cooldown;    // 冷却时间
+
     protected int maxHealth;      // 最大生命值
     protected int health;         // 生命值
     protected Rectangle bounds;   // 碰撞矩形，用于检测是否被击中或被攻击
@@ -25,7 +27,13 @@ public abstract class BasePlant {
 
     protected boolean isHit = false;
     protected float hitStateTime = 0f;
-    private static final float HIT_DURATION = 0.1f;      // 受击动画持续时间
+    private static final float HIT_EFFECT_DURATION = 0.2f;      // 受击动画持续时间
+    private float hitDelayTimer = 0f; // 受击效果延时计时器
+    private boolean showHitEffect = true; // 是否显示受击效果
+    private static final float HIT_EFFECT_INTERVAL = 0.4f;
+
+
+    public BasePlant() {}
 
     /**
      * 构造函数：当一个新植物被创建时调用
@@ -37,7 +45,7 @@ public abstract class BasePlant {
         this.texture = texture;
         this.position = new Vector2(x, y);
         this.bounds = new Rectangle(x, y, texture.getWidth(), texture.getHeight());
-        this.maxHealth = 100;
+        this.maxHealth = 300;
         this.health = maxHealth; // 默认生命值
         this.stateTime = 0f;
     }
@@ -47,7 +55,7 @@ public abstract class BasePlant {
         this.animation = animation;
         this.position = new Vector2(x, y);
         this.bounds = new Rectangle(x, y, texture.getWidth(), texture.getHeight());
-        this.maxHealth = 100;
+        this.maxHealth = 300;
         this.health = maxHealth; // 默认生命值
         this.stateTime = 0f;
     }
@@ -58,7 +66,7 @@ public abstract class BasePlant {
         this.animation = animation;
         this.position = new Vector2(x, y);
         this.bounds = new Rectangle(x, y, texture.getWidth(), texture.getHeight());
-        this.maxHealth = 100;
+        this.maxHealth = 300;
         this.health = maxHealth; // 默认生命值
         this.stateTime = 0f;
     }
@@ -73,9 +81,17 @@ public abstract class BasePlant {
         stateTime += delta;
         if (isHit) {
             hitStateTime += delta;
-            if (hitStateTime >= HIT_DURATION) {
+            if (hitStateTime >= HIT_EFFECT_DURATION) {
                 isHit = false;
+                showHitEffect = false;
                 hitStateTime = 0f;
+            }
+        }
+        if (!showHitEffect) {
+            hitDelayTimer += delta;
+            if (hitDelayTimer >= HIT_EFFECT_INTERVAL) {
+                showHitEffect = true;
+                hitDelayTimer = 0f;
             }
         }
     }
@@ -90,10 +106,10 @@ public abstract class BasePlant {
 
     public void drawAnimation(SpriteBatch batch) {
         batch.draw(animation.getFrame(stateTime), position.x, position.y);
-        if (isHit) {
+        if (isHit && showHitEffect) {
             // 根据受击时间做一个从强到弱的衰减（0..1）
-            float t = Math.min(1f, hitStateTime / HIT_DURATION); // 0 -> 1
-            float intensity = 1f - t; // 1 -> 0（初始最强）
+            float percent = hitStateTime / HIT_EFFECT_DURATION;
+            float intensity = Math.min((float) (4*(percent - Math.pow(percent, 2))), 1f);
             if (intensity > 0f) {
                 // 设置为白色并开启加法混合（GL_SRC_ALPHA, GL_ONE）
                 batch.setColor(1f, 1f, 1f, intensity);
@@ -119,6 +135,18 @@ public abstract class BasePlant {
         if (this.health <= 0) {
             this.alive = false; // 生命值耗尽，标记为死亡
         }
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public int getCost() {
+        return cost;
+    }
+
+    public float getCooldown() {
+        return cooldown;
     }
 
     // --- Getters --- 提供给外部获取内部信息的安全途径

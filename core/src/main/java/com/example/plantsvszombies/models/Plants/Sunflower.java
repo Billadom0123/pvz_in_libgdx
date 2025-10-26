@@ -14,6 +14,13 @@ public class Sunflower extends BasePlant {
     private float sunProduceTimer;
     private static final float SUN_PRODUCE_INTERVAL = 10.0f; // 每10秒产生一次太阳
 
+    public Sunflower() {
+        super();
+        this.name = "Sunflower";
+        this.cost = 50;
+        this.cooldown = 7.5f;
+    }
+
     public Sunflower(Texture texture, float x, float y) {
         super(texture, x, y);
         this.sunProduceTimer = 0f;
@@ -40,9 +47,6 @@ public class Sunflower extends BasePlant {
     }
 
     private void produceSun() {
-        // 直接调用GameManager的单例来增加太阳数量
         screen.spawnGeneratedSun(25, position.x + bounds.width / 2, position.y + bounds.height / 2);
-        // 打印日志，方便调试
-        System.out.println("Sunflower produced 25 sun. Total: " + GameManager.getInstance().getSun());
     }
 }
