@@ -41,12 +41,13 @@ public class AssetMan {
 
     private void loadTextureAssets() {
         assetManager.load("graphics/Map/map0.jpg", Texture.class);
-        assetManager.load("graphics/Plants/Peashooter/0.gif", Texture.class);
+        assetManager.load("graphics/Plants/Peashooter/Still.png", Texture.class);
         assetManager.load("graphics/Plants/Peashooter/Peashooter.png", Texture.class);
         assetManager.load("graphics/Bullets/PeaNormalExplode/pea_splats.png", Texture.class);
-        assetManager.load("graphics/Plants/SunFlower/0.gif", Texture.class);
+        assetManager.load("graphics/Plants/SunFlower/Still.png", Texture.class);
         assetManager.load("graphics/Plants/SunFlower/SunFlower.png", Texture.class);
-        assetManager.load("graphics/Plants/WallNut/0.gif", Texture.class);
+        assetManager.load("graphics/Plants/SunFlower/SunFlowerBright.png", Texture.class);
+        assetManager.load("graphics/Plants/WallNut/StillNormal.png", Texture.class);
         assetManager.load("graphics/Plants/WallNut/WallNut.png", Texture.class);
         assetManager.load("graphics/Plants/WallNut/Wallnut_cracked1.png", Texture.class);
         assetManager.load("graphics/Plants/WallNut/Wallnut_cracked2.png", Texture.class);
@@ -54,6 +55,11 @@ public class AssetMan {
         assetManager.load("graphics/Zombies/Zombie/Zombie.gif", Texture.class);
         assetManager.load("graphics/Zombies/Zombie/Zombie.png", Texture.class);
         assetManager.load("graphics/Zombies/Zombie/ZombieAttack.png", Texture.class);
+        assetManager.load("graphics/Zombies/Zombie/ZombieHead.png", Texture.class);
+        assetManager.load("graphics/Zombies/Zombie/ZombieHeadStill.png", Texture.class);
+        assetManager.load("graphics/Zombies/Zombie/ZombieDie.png", Texture.class);
+        assetManager.load("graphics/Zombies/Zombie/ZombieLostHead.png", Texture.class);
+        assetManager.load("graphics/Zombies/Zombie/ZombieLostHeadAttack.png", Texture.class);
 
         assetManager.load("graphics/Bullets/PeaNormal/PeaNormal_0.png", Texture.class);
 
@@ -70,12 +76,17 @@ public class AssetMan {
     private void loadSoundAssets() {
         // 这里可以添加音频资源的加载逻辑
         assetManager.load("graphics/audio/seedlift.ogg", Sound.class); // 从顶部选植物的音效
+        assetManager.load("graphics/audio/tap2.ogg", Sound.class);      // 取消选择植物的音效
         assetManager.load("graphics/audio/buzzer.ogg", Sound.class);   // 无法选择植物的音效
         assetManager.load("graphics/audio/points.ogg", Sound.class);    // 收集阳光的音效
         assetManager.load("graphics/audio/plant1.ogg", Sound.class);     // 种植植物的音效1
         assetManager.load("graphics/audio/plant2.ogg", Sound.class);     // 种植植物的音效2
         assetManager.load("graphics/audio/chomp.ogg", Sound.class);    // 僵尸吃植物的音效1
         assetManager.load("graphics/audio/chompsoft.ogg", Sound.class);   // 僵尸吃植物的音效2
+        assetManager.load("graphics/audio/gulp.ogg", Sound.class);     // 僵尸吃掉植物的音效
+        assetManager.load("graphics/audio/limbs_pop.ogg", Sound.class); // 僵尸掉头的音效
+        assetManager.load("graphics/audio/zombie_falling_1.ogg", Sound.class); // 僵尸倒地的音效1
+        assetManager.load("graphics/audio/zombie_falling_2.ogg", Sound.class); // 僵尸倒地的音效2
         assetManager.load("graphics/audio/awooga.ogg", Sound.class);    // 第一只僵尸出现的音效
         assetManager.load("graphics/audio/lawnmower.ogg", Sound.class);    // 小推车的音效
         assetManager.load("graphics/audio/throw.ogg", Sound.class);    // 射豌豆的音效
@@ -84,7 +95,7 @@ public class AssetMan {
 
     private void loadMusicAssets() {
         // 这里可以添加音乐资源的加载逻辑
-        assetManager.load("graphics/audio/UraniwaNi.ogg", Music.class); // 背景音乐
+        assetManager.load("graphics/audio/Grasswalk.ogg", Music.class); // 背景音乐
     }
 
     private void loadAnimationAssets() {
@@ -92,12 +103,17 @@ public class AssetMan {
         loadAnimation("Peashooter", "graphics/Plants/Peashooter/Peashooter.png", 13, 1170);
         loadAnimation("PeaSplat", "graphics/Bullets/PeaNormalExplode/pea_splats.png", 4, 200);
         loadAnimation("SunFlower", "graphics/Plants/SunFlower/SunFlower.png", 18, 1980);
+        loadAnimation("SunFlowerBright", "graphics/Plants/SunFlower/SunFlowerBright.png", 18, 1980);
         loadAnimation("WallNut", "graphics/Plants/WallNut/WallNut.png", 16, 1920);
         loadAnimation("WallNut_Cracked1", "graphics/Plants/WallNut/Wallnut_cracked1.png", 11, 1100);
         loadAnimation("WallNut_Cracked2", "graphics/Plants/WallNut/Wallnut_cracked2.png", 15, 1500);
 
         loadAnimation("NormalZombie", "graphics/Zombies/Zombie/Zombie.png", 22, 2970);
+        loadAnimation("ZombieHead", "graphics/Zombies/Zombie/ZombieHead.png", 12, 560);
+        loadAnimation("NormalZombieDie", "graphics/Zombies/Zombie/ZombieDie.png", 10, 2000);
         loadAnimation("NormalZombieAttack", "graphics/Zombies/Zombie/ZombieAttack.png", 21, 2150);
+        loadAnimation("NormalZombieLostHead", "graphics/Zombies/Zombie/ZombieLostHead.png", 18, 3240);
+        loadAnimation("NormalZombieLostHeadAttack", "graphics/Zombies/Zombie/ZombieLostHeadAttack.png", 11, 1100);
 
         loadAnimation("Sun", "graphics/Screen/Sun.png", 29, 2900);
     }

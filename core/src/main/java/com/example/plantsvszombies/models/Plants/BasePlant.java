@@ -16,6 +16,7 @@ public abstract class BasePlant {
     protected String name;        // 植物名称
     protected int cost;        // 种植成本
     protected float cooldown;    // 冷却时间
+    protected float init_cd = 0f; // 初始冷却时间
 
     protected int maxHealth;      // 最大生命值
     protected int health;         // 生命值
@@ -42,22 +43,11 @@ public abstract class BasePlant {
      * @param y       它在世界中的Y坐标
      */
     public BasePlant(Texture texture, float x, float y) {
-        this.texture = texture;
-        this.position = new Vector2(x, y);
-        this.bounds = new Rectangle(x, y, texture.getWidth(), texture.getHeight());
-        this.maxHealth = 300;
-        this.health = maxHealth; // 默认生命值
-        this.stateTime = 0f;
+        this(texture, null, x, y);
     }
 
     public BasePlant(Texture texture, AnimationClip animation, float x, float y) {
-        this.texture = texture;
-        this.animation = animation;
-        this.position = new Vector2(x, y);
-        this.bounds = new Rectangle(x, y, texture.getWidth(), texture.getHeight());
-        this.maxHealth = 300;
-        this.health = maxHealth; // 默认生命值
-        this.stateTime = 0f;
+        this(null, texture, animation, x, y);
     }
 
     public BasePlant(GameScreen screen, Texture texture, AnimationClip animation, float x, float y) {
@@ -148,6 +138,10 @@ public abstract class BasePlant {
     public float getCooldown() {
         return cooldown;
     }
+
+    public float getInitCd() { return init_cd; }
+
+    public int getHealth() { return health; }
 
     // --- Getters --- 提供给外部获取内部信息的安全途径
     public Rectangle getBounds() {

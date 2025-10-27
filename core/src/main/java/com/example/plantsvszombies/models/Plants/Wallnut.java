@@ -11,6 +11,7 @@ public class Wallnut extends BasePlant {
         this.name = "WallNut";
         this.cost = 50;
         this.cooldown = 30.0f; // 坚果墙的冷却时间较长
+        this.init_cd = 20f;
     }
 
     public Wallnut(Texture texture, AnimationClip animation, float x, float y) {

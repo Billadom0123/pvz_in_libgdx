@@ -1,8 +1,10 @@
 package com.example.plantsvszombies.models.Plants;
 
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.example.plantsvszombies.Animation.AnimationClip;
-import com.example.plantsvszombies.managers.GameManager;
+import com.example.plantsvszombies.managers.AssetMan;
 import com.example.plantsvszombies.screens.GameScreen;
 
 public class Sunflower extends BasePlant {
@@ -12,7 +14,8 @@ public class Sunflower extends BasePlant {
         GENERATING
     }
     private float sunProduceTimer;
-    private static final float SUN_PRODUCE_INTERVAL = 10.0f; // 每10秒产生一次太阳
+    private static final float SUN_PRODUCE_INTERVAL = 25f; // 每25秒产生一次太阳
+    private State state = State.NORMAL;
 
     public Sunflower() {
         super();
@@ -43,8 +46,29 @@ public class Sunflower extends BasePlant {
         if (sunProduceTimer >= SUN_PRODUCE_INTERVAL) {
             sunProduceTimer = 0;
             produceSun();
+            state = State.NORMAL;
+        } else if (sunProduceTimer >= SUN_PRODUCE_INTERVAL - 2f) {
+            // 在产生太阳前2秒切换到生成状态
+            // 可以在这里添加生成动画的逻辑
+            state = State.GENERATING;
         }
     }
+
+    @Override
+    public void drawAnimation(SpriteBatch batch) {
+        super.drawAnimation(batch);
+        // 可以根据状态绘制不同的动画效果
+        if (state == State.GENERATING) {
+            // 绘制生成太阳的动画效果
+            // 这里可以添加具体的动画绘制代码
+            float alpha = (float) (Math.sin((sunProduceTimer - (SUN_PRODUCE_INTERVAL - 2f)) / 4 * Math.PI));
+            batch.setColor(1, 1, 1, alpha * .8f);
+            batch.draw(AssetMan.getInstance().getAnimation("SunFlowerBright").getFrame(stateTime), position.x, position.y);
+            batch.setColor(1,1,1,1);
+        }
+    }
+
+
 
     private void produceSun() {
         screen.spawnGeneratedSun(25, position.x + bounds.width / 2, position.y + bounds.height / 2);

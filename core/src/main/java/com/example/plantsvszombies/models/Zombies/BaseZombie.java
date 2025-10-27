@@ -10,6 +10,9 @@ import com.badlogic.gdx.math.Vector2;
 import com.example.plantsvszombies.Animation.AnimationClip;
 import com.example.plantsvszombies.managers.AssetMan;
 import com.example.plantsvszombies.models.Plants.BasePlant;
+import com.example.plantsvszombies.models.Texture.AnimationFalling;
+import com.example.plantsvszombies.models.Texture.Falling;
+import com.example.plantsvszombies.screens.GameScreen;
 
 import java.util.List;
 
@@ -25,6 +28,10 @@ public abstract class BaseZombie {
     protected boolean isHit = false;
     protected float hitStateTime = 0f;
 
+    protected int MAX_HEALTH = 270;
+    protected int DAMAGED_POINT = 180;
+    protected int CRITICAL_POINT = 90;
+
     // 僵尸独有的状态
     protected boolean isAttacking = false; // 当前是否在攻击植物
     protected BasePlant targetPlant = null;      // 攻击的目标
@@ -38,10 +45,23 @@ public abstract class BaseZombie {
     private static final float EAT_SOUND_INTERVAL = 0.5f; // 吃植物声音间隔
     private float eatSoundTimer = 0f; // 吃植物声音计时器
 
+    private boolean isDying = false;     // 是否在播放死亡动画
+    private float dieStateTime = 0f;     // 死亡动画计时
+    private boolean removable = false;   // 是否可以从游戏中移除
+//    private AnimationFalling falling;
+    private Falling falling;
+    private boolean inCriticalState = false;
+
 
     protected Rectangle centerBounds;
+    protected GameScreen screen;
 
     public BaseZombie(Texture texture, AnimationClip animation, float x, float y) {
+        this(null, texture, animation, x, y);
+    }
+
+    public BaseZombie(GameScreen screen, Texture texture, AnimationClip animation, float x, float y) {
+        this.screen = screen;
         this.texture = texture;
         this.animation = animation;
         this.position = new Vector2(x, y);
@@ -49,8 +69,8 @@ public abstract class BaseZombie {
         this.health = 270;
         this.bounds = new Rectangle(x, y, animation.getWidth(), animation.getHeight());
         stateTime = 0f;
-        this.centerBounds = new Rectangle(x + animation.getWidth() * 0.4f, y + animation.getHeight() * 0.3f,
-                animation.getWidth() * 0.2f, animation.getHeight() * 0.4f);
+        this.centerBounds = new Rectangle(x + animation.getWidth() * 0.6f, y + animation.getHeight() * 0.2f,
+            animation.getWidth() * 0.1f, animation.getHeight() * 0.3f);
     }
 
     /**
@@ -58,6 +78,16 @@ public abstract class BaseZombie {
      * @param delta 时间差
      */
     public void update(float delta) {
+        if (isDying) {
+            dieStateTime += delta;
+            animation = AssetMan.getInstance().getAnimation("NormalZombieDie");
+            // 死亡动画播完，允许移除
+            if (animation.isAnimationFinished(dieStateTime)) {
+                removable = true;
+            }
+            return;
+        }
+
         stateTime += delta;
         if (isHit) {
             hitStateTime += delta;
@@ -76,12 +106,15 @@ public abstract class BaseZombie {
                 // 播放吃植物的声音
                 AssetMan.getInstance().playRandomSound(List.of("graphics/audio/chomp.ogg", "graphics/audio/chompsoft.ogg"), 0.4f);
             }
+            if (targetPlant.getHealth() <= 0) {
+                AssetMan.getInstance().playSound("graphics/audio/gulp.ogg", 0.4f);
+            }
         } else {
             // 如果没有在攻击，就从右向左移动
             animation = AssetMan.getInstance().getAnimation("NormalZombie");
             position.x -= speed * delta;
-            bounds.setX(position.x); // 别忘了更新碰撞矩形的位置
-            centerBounds.setX(position.x + animation.getWidth() * 0.4f);
+            bounds.x -= speed * delta;
+            centerBounds.x -= speed * delta;
         }
         if (hitStateTime >= HIT_EFFECT_DURATION) {
             isHit = false;
@@ -94,6 +127,24 @@ public abstract class BaseZombie {
                 hitDelayTimer = 0f;
             }
         }
+        if (inCriticalState && !isDying) {
+            falling.update(delta);
+            health -= (int) (60 * delta);
+        }
+        if (health <= 0 && !isDying) {
+            startDying();
+        }
+        if (health < CRITICAL_POINT && !inCriticalState) {
+            inCriticalState = true;
+//            falling = new AnimationFalling(AssetMan.getInstance().getAnimation("ZombieHead"),
+//                position.x + animation.getWidth() * .4f, position.y - animation.getHeight() * .4f);
+            falling = new Falling(
+                AssetMan.getInstance().getTexture("graphics/Zombies/Zombie/ZombieHeadStill.png"),
+                position.x + animation.getWidth() * .5f, position.y + animation.getHeight() * .5f,
+                new Vector2(MathUtils.random(-30f, 30f), MathUtils.random(100f, 200f)),
+                MathUtils.random(-90f, 90f), position.y);
+            AssetMan.getInstance().playSound("graphics/audio/limbs_pop.ogg", 0.5f);
+        }
     }
 
     public void draw(SpriteBatch batch) {
@@ -101,6 +152,17 @@ public abstract class BaseZombie {
     }
 
     public void drawAnimation(SpriteBatch batch) {
+        if (isDying) {
+            animation = AssetMan.getInstance().getAnimation("NormalZombieDie");
+            batch.draw(animation.getFrame(dieStateTime), position.x, position.y);
+            return;
+        }
+        if (inCriticalState) {
+            if (isAttacking) { animation = AssetMan.getInstance().getAnimation("NormalZombieLostHeadAttack"); }
+            else { animation = AssetMan.getInstance().getAnimation("NormalZombieLostHead"); }
+//            falling.drawAnimation(batch);
+            falling.draw(batch);
+        }
         batch.draw(animation.getFrame(stateTime), position.x, position.y);
         if (isHit && showHitEffect) {
             // 根据受击时间做一个从强到弱的衰减（0..1）
@@ -122,11 +184,9 @@ public abstract class BaseZombie {
     }
 
     public void takeDamage(int damage) {
+        if (removable) return;
         this.isHit = true;
         this.health -= damage;
-        if (this.health <= 0) {
-            alive = false;
-        }
     }
 
     /**
@@ -146,6 +206,20 @@ public abstract class BaseZombie {
         targetPlant = null;
     }
 
+    public void startDying() {
+        isDying = true;
+        dieStateTime = 0f;
+        isAttacking = false;
+        targetPlant = null;
+        speed = 0f;
+        centerBounds = new Rectangle(-100, -100, 0, 0); // 移出中心碰撞框，避免继续与植物碰撞
+        AssetMan.getInstance().playRandomSound(List.of("graphics/audio/zombie_falling_1.ogg", "graphics/audio/zombie_falling_2.ogg"), 0.3f);
+    }
+
+    public boolean isRemovable() {
+        return removable;
+    }
+
     public Rectangle getBounds() {
         return bounds;
     }
@@ -156,5 +230,14 @@ public abstract class BaseZombie {
 
     public float getX() {
         return position.x;
+    }
+
+    private void spawnFalling(Texture texture) {
+        float groundY = position.y;
+        Falling falling = new Falling(texture, position.x, position.y + 50,
+                new Vector2(MathUtils.random(-30f, 30f), MathUtils.random(100f, 200f)),
+                MathUtils.random(-90f, 90f), groundY);
+        // 将掉落物添加到游戏的掉落物管理器中
+        screen.addFalling(falling);
     }
 }

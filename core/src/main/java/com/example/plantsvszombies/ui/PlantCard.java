@@ -5,8 +5,6 @@ import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.scenes.scene2d.Actor;
-import com.badlogic.gdx.scenes.scene2d.InputEvent;
-import com.badlogic.gdx.scenes.scene2d.InputListener;
 import com.example.plantsvszombies.managers.GameManager;
 import com.example.plantsvszombies.models.Plants.BasePlant;
 
@@ -29,20 +27,6 @@ public class PlantCard extends Actor {
         // 设置Actor的尺寸，这对于点击检测很重要
         setWidth(cardTexture.getWidth());
         setHeight(cardTexture.getHeight());
-
-        // 添加点击监听器
-        addListener(new InputListener() {
-            @Override
-            public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
-                // 检查太阳是否足够
-                if (GameManager.getInstance().getSun() >= cost) {
-                    // 如果够，就“选中”这张卡片
-                    ((PlantCard) event.getTarget()).select();
-                    return true; // 返回true表示事件已被处理，不再向后传递
-                }
-                return false; // 太阳不够，点击无效
-            }
-        });
     }
 
     public PlantCard(Texture cardTexture, BasePlant plant) {
@@ -50,28 +34,12 @@ public class PlantCard extends Actor {
         this.plantType = plant.getName();
         this.cost = plant.getCost();
         this.cooldown = plant.getCooldown();
+        this.cooldownTimer = plant.getCooldown() - plant.getInitCd();
         this.plantClass = plant.getClass();
 
         // 设置Actor的尺寸，这对于点击检测很重要
         setWidth(cardTexture.getWidth());
         setHeight(cardTexture.getHeight());
-
-        // 添加点击监听器
-        addListener(new InputListener() {
-            @Override
-            public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
-                if (isOnCooldown()) {
-                    return false; // 冷却中，点击无效
-                }
-                // 检查太阳是否足够
-                if (GameManager.getInstance().getSun() >= cost) {
-                    // 如果够，就“选中”这张卡片
-                    ((PlantCard) event.getTarget()).select();
-                    return true; // 返回true表示事件已被处理，不再向后传递
-                }
-                return false; // 太阳不够，点击无效
-            }
-        });
     }
 
     // --- 公共方法 ---
@@ -123,9 +91,10 @@ public class PlantCard extends Actor {
             batch.setColor(color); // 恢复batch的颜色，以免影响后续绘制
         }
 
-        // 如果被选中，可以绘制一个高亮效果（为简单起见，此处省略）
         if (isSelected) {
-            // e.g., draw a highlight border
+            batch.setColor(0, 0, 0, 0.5f);
+            batch.draw(cardTexture, getX(), getY(), getWidth(), getHeight());
+            batch.setColor(color); // 恢复batch的颜色，以免影响后续绘制
         }
     }
 
