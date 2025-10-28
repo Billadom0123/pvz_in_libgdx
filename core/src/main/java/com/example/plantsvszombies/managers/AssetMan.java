@@ -97,6 +97,7 @@ public class AssetMan {
         assetManager.load("graphics/audio/lawnmower.ogg", Sound.class);    // 小推车的音效
         assetManager.load("graphics/audio/throw.ogg", Sound.class);    // 射豌豆的音效
         assetManager.load("graphics/audio/splat2.ogg", Sound.class); // 豌豆攻击普通僵尸的音效
+        assetManager.load("graphics/audio/dirt_rise.ogg", Sound.class); // 土豆地雷出土的音效
         assetManager.load("graphics/audio/potato_mine.ogg", Sound.class); // 土豆地雷爆炸的音效
         assetManager.load("graphics/audio/scream.ogg", Sound.class);   // 失败时戴夫的尖叫声
     }
@@ -105,6 +106,7 @@ public class AssetMan {
         // 这里可以添加音乐资源的加载逻辑
         assetManager.load("graphics/audio/Grasswalk.ogg", Music.class); // 背景音乐
         assetManager.load("graphics/audio/losemusic.ogg", Music.class); // 失败音乐
+        assetManager.load("graphics/audio/The-King-Paperman.mp3", Music.class); // hyw
     }
 
     private void loadAnimationAssets() {

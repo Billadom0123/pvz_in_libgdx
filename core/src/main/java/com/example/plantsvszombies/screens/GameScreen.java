@@ -83,9 +83,12 @@ public class GameScreen implements Screen, InputProcessor {
     private final Array<Falling> fallings;
 
     // --- 游戏逻辑 ---
+    private float gameTime = 0f;          // 游戏进行的总时间
     private final Rectangle[][] gridCells; // 逻辑网格，用于定位和种植
     private float zombieSpawnTimer;      // 僵尸生成计时器
+    private float ZOMBIE_SPAWN_INTERVAL = 8.0f; // 默认僵尸生成间隔
     private float sunSpawnTimer;         // 太阳生成计时器
+    private float SUN_SPAWN_INTERVAL = 12.0f; // 太阳生成间隔
     private boolean firstZombieSpawned = false;
     private boolean firstWaveSpawned = false;
     private boolean isCameraMoving = false; // 标记相机是否正在移动
@@ -375,6 +378,7 @@ public class GameScreen implements Screen, InputProcessor {
      * 封装了所有游戏世界的更新逻辑
      */
     private void updateGame(float delta) {
+        gameTime += delta;
         // 更新所有游戏对象
         for (BasePlant plant : plants) plant.update(delta);
         for (BaseZombie zombie : zombies) zombie.update(delta);
@@ -382,15 +386,20 @@ public class GameScreen implements Screen, InputProcessor {
         for (LawnMower lawnMower : lawnMowers) lawnMower.update(delta);
         for (Falling falling : fallings) falling.update(delta);
 
+//
+//        if (gameTime >= 41f) {
+//            beginCrazyMode();
+//        }
+
         // 计时生成僵尸
         zombieSpawnTimer += delta;
-        if (zombieSpawnTimer > 8.0f) { // 每8秒生成一个
+        if (zombieSpawnTimer > ZOMBIE_SPAWN_INTERVAL) { // 每8秒生成一个
             spawnZombie();
             zombieSpawnTimer = 0;
         }
 
         sunSpawnTimer += delta;
-        if (sunSpawnTimer > 12.0f) { // 每12秒生成
+        if (sunSpawnTimer > SUN_SPAWN_INTERVAL) { // 每12秒生成
             spawnFallingSun();
             sunSpawnTimer = 0f;
         }
@@ -820,6 +829,7 @@ public class GameScreen implements Screen, InputProcessor {
 
     @Override public void show() {
         bgMusic = assetManager.getMusic("graphics/audio/Grasswalk.ogg");
+//        bgMusic = assetManager.getMusic("graphics/audio/The-King-Paperman.mp3");
         bgMusic.setLooping(true);
         bgMusic.setVolume(0.5f);
         bgMusic.play();
@@ -839,4 +849,10 @@ public class GameScreen implements Screen, InputProcessor {
     @Override public boolean touchDragged(int screenX, int screenY, int pointer) { return false; }
     @Override public boolean touchCancelled(int screenX, int screenY, int pointer, int button) { return false; }
     @Override public boolean scrolled(float amountX, float amountY) { return false; }
+
+    public void beginCrazyMode() {
+        ZOMBIE_SPAWN_INTERVAL = .5f;
+        SUN_SPAWN_INTERVAL = 1.0f;
+        gameManager.setCardCooldown(false);
+    }
 }

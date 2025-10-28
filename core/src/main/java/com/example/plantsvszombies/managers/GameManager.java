@@ -13,6 +13,7 @@ public class GameManager {
         STOPPED // 停止
     }
 
+    private boolean cardCooldown = true;
     private int sun; // 当前太阳数量
     private GameState gameState;
 
@@ -34,6 +35,15 @@ public class GameManager {
     }
 
     // --- 公共接口 ---
+
+
+    public boolean isCardCooldownOn() {
+        return cardCooldown;
+    }
+
+    public void setCardCooldown(boolean cardCooldown) {
+        this.cardCooldown = cardCooldown;
+    }
 
     public int getSun() {
         return sun;

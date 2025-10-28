@@ -36,12 +36,8 @@ public class PlantCard extends Group {
         this.plantTexture = new TextureActor(plant.getTexture());
         this.plantType = plant.getName();
         this.cost = plant.getCost();
-        if (haveCooldown) {
-            this.cooldown = plant.getCooldown();
-            this.cooldownTimer = plant.getCooldown() - plant.getInitCd();
-        } else {
-            this.cooldown = 0f;
-        }
+        this.cooldown = plant.getCooldown();
+        this.cooldownTimer = plant.getCooldown() - plant.getInitCd();
         this.plantClass = plant.getClass();
         this.costLabel = new Label(String.valueOf(cost), skin);
 
@@ -148,7 +144,11 @@ public class PlantCard extends Group {
     @Override
     public void act(float delta) {
         super.act(delta);
-        cooldownTimer += delta;
+        if (GameManager.getInstance().isCardCooldownOn()) {
+            cooldownTimer += delta;
+        } else {
+            cooldownTimer = cooldown;
+        }
     }
 
     public Texture getPlantTexture() {

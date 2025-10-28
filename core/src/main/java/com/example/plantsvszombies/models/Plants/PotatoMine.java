@@ -57,6 +57,7 @@ public class PotatoMine extends BasePlant {
             state = State.ARMING;
             armingTimer = 0f;
             animation = AssetMan.getInstance().getAnimation("PotatoMine_ArmUp");
+            AssetMan.getInstance().playSound("graphics/audio/dirt_rise.ogg");
         }
         if (state == State.ARMING) {
             armingTimer += delta;
