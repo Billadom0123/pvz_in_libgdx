@@ -119,7 +119,6 @@ public class Sun extends Actor {
                     remove();
                 })));
             }
-            return;
         }
     }
 

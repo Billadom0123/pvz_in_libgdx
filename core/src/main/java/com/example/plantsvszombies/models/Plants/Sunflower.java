@@ -19,24 +19,32 @@ public class Sunflower extends BasePlant {
 
     public Sunflower() {
         super();
-        this.name = "Sunflower";
+        this.name = "SunFlower";
         this.cost = 50;
         this.cooldown = 7.5f;
     }
 
     public Sunflower(Texture texture, float x, float y) {
-        super(texture, x, y);
-        this.sunProduceTimer = 0f;
+        this(texture, null, x, y);
     }
 
     public Sunflower(Texture texture, AnimationClip animation, float x, float y) {
-        super(texture, animation, x, y);
-        this.sunProduceTimer = 0f;
+        this(null, texture, animation, x, y);
     }
 
     public Sunflower(GameScreen screen, Texture texture, AnimationClip animation, float x, float y) {
         super(screen, texture, animation, x, y);
+        this.name = "SunFlower";
         this.sunProduceTimer = 0f;
+        this.cost = 50;
+        this.cooldown = 7.5f;
+    }
+
+    public Sunflower(GameScreen screen, float x, float y) {
+        this(screen,
+            AssetMan.getInstance().getTexture("graphics/Plants/SunFlower/Still.png"),
+            AssetMan.getInstance().getAnimation("SunFlower"),
+            x, y);
     }
 
     @Override

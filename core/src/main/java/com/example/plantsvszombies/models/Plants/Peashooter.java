@@ -2,6 +2,7 @@ package com.example.plantsvszombies.models.Plants;
 
 
 import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.TextureData;
 import com.example.plantsvszombies.Animation.AnimationClip;
 import com.example.plantsvszombies.managers.AssetMan;
 import com.example.plantsvszombies.models.Projectiles.BaseProjectile;
@@ -25,6 +26,14 @@ public class Peashooter extends BasePlant {
         this.name = "Peashooter";
         this.screen = screen;
         this.shootTimer = 0f;
+        this.cooldown = 7.5f;
+    }
+
+    public Peashooter(GameScreen screen, float x, float y) {
+        this(screen,
+            AssetMan.getInstance().getTexture("graphics/Plants/Peashooter/Still.png"),
+            AssetMan.getInstance().getAnimation("Peashooter"),
+            x, y);
     }
 
     /**
@@ -34,11 +43,15 @@ public class Peashooter extends BasePlant {
     public void update(float delta) {
         super.update(delta);
         shootTimer += delta;
-        if (shootTimer >= SHOOT_INTERVAL) {
+        if (shootTimer >= SHOOT_INTERVAL && shouldFire()) {
             shootTimer = 0; // 重置计时器
             AssetMan.getInstance().playSound("graphics/audio/throw.ogg", 0.7f);
             fire();
         }
+    }
+
+    private boolean shouldFire() {
+        return screen.anyZombieInHeight(position.y);
     }
 
     /**

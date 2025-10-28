@@ -20,6 +20,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.badlogic.gdx.utils.Align;
 import com.badlogic.gdx.utils.Array;
+import com.badlogic.gdx.utils.Timer;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.example.plantsvszombies.Animation.AnimationClip;
 import com.example.plantsvszombies.PvzGame;
@@ -39,6 +40,7 @@ import com.example.plantsvszombies.ui.PlantCard;
 
 import java.util.Iterator;
 import java.util.List;
+import java.util.Random;
 
 public class GameScreen implements Screen, InputProcessor {
 
@@ -52,6 +54,15 @@ public class GameScreen implements Screen, InputProcessor {
     private final FitViewport gameViewport;     // 保持游戏世界比例的视口
     public static final float WORLD_WIDTH = 1400;  // 游戏世界的宽度
     public static final float WORLD_HEIGHT = 600; // 游戏世界的高度
+
+    // --- 背景音乐 ---
+    private Music bgMusic;
+
+    // 相机可视范围（用户提供的数据缓存为字段，避免在 resize 时丢失）
+    private final float cameraMinX;
+    private final float cameraMaxX;
+    private final float cameraMinY;
+    private final float cameraMaxY;
 
     private final float cellWidth = 81;   // 这些数值需要根据你的背景图精确测量
     private final float cellHeight = 98;
@@ -75,6 +86,7 @@ public class GameScreen implements Screen, InputProcessor {
     private float sunSpawnTimer;         // 太阳生成计时器
     private boolean firstZombieSpawned = false;
     private boolean firstWaveSpawned = false;
+    private boolean isCameraMoving = false; // 标记相机是否正在移动
 
     // --- UI 相关 ---
     private final Skin uiSkin;
@@ -82,6 +94,9 @@ public class GameScreen implements Screen, InputProcessor {
     private final Label sunLabel;     // 显示太阳数量的标签
     private PlantCard selectedCard; // 当前被玩家选中的植物卡片
     private Table tooltipTable;    // 显示卡片信息的提示框
+
+    private float endBlackOverlayAlpha = 0f; // 黑色覆盖层的透明度
+    private float endWordScale = 0f; // 抖动计时器
 
     /**
      * GameScreen的构造函数
@@ -93,8 +108,19 @@ public class GameScreen implements Screen, InputProcessor {
 
         // 1. 初始化游戏相机和视口
         gameCamera = new OrthographicCamera();
-        gameViewport = new FitViewport(WORLD_WIDTH, WORLD_HEIGHT, gameCamera);
-        gameCamera.position.set(WORLD_WIDTH / 2, WORLD_HEIGHT / 2, 0); // 相机居中
+        float minX = startX - cellWidth;
+        float maxX = startX + 10 * cellWidth; // 使用你提供的新范围
+        float minY = 0;
+        float maxY = WORLD_HEIGHT;
+        // 缓存范围到字段
+        this.cameraMinX = minX;
+        this.cameraMaxX = maxX;
+        this.cameraMinY = minY;
+        this.cameraMaxY = maxY;
+
+        gameViewport = new FitViewport(maxX - minX, maxY - minY, gameCamera);
+        gameCamera.position.set((minX + maxX) / 2f, (minY + maxY) / 2f, 0); // 相机居中到可视范围
+        gameCamera.update();
 
         // 2. 初始化游戏对象列表
         plants = new Array<>();
@@ -104,9 +130,9 @@ public class GameScreen implements Screen, InputProcessor {
         lawnMowers = new Array<>();
         fallings = new Array<>();
 
-        // 3. 初始化UI
+        // 3. 初始化UI（与游戏共用同一 viewport，避免相机裁切后的偏移）
         uiSkin = new Skin(Gdx.files.internal("graphics/Skin/uiskin.json"));
-        uiStage = new Stage(new FitViewport(WORLD_WIDTH, WORLD_HEIGHT)); // UI使用独立的舞台和视口
+        uiStage = new Stage(gameViewport);
         tooltipTable = new Table();
 
         Pixmap pix = new Pixmap(1, 1, Pixmap.Format.RGBA8888);
@@ -149,9 +175,12 @@ public class GameScreen implements Screen, InputProcessor {
 
 
         // 创建植物卡片
-        PlantCard peashooterCard = new PlantCard(assetManager.getTexture("graphics/Cards/card_peashooter.png"), new Peashooter());
-        PlantCard sunflowerCard = new PlantCard(assetManager.getTexture("graphics/Cards/card_sunflower.png"), new Sunflower());
-        PlantCard wallnutCard = new PlantCard(assetManager.getTexture("graphics/Cards/card_wallnut.png"), new Wallnut());
+        PlantCard peashooterCard = new PlantCard(assetManager.getTexture("graphics/Cards/card_peashooter.png"),
+            new Peashooter(this, 0,0));
+        PlantCard sunflowerCard = new PlantCard(assetManager.getTexture("graphics/Cards/card_sunflower.png"),
+            new Sunflower(this, 0,0));
+        PlantCard wallnutCard = new PlantCard(assetManager.getTexture("graphics/Cards/card_wallnut.png"),
+            new Wallnut(this, 0,0));
 
         // 将卡片添加到Table中
         topBar.add(peashooterCard).pad(1);
@@ -186,23 +215,68 @@ public class GameScreen implements Screen, InputProcessor {
 
     @Override
     public void render(float delta) {
+
+        if (isCameraMoving) {
+            float targetX = startX + 3.5f * cellWidth;
+            float lerpSpeed = 50f; // 控制移动速度
+            gameCamera.position.x -= lerpSpeed * delta;
+
+            // 检查是否到达目标位置
+            if (gameCamera.position.x <= targetX) {
+                gameCamera.position.x = targetX; // 确保精确到达
+                isCameraMoving = false; // 停止移动
+            }
+            gameCamera.update();
+        }
+
+
         // 1. 清理屏幕
         Gdx.gl.glClearColor(0.3f, 0.7f, 0.8f, 1);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
         // 2. 更新游戏逻辑 (仅在游戏进行时)
-        if (gameManager.getGameState() == GameManager.GameState.PLAYING) {
+        if (gameManager.getGameState() == GameManager.GameState.PLAYING || gameManager.getGameState() == GameManager.GameState.GAME_OVER) {
             updateGame(delta);
+        } else if (gameManager.getGameState() == GameManager.GameState.STOPPED) {
+            // 游戏结束时的逻辑（如果需要）
+            endBlackOverlayAlpha += delta * 0.2f;
+            if (endBlackOverlayAlpha > 1f) endBlackOverlayAlpha = 1f;
+
+            ShapeRenderer shapeRenderer = new ShapeRenderer();
+            shapeRenderer.setProjectionMatrix(gameCamera.combined);
+            shapeRenderer.begin(ShapeRenderer.ShapeType.Filled);
+            shapeRenderer.setColor(0, 0, 0, endBlackOverlayAlpha); // 设置黑色和透明度
+            shapeRenderer.rect(0, 0, WORLD_WIDTH, WORLD_HEIGHT); // 绘制全屏矩形
+            shapeRenderer.end();
+            shapeRenderer.dispose();
+
+            game.batch.begin();
+            Texture gameOverTexture = assetManager.getTexture("graphics/Screen/ZombiesWon.png");
+            // 添加抖动效果
+
+            endWordScale += delta * 0.4f;
+            if (endWordScale > 1f) endWordScale = 1f;
+            float centerX = gameCamera.position.x - (gameOverTexture.getWidth() * endWordScale) / 2f;
+            float centerY = gameCamera.position.y - (gameOverTexture.getHeight() * endWordScale) / 2f;
+
+
+            Random random = new Random();
+            float shakeOffsetX = (random.nextFloat() - 0.5f) * 5f * endWordScale; // 随机偏移范围为 [-10, 10]
+            float shakeOffsetY = (random.nextFloat() - 0.5f) * 5f * endWordScale; // 随机偏移范围为 [-10, 10]
+
+
+
+            game.batch.draw(gameOverTexture, centerX + shakeOffsetX, centerY + shakeOffsetY,
+                gameOverTexture.getWidth() * endWordScale, gameOverTexture.getHeight() * endWordScale);
+            game.batch.end();
+
+            return;
         }
 
         // 3. 渲染游戏世界
         gameViewport.apply(); // 应用游戏视口
         gameCamera.update();
         game.batch.setProjectionMatrix(gameCamera.combined); // 设置投影矩阵
-
-        int screenX = Gdx.input.getX();
-        int screenY = Gdx.input.getY();
-        Vector2 worldCoords = gameViewport.unproject(new Vector2(screenX, screenY));
 
         game.batch.begin();
         // 绘制背景
@@ -214,15 +288,22 @@ public class GameScreen implements Screen, InputProcessor {
         for (BaseProjectile projectile : projectiles) projectile.draw(game.batch);
         for (LawnMower lawnMower : lawnMowers) lawnMower.draw(game.batch);
 
-        ShapeRenderer shapeRenderer = new ShapeRenderer();
-        shapeRenderer.setProjectionMatrix(gameCamera.combined);
-        shapeRenderer.begin(ShapeRenderer.ShapeType.Line);
-        shapeRenderer.setColor(Color.RED);
-        for (BaseZombie z: zombies) {
-            Rectangle r = z.getCenterBounds();
-            shapeRenderer.rect(r.x, r.y, r.width, r.height);
-        }
-        shapeRenderer.end();
+        game.batch.end();
+
+        // 绘制种植预览
+        int screenX = Gdx.input.getX();
+        int screenY = Gdx.input.getY();
+        Vector2 worldCoords = gameViewport.unproject(new Vector2(screenX, screenY));
+
+//        ShapeRenderer shapeRenderer = new ShapeRenderer();
+//        shapeRenderer.setProjectionMatrix(gameCamera.combined);
+//        shapeRenderer.begin(ShapeRenderer.ShapeType.Line);
+//        shapeRenderer.setColor(Color.RED);
+//        for (BaseZombie z: zombies) {
+//            Rectangle r = z.getCenterBounds();
+//            shapeRenderer.rect(r.x, r.y, r.width, r.height);
+//        }
+//        shapeRenderer.end();
 
         // 4. 渲染UI
         sunLabel.setText(String.valueOf(gameManager.getSun())); // 更新UI标签
@@ -230,7 +311,8 @@ public class GameScreen implements Screen, InputProcessor {
         uiStage.act(delta); // 更新UI舞台（例如，执行Action）
         uiStage.draw();     // 绘制UI舞台
 
-        // 5. 绘制种植预览
+        game.batch.begin();
+
         if (selectedCard != null) {
             Texture t = getPlantTextureBySelectedCard();
             if (canPlantAt(highlightedRow, highlightedCol)) {
@@ -241,6 +323,7 @@ public class GameScreen implements Screen, InputProcessor {
             }
             game.batch.draw(t, worldCoords.x - t.getWidth() / 2f, worldCoords.y - t.getHeight() / 2f);
         }
+
         game.batch.end();
 //
 //        ShapeRenderer shapeRenderer = new ShapeRenderer();
@@ -290,7 +373,7 @@ public class GameScreen implements Screen, InputProcessor {
     }
 
     private void spawnFallingSun() {
-        float randomX = MathUtils.random(50f, WORLD_WIDTH - 50f);
+        float randomX = MathUtils.random(cameraMinX, cameraMaxX - 50f);
         float randomGroundY = MathUtils.random(50f, WORLD_HEIGHT - 200f);
         Sun sun = new Sun(assetManager.getTexture("graphics/Screen/Sun.gif"), assetManager.getAnimation("Sun"), randomX, WORLD_HEIGHT, randomGroundY);
         suns.add(sun);
@@ -311,11 +394,22 @@ public class GameScreen implements Screen, InputProcessor {
         // 在屏幕右侧外生成
         Texture zombieTexture = assetManager.getTexture("graphics/Zombies/Zombie/Zombie.gif");
         AnimationClip zombieAnimation = assetManager.getAnimation("NormalZombie");
-        zombies.add(new NormalZombie(zombieTexture, zombieAnimation, WORLD_WIDTH, gridCells[row][0].y));
+        zombies.add(new NormalZombie(this, zombieTexture, zombieAnimation, cameraMaxX + 20f, gridCells[row][0].y));
         if (!firstZombieSpawned) {
             firstZombieSpawned = true;
             assetManager.playSound("graphics/audio/awooga.ogg", 0.6f);
         }
+    }
+
+    public boolean anyZombieInHeight(float height) {
+        for (BaseZombie z : zombies) {
+            float zombieX = z.getCenterBounds().getX();
+            float zombieY = z.getY();
+            if (zombieY >= height - 10 && zombieY <= height + 10 && zombieX <= cameraMaxX && zombieX >= cameraMinX) {
+                return true;
+            }
+        }
+        return false;
     }
 
     public void addFalling(Falling falling) {
@@ -326,14 +420,49 @@ public class GameScreen implements Screen, InputProcessor {
      * 检查游戏结束条件
      */
     private void checkGameOver() {
+        if (gameManager.getGameState() == GameManager.GameState.GAME_OVER) {
+            return; // 已经是游戏结束状态，跳过检查
+        }
         for(BaseZombie z : zombies) {
-            if(z.getX() < startX - cellWidth * 2) { // 如果有僵尸走到了屏幕最左边
-                gameManager.setGameState(GameManager.GameState.GAME_OVER);
-                System.out.println("GAME OVER");
+            float zombieX = z.getCenterBounds().getX();
+            if(zombieX < startX - 20f && zombieX >= cameraMinX) { // 如果有僵尸走到了屏幕最左边
+                startGameOver(z);
                 // 在实际游戏中，这里应该切换到游戏结束画面
                 // game.setScreen(new GameOverScreen(game));
             }
         }
+    }
+
+    private void startGameOver(BaseZombie killer) {
+        gameManager.setGameState(GameManager.GameState.GAME_OVER);
+        killer.moveToDoor(1.5f, startY + 1.5f * cellHeight); // 让这个僵尸走向大门
+        bgMusic.stop();
+        bgMusic = assetManager.getMusic("graphics/audio/losemusic.ogg");
+        bgMusic.setVolume(0.5f);
+        bgMusic.play();
+        Timer.schedule(new Timer.Task() {
+            @Override
+            public void run() {
+                isCameraMoving = true;
+            }
+        }, 2f);
+        Timer.schedule(new Timer.Task() {
+            @Override
+            public void run() {
+                killer.stand();
+                killer.setAnimation(assetManager.getAnimation("NormalZombieAttack"));
+                assetManager.playSound("graphics/audio/chomp.ogg", 0.6f);
+            }
+        }, 5f, .5f, 5);
+        Timer.schedule(new Timer.Task() {
+            @Override
+            public void run() {
+                assetManager.playSound("graphics/audio/scream.ogg", 0.6f);
+                gameManager.setGameState(GameManager.GameState.STOPPED);
+            }
+        }, 7.5f);
+
+
     }
 
     /**
@@ -451,9 +580,13 @@ public class GameScreen implements Screen, InputProcessor {
 
     @Override
     public boolean touchDown(int screenX, int screenY, int pointer, int button) {
-        // --- 第一步：处理UI输入 ---
+        // --- 第一步：处理UI输入（舞台与游戏共用 viewport） ---
         Vector2 uiCoords = new Vector2(screenX, screenY);
-        uiStage.getViewport().unproject(uiCoords); // 将屏幕坐标转换为UI舞台坐标
+        uiStage.getViewport().unproject(uiCoords);
+
+        // 同步计算世界坐标，供种植判定
+        Vector2 worldCoords = new Vector2(screenX, screenY);
+        gameViewport.unproject(worldCoords);
 
         for (Iterator<Sun> it = suns.iterator(); it.hasNext();) {
             Sun sun = it.next();
@@ -469,9 +602,6 @@ public class GameScreen implements Screen, InputProcessor {
         Actor hitActor = uiStage.hit(uiCoords.x, uiCoords.y, true); // 检测是否点中UI演员
         if (hitActor instanceof PlantCard card) {
             // 如果点中的是植物卡片
-            // 判断阳光是否足够以及卡片是否在冷却中
-
-
             if (selectedCard != null) { // 如果卡片已经被选中，则取消选中
                 selectedCard.deselect();
                 selectedCard = null;
@@ -490,14 +620,11 @@ public class GameScreen implements Screen, InputProcessor {
 
         // --- 第二步：如果UI未处理，则处理游戏世界输入 ---
         if (selectedCard != null) {
-            // 如果当前有选中的卡片，说明玩家想种植
-
-            // 遍历所有网格，检查点击位置
+            // 遍历所有网格，检查点击位置（使用世界坐标）
             for (int row = 0; row < 5; row++) {
                 for (int col = 0; col < 9; col++) {
                     Rectangle cell = gridCells[row][col];
-                    if (cell.contains(uiCoords.x, uiCoords.y) && canPlantAt(cell)) {
-                        // 在这个格子上种植植物
+                    if (cell.contains(worldCoords.x, worldCoords.y) && canPlantAt(cell)) {
                         assetManager.playRandomSound(List.of("graphics/audio/plant1.ogg", "graphics/audio/plant2.ogg"), 0.3f);
                         placePlant(cell);
                         return true; // 事件被游戏世界处理，结束
@@ -557,17 +684,11 @@ public class GameScreen implements Screen, InputProcessor {
             BasePlant newPlant;
             // 根据选中的卡片类型，创建不同的植物实例
             if (selectedCard.plantInstanceOf(Peashooter.class)) {
-                plantTexture = assetManager.getTexture("graphics/Plants/Peashooter/Still.png");
-                plantAnimation = assetManager.getAnimation("Peashooter");
-                newPlant = new Peashooter(this, plantTexture, plantAnimation, cell.x, cell.y);
+                newPlant = new Peashooter(this, cell.x, cell.y);
             } else if (selectedCard.plantInstanceOf(Sunflower.class)) {
-                plantTexture = assetManager.getTexture("graphics/Plants/SunFlower/Still.png");
-                plantAnimation = assetManager.getAnimation("SunFlower");
-                newPlant = new Sunflower(this, plantTexture, plantAnimation, cell.x, cell.y);
+                newPlant = new Sunflower(this, cell.x, cell.y);
             } else if (selectedCard.plantInstanceOf(Wallnut.class)) {
-                plantTexture = assetManager.getTexture("graphics/Plants/WallNut/StillNormal.png");
-                plantAnimation = assetManager.getAnimation("WallNut");
-                newPlant = new Wallnut(plantTexture, plantAnimation, cell.x, cell.y);
+                newPlant = new Wallnut(this, cell.x, cell.y);
             } else {
                 return; // 未知的植物类型
             }
@@ -640,8 +761,13 @@ public class GameScreen implements Screen, InputProcessor {
 
     @Override
     public void resize(int width, int height) {
-        gameViewport.update(width, height);
-        uiStage.getViewport().update(width, height, true);
+        // 禁止自动居中，避免把相机挪回 worldWidth/2 导致左偏
+        gameViewport.update(width, height, false);
+        // 手动把相机定位到用户提供的范围中心
+        gameCamera.position.set((cameraMinX + cameraMaxX) / 2f, (cameraMinY + cameraMaxY) / 2f, 0f);
+        gameCamera.update();
+        // 同步 UI 的 viewport（与游戏共用对象，这里冗余但安全）
+        uiStage.getViewport().update(width, height, false);
     }
 
     // 让GameScreen能够生成子弹 (被Peashooter调用)
@@ -655,7 +781,7 @@ public class GameScreen implements Screen, InputProcessor {
     }
 
     @Override public void show() {
-        Music bgMusic = assetManager.getMusic("graphics/audio/Grasswalk.ogg");
+        bgMusic = assetManager.getMusic("graphics/audio/Grasswalk.ogg");
         bgMusic.setLooping(true);
         bgMusic.setVolume(0.5f);
         bgMusic.play();

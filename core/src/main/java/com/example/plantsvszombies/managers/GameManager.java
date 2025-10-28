@@ -9,7 +9,8 @@ public class GameManager {
     public enum GameState {
         PLAYING, // 正在进行
         PAUSED,  // 暂停
-        GAME_OVER // 游戏结束
+        GAME_OVER, // 游戏结束
+        STOPPED // 停止
     }
 
     private int sun; // 当前太阳数量

@@ -5,11 +5,16 @@ import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.scenes.scene2d.Actor;
+import com.badlogic.gdx.scenes.scene2d.Group;
+import com.badlogic.gdx.scenes.scene2d.ui.Label;
+import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.example.plantsvszombies.managers.GameManager;
 import com.example.plantsvszombies.models.Plants.BasePlant;
 
 public class PlantCard extends Actor {
     private final Texture cardTexture; // 卡片图片
+    private final Texture plantTexture; // 植物图片
+    private final Label costLabel;   // 显示种植消耗的标签
     public final String plantType;     // 卡片代表的植物类型 (字符串标识)
     private final int cost;            // 种植所需太阳
     private final float cooldown;
@@ -18,16 +23,7 @@ public class PlantCard extends Actor {
 
     private boolean isSelected = false; // 是否被选中
 
-    public PlantCard(Texture cardTexture, String plantType, int cost) {
-        this.cardTexture = cardTexture;
-        this.plantType = plantType;
-        this.cost = cost;
-        this.cooldown = 7.5f; // 默认冷却时间
 
-        // 设置Actor的尺寸，这对于点击检测很重要
-        setWidth(cardTexture.getWidth());
-        setHeight(cardTexture.getHeight());
-    }
 
     public PlantCard(Texture cardTexture, BasePlant plant) {
         this.cardTexture = cardTexture;
@@ -36,6 +32,23 @@ public class PlantCard extends Actor {
         this.cooldown = plant.getCooldown();
         this.cooldownTimer = plant.getCooldown() - plant.getInitCd();
         this.plantClass = plant.getClass();
+        this.plantTexture = plant.getTexture();
+        this.costLabel = new Label(String.valueOf(cost), new Label.LabelStyle());
+
+        // 设置Actor的尺寸，这对于点击检测很重要
+        setWidth(cardTexture.getWidth());
+        setHeight(cardTexture.getHeight());
+    }
+
+    public PlantCard(Texture cardTexture, Skin skin, BasePlant plant) {
+        this.cardTexture = cardTexture;
+        this.plantType = plant.getName();
+        this.cost = plant.getCost();
+        this.cooldown = plant.getCooldown();
+        this.cooldownTimer = plant.getCooldown() - plant.getInitCd();
+        this.plantClass = plant.getClass();
+        this.plantTexture = plant.getTexture();
+        this.costLabel = new Label(String.valueOf(cost), skin);
 
         // 设置Actor的尺寸，这对于点击检测很重要
         setWidth(cardTexture.getWidth());

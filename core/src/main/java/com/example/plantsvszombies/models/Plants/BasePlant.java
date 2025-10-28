@@ -151,4 +151,8 @@ public abstract class BasePlant {
     public Vector2 getPosition() {
         return position;
     }
+
+    public Texture getTexture() {
+        return texture;
+    }
 }

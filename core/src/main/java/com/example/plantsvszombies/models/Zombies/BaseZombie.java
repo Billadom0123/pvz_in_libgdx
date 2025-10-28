@@ -1,6 +1,7 @@
 package com.example.plantsvszombies.models.Zombies;
 
 
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
@@ -52,6 +53,11 @@ public abstract class BaseZombie {
     private Falling falling;
     private boolean inCriticalState = false;
 
+    private boolean isMovingToDoor = false;
+    private float moveToDoorDuration;
+    private float moveToDoorTimer;
+    private float doorY;
+
 
     protected Rectangle centerBounds;
     protected GameScreen screen;
@@ -65,7 +71,7 @@ public abstract class BaseZombie {
         this.texture = texture;
         this.animation = animation;
         this.position = new Vector2(x, y);
-        this.speed = MathUtils.random(15f, 20f); // 给每个僵尸一个随机的速度，让它们看起来更自然
+        this.speed = MathUtils.random(15f, 17f); // 给每个僵尸一个随机的速度，让它们看起来更自然
         this.health = 270;
         this.bounds = new Rectangle(x, y, animation.getWidth(), animation.getHeight());
         stateTime = 0f;
@@ -86,6 +92,15 @@ public abstract class BaseZombie {
                 removable = true;
             }
             return;
+        }
+
+        if (isMovingToDoor) {
+            moveToDoorTimer += delta;
+            float progress = moveToDoorTimer / moveToDoorDuration;
+            float targetY = doorY;
+            float startY = position.y;
+            position.y = MathUtils.lerp(startY, targetY, progress);
+            bounds.y = position.y;
         }
 
         stateTime += delta;
@@ -146,6 +161,15 @@ public abstract class BaseZombie {
             AssetMan.getInstance().playSound("graphics/audio/limbs_pop.ogg", 0.5f);
         }
     }
+
+    public void moveToDoor(float duration, float doorY) {
+        centerBounds = new Rectangle(-100, -100, 0, 0); // 移出中心碰撞框，避免继续与植物碰撞
+        isMovingToDoor = true;
+        moveToDoorDuration = duration;
+        moveToDoorTimer = 0f;
+        this.doorY = doorY;
+    }
+
 
     public void draw(SpriteBatch batch) {
         batch.draw(texture, position.x, position.y);
@@ -232,6 +256,10 @@ public abstract class BaseZombie {
         return position.x;
     }
 
+    public float getY() {
+        return position.y;
+    }
+
     private void spawnFalling(Texture texture) {
         float groundY = position.y;
         Falling falling = new Falling(texture, position.x, position.y + 50,
@@ -239,5 +267,13 @@ public abstract class BaseZombie {
                 MathUtils.random(-90f, 90f), groundY);
         // 将掉落物添加到游戏的掉落物管理器中
         screen.addFalling(falling);
+    }
+
+    public void stand() {
+        speed = 0f;
+    }
+
+    public void setAnimation(AnimationClip animation) {
+        this.animation = animation;
     }
 }
