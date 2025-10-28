@@ -49,8 +49,6 @@ public abstract class BaseZombie {
     private boolean isDying = false;     // 是否在播放死亡动画
     private float dieStateTime = 0f;     // 死亡动画计时
     private boolean removable = false;   // 是否可以从游戏中移除
-//    private AnimationFalling falling;
-    private Falling falling;
     private boolean inCriticalState = false;
 
     private boolean isMovingToDoor = false;
@@ -143,7 +141,6 @@ public abstract class BaseZombie {
             }
         }
         if (inCriticalState && !isDying) {
-            falling.update(delta);
             health -= (int) (60 * delta);
         }
         if (health <= 0 && !isDying) {
@@ -153,11 +150,12 @@ public abstract class BaseZombie {
             inCriticalState = true;
 //            falling = new AnimationFalling(AssetMan.getInstance().getAnimation("ZombieHead"),
 //                position.x + animation.getWidth() * .4f, position.y - animation.getHeight() * .4f);
-            falling = new Falling(
-                AssetMan.getInstance().getTexture("graphics/Zombies/Zombie/ZombieHeadStill.png"),
+            Falling falling = new Falling(
+                AssetMan.getInstance().getTexture("graphics/Zombies/Zombie/ZombieHead.png"),
                 position.x + animation.getWidth() * .5f, position.y + animation.getHeight() * .5f,
                 new Vector2(MathUtils.random(-30f, 30f), MathUtils.random(100f, 200f)),
                 MathUtils.random(-90f, 90f), position.y);
+            screen.addFalling(falling);
             AssetMan.getInstance().playSound("graphics/audio/limbs_pop.ogg", 0.5f);
         }
     }
@@ -184,8 +182,6 @@ public abstract class BaseZombie {
         if (inCriticalState) {
             if (isAttacking) { animation = AssetMan.getInstance().getAnimation("NormalZombieLostHeadAttack"); }
             else { animation = AssetMan.getInstance().getAnimation("NormalZombieLostHead"); }
-//            falling.drawAnimation(batch);
-            falling.draw(batch);
         }
         batch.draw(animation.getFrame(stateTime), position.x, position.y);
         if (isHit && showHitEffect) {

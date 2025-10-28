@@ -94,8 +94,7 @@ public class Falling {
 
     public void draw(SpriteBatch batch) {
         if (!active) return;
-        Color old = batch.getColor();
-        batch.setColor(old.r, old.g, old.b, alpha);
+        batch.setColor(1, 1, 1, alpha);
 
         float ox = texture.getWidth() / 2f;
         float oy = texture.getHeight() / 2f;
@@ -111,7 +110,7 @@ public class Falling {
             false, false
         );
 
-        batch.setColor(old);
+        batch.setColor(1,1,1,1);
     }
 
     public boolean isActive() { return active; }

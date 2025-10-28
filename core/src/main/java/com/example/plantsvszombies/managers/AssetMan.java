@@ -51,29 +51,32 @@ public class AssetMan {
         assetManager.load("graphics/Plants/WallNut/WallNut.png", Texture.class);
         assetManager.load("graphics/Plants/WallNut/Wallnut_cracked1.png", Texture.class);
         assetManager.load("graphics/Plants/WallNut/Wallnut_cracked2.png", Texture.class);
+        assetManager.load("graphics/Plants/PotatoMine/Still.png", Texture.class);
+        assetManager.load("graphics/Plants/PotatoMine/ArmUp.png", Texture.class);
+        assetManager.load("graphics/Plants/PotatoMine/ArmedUp.png", Texture.class);
+        assetManager.load("graphics/Plants/PotatoMine/ArmedUpNoLight.png", Texture.class);
+        assetManager.load("graphics/Plants/PotatoMine/Explosion.png", Texture.class);
+        assetManager.load("graphics/Plants/PotatoMine/ExplosionSpudow.png", Texture.class);
 
         assetManager.load("graphics/Zombies/Zombie/Zombie.gif", Texture.class);
         assetManager.load("graphics/Zombies/Zombie/Zombie.png", Texture.class);
         assetManager.load("graphics/Zombies/Zombie/ZombieAttack.png", Texture.class);
         assetManager.load("graphics/Zombies/Zombie/ZombieHead.png", Texture.class);
-        assetManager.load("graphics/Zombies/Zombie/ZombieHeadStill.png", Texture.class);
         assetManager.load("graphics/Zombies/Zombie/ZombieDie.png", Texture.class);
         assetManager.load("graphics/Zombies/Zombie/ZombieLostHead.png", Texture.class);
         assetManager.load("graphics/Zombies/Zombie/ZombieLostHeadAttack.png", Texture.class);
 
         assetManager.load("graphics/Bullets/PeaNormal/PeaNormal_0.png", Texture.class);
 
-        assetManager.load("graphics/Cards/card_peashooter.png", Texture.class);
-        assetManager.load("graphics/Cards/card_sunflower.png", Texture.class);
-        assetManager.load("graphics/Cards/card_wallnut.png", Texture.class);
-
         assetManager.load("graphics/Screen/SeedBank.png", Texture.class);
         assetManager.load("graphics/Screen/Sun.gif", Texture.class);
         assetManager.load("graphics/Screen/Sun.png", Texture.class);
         assetManager.load("graphics/Screen/car.png", Texture.class);
 
-        assetManager.load("graphics/Screen/ZombiesWon.png", Texture.class);
+        assetManager.load("graphics/Screen/ZombiesAteYourBrains.png", Texture.class);
         assetManager.load("graphics/Screen/SeedPacket_Larger.png", Texture.class); // 种子包图标
+        assetManager.load("graphics/Screen/SeedPacket_6f.png", Texture.class); // 种子包图标小尺寸
+        assetManager.load("graphics/Screen/SeedPacket_5f.png", Texture.class); // 种子包图标小尺寸
     }
 
     private void loadSoundAssets() {
@@ -94,6 +97,7 @@ public class AssetMan {
         assetManager.load("graphics/audio/lawnmower.ogg", Sound.class);    // 小推车的音效
         assetManager.load("graphics/audio/throw.ogg", Sound.class);    // 射豌豆的音效
         assetManager.load("graphics/audio/splat2.ogg", Sound.class); // 豌豆攻击普通僵尸的音效
+        assetManager.load("graphics/audio/potato_mine.ogg", Sound.class); // 土豆地雷爆炸的音效
         assetManager.load("graphics/audio/scream.ogg", Sound.class);   // 失败时戴夫的尖叫声
     }
 
@@ -112,9 +116,12 @@ public class AssetMan {
         loadAnimation("WallNut", "graphics/Plants/WallNut/WallNut.png", 16, 1920);
         loadAnimation("WallNut_Cracked1", "graphics/Plants/WallNut/Wallnut_cracked1.png", 11, 1100);
         loadAnimation("WallNut_Cracked2", "graphics/Plants/WallNut/Wallnut_cracked2.png", 15, 1500);
+        loadAnimation("PotatoMine", "graphics/Plants/PotatoMine/Still.png", 1, 1000);
+        loadAnimation("PotatoMine_ArmUp", "graphics/Plants/PotatoMine/ArmUp.png", 30, 1500);
+        loadAnimation("PotatoMine_Armed", "graphics/Plants/PotatoMine/ArmedUp.png", 8, 1600);
+        loadAnimation("PotatoMine_Explosion", "graphics/Plants/PotatoMine/Explosion.png", 1, 1000);
 
         loadAnimation("NormalZombie", "graphics/Zombies/Zombie/Zombie.png", 22, 2970);
-        loadAnimation("ZombieHead", "graphics/Zombies/Zombie/ZombieHead.png", 12, 560);
         loadAnimation("NormalZombieDie", "graphics/Zombies/Zombie/ZombieDie.png", 10, 2000);
         loadAnimation("NormalZombieAttack", "graphics/Zombies/Zombie/ZombieAttack.png", 21, 2150);
         loadAnimation("NormalZombieLostHead", "graphics/Zombies/Zombie/ZombieLostHead.png", 18, 3240);

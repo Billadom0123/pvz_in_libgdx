@@ -26,6 +26,7 @@ public class Peashooter extends BasePlant {
         this.name = "Peashooter";
         this.screen = screen;
         this.shootTimer = 0f;
+        this.cost = 100;
         this.cooldown = 7.5f;
     }
 
