@@ -1,0 +1,361 @@
+com.example.plantsvszombies.Animation.AnimationClip:
+    12:18:public AnimationClip(java.lang.String,int,float)
+    27:31:public AnimationClip(com.badlogic.gdx.graphics.g2d.TextureRegion[],float)
+    33:37:public AnimationClip(com.badlogic.gdx.graphics.g2d.Animation,int,float)
+    40:40:public com.badlogic.gdx.graphics.g2d.Animation getAnimation()
+    44:44:public double getDuration()
+    48:48:public int getFrames()
+com.example.plantsvszombies.managers.AssetMan:
+    170:171:public void playRandomSound(java.util.List)
+    183:186:public void unloadAsset(java.lang.String)
+com.example.plantsvszombies.managers.GameManager$GameState:
+    9:9:public static com.example.plantsvszombies.managers.GameManager$GameState[] values()
+    9:9:public static com.example.plantsvszombies.managers.GameManager$GameState valueOf(java.lang.String)
+com.example.plantsvszombies.models.LawnMower$LawnMowerState:
+    12:12:public static com.example.plantsvszombies.models.LawnMower$LawnMowerState[] values()
+    12:12:public static com.example.plantsvszombies.models.LawnMower$LawnMowerState valueOf(java.lang.String)
+com.example.plantsvszombies.models.Plants.BasePlant:
+    private static final float HIT_EFFECT_DURATION
+    private static final float HIT_EFFECT_INTERVAL
+    46:47:public BasePlant(com.badlogic.gdx.graphics.Texture,float,float)
+    94:95:public void draw(com.badlogic.gdx.graphics.g2d.SpriteBatch)
+    152:152:public com.badlogic.gdx.math.Vector2 getPosition()
+com.example.plantsvszombies.models.Plants.Peashooter:
+    private static final float SHOOT_INTERVAL
+com.example.plantsvszombies.models.Plants.PotatoMine:
+    private static final float ARMING_TIME
+com.example.plantsvszombies.models.Plants.PotatoMine$State:
+    17:17:public static com.example.plantsvszombies.models.Plants.PotatoMine$State[] values()
+    17:17:public static com.example.plantsvszombies.models.Plants.PotatoMine$State valueOf(java.lang.String)
+com.example.plantsvszombies.models.Plants.Sunflower:
+    private static final float SUN_PRODUCE_INTERVAL
+    28:29:public Sunflower(com.badlogic.gdx.graphics.Texture,float,float)
+    32:33:public Sunflower(com.badlogic.gdx.graphics.Texture,com.example.plantsvszombies.Animation.AnimationClip,float,float)
+com.example.plantsvszombies.models.Plants.Sunflower$State:
+    12:12:public static com.example.plantsvszombies.models.Plants.Sunflower$State[] values()
+    12:12:public static com.example.plantsvszombies.models.Plants.Sunflower$State valueOf(java.lang.String)
+com.example.plantsvszombies.models.Plants.Wallnut:
+    21:22:public Wallnut(com.badlogic.gdx.graphics.Texture,com.example.plantsvszombies.Animation.AnimationClip,float,float)
+com.example.plantsvszombies.models.Projectiles.BaseProjectile:
+    18:40:public BaseProjectile(com.badlogic.gdx.graphics.Texture,com.example.plantsvszombies.Animation.AnimationClip,int,float,float)
+    80:80:public int getDamage()
+com.example.plantsvszombies.models.Sun:
+    41:42:public Sun(com.badlogic.gdx.graphics.Texture,float,float,float)
+com.example.plantsvszombies.models.Sun$SunState:
+    17:17:public static com.example.plantsvszombies.models.Sun$SunState[] values()
+    17:17:public static com.example.plantsvszombies.models.Sun$SunState valueOf(java.lang.String)
+com.example.plantsvszombies.models.Texture.AnimationFalling
+com.example.plantsvszombies.models.Texture.Falling:
+    42:43:public void setGroundStay(float)
+    46:47:public void setFadeDuration(float)
+    117:117:public com.example.plantsvszombies.models.Texture.Falling$State getState()
+    118:118:public com.badlogic.gdx.math.Vector2 getPosition()
+com.example.plantsvszombies.models.Texture.Falling$State:
+    9:9:public static com.example.plantsvszombies.models.Texture.Falling$State valueOf(java.lang.String)
+com.example.plantsvszombies.models.Zombies.BaseZombie:
+    private static final float ATTACK_INTERVAL
+    private static final int ATTACK_DAMAGE
+    private static final float HIT_EFFECT_DURATION
+    private static final float HIT_EFFECT_INTERVAL
+    private static final float EAT_SOUND_INTERVAL
+    64:65:public BaseZombie(com.badlogic.gdx.graphics.Texture,com.example.plantsvszombies.Animation.AnimationClip,float,float)
+    173:174:public void draw(com.badlogic.gdx.graphics.g2d.SpriteBatch)
+    244:244:public com.badlogic.gdx.math.Rectangle getBounds()
+    252:252:public float getX()
+    260:266:private void spawnFalling(com.badlogic.gdx.graphics.Texture)
+com.example.plantsvszombies.models.Zombies.NormalZombie:
+    10:11:public NormalZombie(com.badlogic.gdx.graphics.Texture,com.example.plantsvszombies.Animation.AnimationClip,float,float)
+com.example.plantsvszombies.screens.GameScreen:
+    public static final float WORLD_WIDTH
+    public static final float WORLD_HEIGHT
+com.example.plantsvszombies.ui.PlantCard:
+    80:80:public boolean isSelected()
+com.example.plantsvszombies.ui.TextureActor:
+    36:39:public void setTexture(com.badlogic.gdx.graphics.Texture)
+com.jcraft.jogg.Buffer:
+    private static final int BUFFER_INCREMENT
+    53:58:public void write(byte[])
+    68:71:void reset()
+    78:79:public void readinit(byte[],int)
+    89:119:public void write(int,int)
+    149:151:public int look1()
+    162:168:public void adv1()
+    210:242:public int readB(int)
+    270:270:public int bytes()
+    274:274:public int bits()
+    278:278:public byte[] buffer()
+    282:287:public static int ilog(int)
+    291:293:public static void report(java.lang.String)
+com.jcraft.jogg.Page:
+    118:118:public com.jcraft.jogg.Page copy()
+    122:132:public com.jcraft.jogg.Page copy(com.jcraft.jogg.Page)
+com.jcraft.jogg.StreamState:
+    int header_fill
+    int b_o_s
+    long granulepos
+    65:67:StreamState(int)
+    99:100:void destroy()
+    126:171:public int packetin(com.jcraft.jogg.Packet)
+    375:489:public int flush(com.jcraft.jogg.Page)
+    496:502:public int pageout(com.jcraft.jogg.Page)
+    506:506:public int eof()
+    510:524:public int reset()
+com.jcraft.jogg.SyncState:
+    257:262:public int reset()
+    269:269:public int getDataOffset()
+    273:273:public int getBufferOffset()
+com.jcraft.jorbis.CodeBook:
+    int[] codelist
+    42:43:int encode(int,com.jcraft.jogg.Buffer)
+    62:66:int errorv(float[])
+    71:74:int encodev(int,float[],com.jcraft.jogg.Buffer)
+    80:81:int encodevs(float[],com.jcraft.jogg.Buffer,int,int)
+    240:259:int decodevs(float[],int,com.jcraft.jogg.Buffer,int,int)
+    265:278:int best(float[],int)
+    284:302:int besterror(float[],int,int)
+    309:314:private static float dist(int,float[],int,float[],int)
+com.jcraft.jorbis.Comment:
+    private static final int OV_EIMPL
+    52:53:public void add(java.lang.String)
+    56:74:private void add(byte[])
+    77:80:public void add_tag(java.lang.String,java.lang.String)
+    83:97:static boolean tagcompare(byte[],byte[],int)
+    101:101:public java.lang.String query(java.lang.String)
+    105:114:public java.lang.String query(java.lang.String,int)
+    118:137:private int query(byte[],int)
+    176:197:int pack(com.jcraft.jogg.Buffer)
+    201:214:public int header_out(com.jcraft.jogg.Packet)
+    225:225:public java.lang.String getVendor()
+    229:231:public java.lang.String getComment(int)
+com.jcraft.jorbis.Drft:
+    35:38:void backward(float[])
+    48:52:void clear()
+    158:207:static void dradf2(int,int,float[],float[],float[],int)
+    213:307:static void dradf4(int,int,float[],float[],float[],int,float[],int,float[],int)
+    312:624:static void dradfg(int,int,int,int,float[],float[],float[],float[],float[],float[],int)
+    631:700:static void drftf1(int,float[],float[],float[],int[])
+    707:753:static void dradb2(int,int,float[],float[],float[],int)
+    759:815:static void dradb3(int,int,float[],float[],float[],int,float[],int)
+    821:904:static void dradb4(int,int,float[],float[],float[],int,float[],int,float[],int)
+    909:1241:static void dradbg(int,int,int,int,float[],float[],float[],float[],float[],float[],int)
+    1245:1326:static void drftb1(int,float[],float[],float[],int,int[])
+com.jcraft.jorbis.DspState:
+    static final float M_PI
+    static final int VI_TRANSFORMB
+    static final int VI_WINDOWB
+    float[] multipliers
+    int envelope_storage
+    int envelope_current
+    byte[] header
+    byte[] header1
+    byte[] header2
+    226:233:DspState(com.jcraft.jorbis.Info)
+com.jcraft.jorbis.Floor0:
+    34:43:void pack(java.lang.Object,com.jcraft.jogg.Buffer)
+    102:109:java.lang.Object state(java.lang.Object)
+    116:116:void free_look(java.lang.Object)
+    119:119:void free_state(java.lang.Object)
+    122:122:int forward(com.jcraft.jorbis.Block,java.lang.Object,float[],float[],java.lang.Object)
+    129:174:int inverse(com.jcraft.jorbis.Block,java.lang.Object,float[])
+    240:240:static float fromdB(float)
+    244:289:static void lsp_to_lpc(float[],float[],int)
+    294:305:static void lpc_to_curve(float[],float[],float,com.jcraft.jorbis.Floor0$LookFloor0,java.lang.String,int)
+com.jcraft.jorbis.Floor0$EchstateFloor0
+com.jcraft.jorbis.Floor1:
+    static final int floor1_rangedb
+    static final int VIF_POSIT
+    36:74:void pack(java.lang.Object,com.jcraft.jogg.Buffer)
+    235:235:void free_look(java.lang.Object)
+    238:238:void free_state(java.lang.Object)
+    241:241:int forward(com.jcraft.jorbis.Block,java.lang.Object,float[],float[],java.lang.Object)
+com.jcraft.jorbis.Floor1$EchstateFloor1
+com.jcraft.jorbis.Floor1$InfoFloor1:
+    static final int VIF_POSIT
+    static final int VIF_CLASS
+    static final int VIF_PARTS
+    float maxover
+    float maxunder
+    float maxerr
+    int twofitminsize
+    int twofitminused
+    int twofitweight
+    float twofitatten
+    int unusedminsize
+    int unusedmin_n
+    int n
+    527:557:java.lang.Object copy_info()
+com.jcraft.jorbis.Floor1$LookFloor1:
+    static final int VIF_POSIT
+    int phrasebits
+    int postbits
+    int frames
+    581:586:void free()
+com.jcraft.jorbis.Floor1$Lsfit_acc
+com.jcraft.jorbis.FuncFloor:
+    abstract void pack(java.lang.Object,com.jcraft.jogg.Buffer)
+    abstract void free_look(java.lang.Object)
+    abstract void free_state(java.lang.Object)
+    abstract int forward(com.jcraft.jorbis.Block,java.lang.Object,float[],float[],java.lang.Object)
+com.jcraft.jorbis.FuncMapping:
+    abstract void pack(com.jcraft.jorbis.Info,java.lang.Object,com.jcraft.jogg.Buffer)
+    abstract void free_look(java.lang.Object)
+com.jcraft.jorbis.FuncResidue:
+    abstract void pack(java.lang.Object,com.jcraft.jogg.Buffer)
+    abstract void free_look(java.lang.Object)
+com.jcraft.jorbis.FuncTime:
+    abstract void pack(java.lang.Object,com.jcraft.jogg.Buffer)
+    abstract void free_look(java.lang.Object)
+    abstract int inverse(com.jcraft.jorbis.Block,java.lang.Object,float[],float[])
+com.jcraft.jorbis.Info:
+    private static final int OV_EBADPACKET
+    private static final int OV_ENOTAUDIO
+    private static final int VI_TIMEB
+    private static final int VI_FLOORB
+    private static final int VI_RESB
+    private static final int VI_MAPB
+    private static final int VI_WINDOWB
+    int envelopesa
+    float preecho_thresh
+    float preecho_clamp
+    364:379:int pack_info(com.jcraft.jogg.Buffer)
+    383:432:int pack_books(com.jcraft.jogg.Buffer)
+    437:461:public int blocksize(com.jcraft.jogg.Packet)
+com.jcraft.jorbis.JOrbisException
+com.jcraft.jorbis.Lookup:
+    static final int COS_LOOKUP_SZ
+    static final int INVSQ_LOOKUP_SZ
+    static final int INVSQ2EXP_LOOKUP_MIN
+    static final int INVSQ2EXP_LOOKUP_MAX
+    static final int FROMdB_LOOKUP_SZ
+    static final int FROMdB2_LOOKUP_SZ
+    static final int FROMdB_SHIFT
+    static final int FROMdB2_SHIFT
+    static final int FROMdB2_MASK
+    29:29:Lookup()
+com.jcraft.jorbis.Lpc:
+    43:102:static float lpc_from_data(float[],float[],int,int)
+    109:134:float lpc_from_curve(float[],float[])
+    146:147:void clear()
+    150:150:static float FAST_HYPOT(float,float)
+    162:187:void lpc_to_curve(float[],float[],float)
+com.jcraft.jorbis.Lsp:
+    static final float M_PI
+    39:39:Lsp()
+com.jcraft.jorbis.Mapping0:
+    38:38:void free_look(java.lang.Object)
+    81:122:void pack(com.jcraft.jorbis.Info,java.lang.Object,com.jcraft.jogg.Buffer)
+com.jcraft.jorbis.Mapping0$LookMapping0:
+    java.lang.Object[] floor_state
+    com.jcraft.jorbis.PsyLook[] psy_look
+    float[][] decay
+    int lastframe
+com.jcraft.jorbis.Mdct:
+    81:81:void clear()
+    84:84:void forward(float[],float[])
+com.jcraft.jorbis.PsyInfo:
+    int athp
+    int decayp
+    int smoothp
+    int noisefitp
+    int noisefit_subblock
+    float noisefit_threshdB
+    float ath_att
+    int tonemaskp
+    int peakattp
+    int noisemaskp
+    float max_curve_dB
+    float attack_coeff
+    float decay_coeff
+com.jcraft.jorbis.PsyLook
+com.jcraft.jorbis.Residue0:
+    33:62:void pack(java.lang.Object,com.jcraft.jogg.Buffer)
+    154:154:void free_look(java.lang.Object)
+com.jcraft.jorbis.Residue0$LookResidue0:
+    int postbits
+    int phrasebits
+    int frames
+com.jcraft.jorbis.StaticCodeBook:
+    static final int VQ_FEXP
+    static final int VQ_FMAN
+    static final int VQ_FEXP_BIAS
+    62:178:int pack(com.jcraft.jogg.Buffer)
+    419:429:static long float32_pack(float)
+com.jcraft.jorbis.Time0:
+    33:33:void pack(java.lang.Object,com.jcraft.jogg.Buffer)
+    47:47:void free_look(java.lang.Object)
+    50:50:int inverse(com.jcraft.jorbis.Block,java.lang.Object,float[],float[])
+com.jcraft.jorbis.Util:
+    3:3:Util()
+com.jcraft.jorbis.VorbisFile
+com.jcraft.jorbis.VorbisFile$SeekableInputStream
+javazoom.jl.decoder.BitReserve:
+    private static final int BUFSIZE
+    private static final int BUFSIZE_MASK
+javazoom.jl.decoder.Bitstream:
+    private static final int BUFFER_INT_SIZE
+    public static final int BITSTREAM_ERROR
+    public static final int UNKNOWN_ERROR
+    public static final int UNKNOWN_SAMPLE_RATE
+    public static final int STREAM_ERROR
+    public static final int UNEXPECTED_EOF
+    public static final int STREAM_EOF
+    public static final int INVALIDFRAME
+    public static final int BITSTREAM_LAST
+    147:147:public int header_pos()
+    206:210:public java.io.InputStream getRawID3v2()
+    289:289:public java.lang.Float getReplayGainScale()
+    405:405:public int readBits(int)
+    410:410:public int readCheckedBits(int)
+javazoom.jl.decoder.DecoderException:
+    35:35:public int getErrorCode()
+javazoom.jl.decoder.Header:
+    public static final int MPEG2_LSF
+    public static final int MPEG25_LSF
+    public static final int MPEG1
+    public static final int STEREO
+    public static final int JOINT_STEREO
+    public static final int DUAL_CHANNEL
+    public static final int SINGLE_CHANNEL
+    public static final int FOURTYFOUR_POINT_ONE
+    public static final int FOURTYEIGHT
+    public static final int THIRTYTWO
+    343:343:public boolean copyright()
+    350:350:public boolean original()
+    358:358:public boolean vbr()
+    366:366:public int vbr_scale()
+    374:374:public byte[] vbr_toc()
+    389:392:public boolean padding()
+    475:480:public int max_number_of_frames(int)
+    490:495:public int min_number_of_frames(int)
+    521:521:public float total_ms(int)
+    529:529:public int getSyncHeader()
+    601:601:public int bitrate_instant()
+javazoom.jl.decoder.JavaLayerException:
+    30:31:public JavaLayerException()
+    34:35:public JavaLayerException(java.lang.String)
+    43:43:public java.lang.Throwable getException()
+javazoom.jl.decoder.LayerIIIDecoder:
+    private static final int SSLIMIT
+    private static final int SBLIMIT
+    184:189:public void seek_notify()
+javazoom.jl.decoder.LayerIIIDecoder$Sftable:
+    1960:1963:public LayerIIIDecoder$Sftable(javazoom.jl.decoder.LayerIIIDecoder)
+javazoom.jl.decoder.MP3Decoder:
+    public static final int DECODER_ERROR
+    public static final int UNKNOWN_ERROR
+    public static final int UNSUPPORTED_LAYER
+    public static final int ILLEGAL_SUBBAND_ALLOCATION
+    95:95:public int getOutputFrequency()
+    106:106:public int getOutputChannels()
+    110:110:protected javazoom.jl.decoder.DecoderException newDecoderException(int)
+javazoom.jl.decoder.OutputBuffer:
+    public static final int BUFFERSIZE
+    private static final int MAXCHANNELS
+    104:105:public void setReplayGainScale(java.lang.Float)
+    108:108:public boolean isStereo()
+javazoom.jl.decoder.OutputChannels
+javazoom.jl.decoder.SynthesisFilter:
+    private static final double MY_PI
+javazoom.jl.decoder.huffcodetab:
+    private static final int MXOFF
+    private static final int HTN
