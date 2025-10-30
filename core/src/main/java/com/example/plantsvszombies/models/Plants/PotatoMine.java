@@ -1,6 +1,7 @@
 package com.example.plantsvszombies.models.Plants;
 
 import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.ParticleEffect;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Rectangle;
@@ -58,6 +59,11 @@ public class PotatoMine extends BasePlant {
             armingTimer = 0f;
             animation = AssetMan.getInstance().getAnimation("PotatoMine_ArmUp");
             AssetMan.getInstance().playSound("graphics/audio/dirt_rise.ogg");
+            ParticleEffect dig_up = AssetMan.getInstance().getParticleEffect("PotatoMine_Up");
+            dig_up.setPosition(position.x + animation.getWidth() / 2f, position.y);
+            dig_up.scaleEffect(.6f);
+            dig_up.start();
+            screen.addParticle(dig_up);
         }
         if (state == State.ARMING) {
             armingTimer += delta;
@@ -99,6 +105,11 @@ public class PotatoMine extends BasePlant {
         position = new Vector2( position.x - (explosion.getWidth() - bounds.width) / 2,
             position.y - (explosion.getHeight() - bounds.height) / 2);
         animation = explosion;
+        ParticleEffect explosionEffect = assetMan.getParticleEffect("PotatoMine_Explode");
+        explosionEffect.setPosition(position.x + animation.getWidth() / 2f, position.y + animation.getHeight() / 2f);
+        explosionEffect.scaleEffect(0.35f);
+        explosionEffect.start();
+        screen.addParticle(explosionEffect);
         assetMan.playSound("graphics/audio/potato_mine.ogg", 0.6f);
         bounds = new Rectangle(-100, -100, 0, 0); // 移出碰撞框，避免继续与僵尸碰撞
         screen.triggerCameraShake(0.25f, 6f);

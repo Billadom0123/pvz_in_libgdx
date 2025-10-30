@@ -7,6 +7,7 @@ import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.graphics.*;
+import com.badlogic.gdx.graphics.g2d.ParticleEffect;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.MathUtils;
@@ -81,6 +82,7 @@ public class GameScreen implements Screen, InputProcessor {
     private final Array<Sun> suns;
     private final Array<LawnMower> lawnMowers;
     private final Array<Falling> fallings;
+    private final Array<ParticleEffect> particles;
 
     // --- 游戏逻辑 ---
     private float gameTime = 0f;          // 游戏进行的总时间
@@ -134,6 +136,7 @@ public class GameScreen implements Screen, InputProcessor {
         suns = new Array<>();
         lawnMowers = new Array<>();
         fallings = new Array<>();
+        particles = new Array<>();
 
         // 3. 初始化UI（与游戏共用同一 viewport，避免相机裁切后的偏移）
         uiSkin = new Skin(Gdx.files.internal("graphics/Skin/uiskin.json"));
@@ -259,6 +262,7 @@ public class GameScreen implements Screen, InputProcessor {
         for (BaseProjectile projectile : projectiles) projectile.draw(game.batch);
         for (LawnMower lawnMower : lawnMowers) lawnMower.draw(game.batch);
         for (Falling falling : fallings) falling.draw(game.batch);
+        for (ParticleEffect particleEffect : particles) particleEffect.draw(game.batch);
 
         game.batch.end();
 
@@ -385,6 +389,7 @@ public class GameScreen implements Screen, InputProcessor {
         for (BaseProjectile projectile : projectiles) projectile.update(delta);
         for (LawnMower lawnMower : lawnMowers) lawnMower.update(delta);
         for (Falling falling : fallings) falling.update(delta);
+        for (ParticleEffect particleEffect : particles) particleEffect.update(delta);
 
 //
 //        if (gameTime >= 41f) {
@@ -456,6 +461,10 @@ public class GameScreen implements Screen, InputProcessor {
 
     public void addFalling(Falling falling) {
         fallings.add(falling);
+    }
+
+    public void addParticle(ParticleEffect particle) {
+        particles.add(particle);
     }
 
     /**
@@ -602,6 +611,14 @@ public class GameScreen implements Screen, InputProcessor {
                 it.remove();
             }
         }
+
+        for (Iterator<ParticleEffect> it = particles.iterator(); it.hasNext();) {
+            ParticleEffect p = it.next();
+            if (p.isComplete()) {
+                p.dispose();
+                it.remove();
+            }
+        }
     }
 
 
@@ -673,7 +690,6 @@ public class GameScreen implements Screen, InputProcessor {
                 for (int col = 0; col < 9; col++) {
                     Rectangle cell = gridCells[row][col];
                     if (cell.contains(worldCoords.x, worldCoords.y) && canPlantAt(cell)) {
-                        assetManager.playRandomSound(List.of("graphics/audio/plant1.ogg", "graphics/audio/plant2.ogg"), 0.3f);
                         placePlant(cell);
                         return true; // 事件被游戏世界处理，结束
                     }
@@ -729,6 +745,12 @@ public class GameScreen implements Screen, InputProcessor {
             } else {
                 return;
             }
+            assetManager.playRandomSound(List.of("graphics/audio/plant1.ogg", "graphics/audio/plant2.ogg"), 0.3f);
+            ParticleEffect plantEffect = assetManager.getParticleEffect("Planting");
+            plantEffect.setPosition(cell.x + cell.width / 2f, cell.y + 5);
+            plantEffect.scaleEffect(.4f);
+            plantEffect.start();
+            particles.add(plantEffect);
             plants.add(newPlant); // 将新植物添加到世界中
             selectedCard.resetCooldown();
         }
