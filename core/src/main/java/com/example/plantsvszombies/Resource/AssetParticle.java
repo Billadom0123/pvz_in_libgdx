@@ -13,14 +13,18 @@ public enum AssetParticle {
 
     private final String filePath;
     private final String ImageDirectory;
+    private boolean loaded;
 
     AssetParticle(String filePath, String imageDirectory) {
         this.filePath = filePath;
         this.ImageDirectory = imageDirectory;
+        this.loaded = false;
     }
 
     public void load(AssetMan assetMan) {
+        if (loaded) { return; }
         assetMan.loadParticleEffect(this.name(), this.filePath, this.ImageDirectory);
+        loaded = true;
     }
 
     public static void loadAll(AssetMan assetMan) {
@@ -30,6 +34,13 @@ public enum AssetParticle {
     }
 
     public ParticleEffect get(AssetMan assetMan) {
+        if (!loaded) { load(assetMan); }
+        return assetMan.getParticleEffect(this.name());
+    }
+
+    public ParticleEffect loadAndGet(AssetMan assetMan) {
+        load(assetMan);
+        assetMan.getAssetManager().finishLoading();
         return assetMan.getParticleEffect(this.name());
     }
 }

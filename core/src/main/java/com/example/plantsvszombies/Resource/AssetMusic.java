@@ -5,19 +5,26 @@ import com.example.plantsvszombies.managers.AssetMan;
 
 public enum AssetMusic {
 
+    // 加载页相关
+    MAINTHEME("graphics/audio/MainTheme.ogg"),
+
     GRASSWALK("graphics/audio/Grasswalk.ogg"),
     LOSE_MUSIC("graphics/audio/losemusic.ogg"),
     THE_KING_PAPERMAN("graphics/audio/The-King-Paperman.mp3");
 
 
     private final String filePath;
+    private boolean loaded;
 
     AssetMusic(String filePath) {
         this.filePath = filePath;
+        this.loaded = false;
     }
 
     public void load(AssetMan assetMan) {
+        if (loaded) { return; }
         assetMan.loadMusic(this.filePath);
+        loaded = true;
     }
 
     public static void loadAll(AssetMan assetMan) {
@@ -27,6 +34,13 @@ public enum AssetMusic {
     }
 
     public Music get(AssetMan assetMan) {
+        if (!loaded) { load(assetMan); }
+        return assetMan.getMusic(this.filePath);
+    }
+
+    public Music loadAndGet(AssetMan assetMan) {
+        load(assetMan);
+        assetMan.getAssetManager().finishLoading();
         return assetMan.getMusic(this.filePath);
     }
 }

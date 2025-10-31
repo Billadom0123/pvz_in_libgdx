@@ -28,6 +28,7 @@ import com.example.plantsvszombies.PvzGame;
 import com.example.plantsvszombies.Resource.*;
 import com.example.plantsvszombies.managers.AssetMan;
 import com.example.plantsvszombies.managers.GameManager;
+import com.example.plantsvszombies.models.DamageType;
 import com.example.plantsvszombies.models.LawnMower;
 import com.example.plantsvszombies.models.Plants.*;
 import com.example.plantsvszombies.models.Projectiles.BaseProjectile;
@@ -116,18 +117,16 @@ public class GameScreen implements Screen, InputProcessor {
 
         // 1. 初始化游戏相机和视口
         gameCamera = new OrthographicCamera();
-        float minX = startX - cellWidth;
-        float maxX = startX + 10 * cellWidth; // 使用你提供的新范围
+        float minX = startX - cellWidth + 30;
         float minY = 0;
-        float maxY = WORLD_HEIGHT;
         // 缓存范围到字段
         this.cameraMinX = minX;
-        this.cameraMaxX = maxX;
+        this.cameraMaxX = minX + 800f;
         this.cameraMinY = minY;
-        this.cameraMaxY = maxY;
+        this.cameraMaxY = minY + 600f;
 
-        gameViewport = new FitViewport(maxX - minX, maxY - minY, gameCamera);
-        gameCamera.position.set((minX + maxX) / 2f, (minY + maxY) / 2f, 0); // 相机居中到可视范围
+        gameViewport = new FitViewport(800, 600, gameCamera);
+        gameCamera.position.set(400, 300, 0); // 相机居中到可视范围
         gameCamera.update();
 
         // 2. 初始化游戏对象列表
@@ -173,7 +172,7 @@ public class GameScreen implements Screen, InputProcessor {
     private Label setupUI() {
         Table topBar = new Table(); // 使用Table来布局UI
         topBar.top().left(); // 对齐到舞台的左上角
-        topBar.setPosition(startX - cellWidth, startY + 6 * cellHeight - 15);
+        topBar.setPosition(cameraMinX, startY + 6 * cellHeight - 15);
 
         // 创建太阳标签
         Label label = new Label(String.valueOf(gameManager.getSun()), uiSkin);
@@ -188,12 +187,14 @@ public class GameScreen implements Screen, InputProcessor {
         PlantCard sunflowerCard = new PlantCard(this, uiSkin, new Sunflower(this, 0,0));
         PlantCard wallnutCard = new PlantCard(this, uiSkin, new Wallnut(this, 0,0));
         PlantCard potatoMineCard = new PlantCard(this, uiSkin, new PotatoMine(this, 0,0));
+        PlantCard cherryBombCard = new PlantCard(this, uiSkin, new CherryBomb(this, 0,0));
 
         // 将卡片添加到Table中
         topBar.add(peashooterCard).pad(1).padBottom(3).bottom();
         topBar.add(sunflowerCard).pad(1).padBottom(3).bottom();
         topBar.add(wallnutCard).pad(1).padBottom(3).bottom();
         topBar.add(potatoMineCard).pad(1).padBottom(3).bottom();
+        topBar.add(cherryBombCard).pad(1).padBottom(3).bottom();
 
 
         uiStage.addActor(topBar);
@@ -256,7 +257,7 @@ public class GameScreen implements Screen, InputProcessor {
         game.batch.begin();
         // 绘制背景
         game.batch.draw(AssetTexture.MAP_0.get(assetManager), 0, 0, WORLD_WIDTH, WORLD_HEIGHT);
-        game.batch.draw(AssetTexture.SEED_BANK.get(assetManager), startX - cellWidth, startY + 5 * cellHeight - 15, 446, 87); // 绘制种子银行背景
+        game.batch.draw(AssetTexture.SEED_BANK.get(assetManager), cameraMinX, startY + 5 * cellHeight - 15, 446, 87); // 绘制种子银行背景
         // 绘制所有游戏对象
         for (BasePlant plant : plants) plant.drawAnimation(game.batch);
         for (BaseZombie zombie : zombies) zombie.drawAnimation(game.batch);
@@ -291,10 +292,11 @@ public class GameScreen implements Screen, InputProcessor {
 
         if (selectedCard != null) {
             Texture t = selectedCard.getPlantTexture();
+            Vector2 v = selectedCard.getPlantPosition();
             if (canPlantAt(highlightedRow, highlightedCol)) {
                 Rectangle cell = gridCells[highlightedRow][highlightedCol];
                 game.batch.setColor(1, 1, 1, 0.5f); // 半透明
-                game.batch.draw(t, cell.x, cell.y);
+                game.batch.draw(t, cell.x + v.x, cell.y + v.y);
                 game.batch.setColor(1, 1, 1, 1); // 恢复不透明
             }
             game.batch.draw(t, worldCoords.x - t.getWidth() / 2f, worldCoords.y - t.getHeight() / 2f);
@@ -392,10 +394,10 @@ public class GameScreen implements Screen, InputProcessor {
         for (Falling falling : fallings) falling.update(delta);
         for (ParticleEffect particleEffect : particles) particleEffect.update(delta);
 
-//
-//        if (gameTime >= 41f) {
-//            beginCrazyMode();
-//        }
+
+        if (gameTime >= 41f) {
+            beginCrazyMode();
+        }
 
         // 计时生成僵尸
         zombieSpawnTimer += delta;
@@ -743,6 +745,8 @@ public class GameScreen implements Screen, InputProcessor {
                 newPlant = new Wallnut(this, cell.x, cell.y);
             } else if (selectedCard.plantInstanceOf(PotatoMine.class)) {
                 newPlant = new PotatoMine(this, cell.x, cell.y);
+            } else if (selectedCard.plantInstanceOf(CherryBomb.class)) {
+                newPlant = new CherryBomb(this, cell.x, cell.y);
             } else {
                 return;
             }
@@ -835,12 +839,12 @@ public class GameScreen implements Screen, InputProcessor {
         projectiles.add(projectile);
     }
 
-    public void doAoeDamage(Rectangle area, int damage) {
+    public void doAoeDamage(Rectangle area, int damage, DamageType type) {
         Array.ArrayIterator<BaseZombie> iterator = new Array.ArrayIterator<>(zombies);
         while (iterator.hasNext()) {
             BaseZombie z = iterator.next();
             if (area.overlaps(z.getCenterBounds())) {
-                z.takeDamage(damage);
+                z.takeDamage(damage, type);
             }
         }
     }
@@ -855,8 +859,8 @@ public class GameScreen implements Screen, InputProcessor {
     }
 
     @Override public void show() {
-        bgMusic = AssetMusic.GRASSWALK.get(assetManager);
-        // bgMusic = AssetMusic.THE_KING_PAPERMAN.get(assetManager);
+//        bgMusic = AssetMusic.GRASSWALK.get(assetManager);
+        bgMusic = AssetMusic.THE_KING_PAPERMAN.get(assetManager);
         bgMusic.setLooping(true);
         bgMusic.setVolume(0.5f);
         bgMusic.play();

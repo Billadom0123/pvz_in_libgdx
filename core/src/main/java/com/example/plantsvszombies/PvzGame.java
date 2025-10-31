@@ -4,6 +4,7 @@ import com.badlogic.gdx.Game;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.example.plantsvszombies.managers.AssetMan;
 import com.example.plantsvszombies.screens.GameScreen;
+import com.example.plantsvszombies.screens.LoadingScreen;
 
 public class PvzGame extends Game {
     // 全局唯一的SpriteBatch，所有屏幕共享，避免重复创建
@@ -16,13 +17,9 @@ public class PvzGame extends Game {
         batch = new SpriteBatch();
         assetManager = AssetMan.getInstance();
 
-        // 开始加载资源
-        assetManager.loadAssets();
-        // 同步阻塞，直到所有资源加载完成
-        assetManager.getAssetManager().finishLoading();
 
         // 资源加载完毕后，设置并切换到游戏主屏幕
-        setScreen(new GameScreen(this));
+        setScreen(new LoadingScreen(this));
     }
 
     @Override

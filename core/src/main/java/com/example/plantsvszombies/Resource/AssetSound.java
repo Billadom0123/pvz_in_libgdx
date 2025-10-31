@@ -23,16 +23,22 @@ public enum AssetSound {
     PEA_SPLAT("graphics/audio/splat2.ogg"), // 豌豆攻击普通僵尸的音效
     POTATO_MINE_RISE("graphics/audio/dirt_rise.ogg"), // 土豆地雷出土的音效
     POTATO_MINE_EXPLODE("graphics/audio/potato_mine.ogg"), // 土豆地雷爆炸的音效
-    DAVE_SCREAM("graphics/audio/scream.ogg"); // 失败时戴夫的尖叫声
+    DAVE_SCREAM("graphics/audio/scream.ogg"), // 失败时戴夫的尖叫声
+    CHERRY_BOMB_READY("graphics/audio/reverse_explosion.ogg"), // 樱桃炸弹准备爆炸的音效
+    CHERRY_BOMB_EXPLODE("graphics/audio/cherrybomb.ogg"); // 樱桃炸弹爆炸的音效
 
     private final String filePath;
+    private boolean loaded;
 
     AssetSound(String filePath) {
         this.filePath = filePath;
+        this.loaded = false;
     }
 
     public void load(AssetMan assetMan) {
+        if (loaded) { return; }
         assetMan.loadSound(this.filePath);
+        loaded = true;
     }
 
     public static void loadAll(AssetMan assetMan) {
@@ -42,6 +48,13 @@ public enum AssetSound {
     }
 
     public Sound get(AssetMan assetMan) {
+        if (!loaded) { load(assetMan); }
+        return assetMan.getSound(this.filePath);
+    }
+
+    public Sound loadAndGet(AssetMan assetMan) {
+        load(assetMan);
+        assetMan.getAssetManager().finishLoading();
         return assetMan.getSound(this.filePath);
     }
 }

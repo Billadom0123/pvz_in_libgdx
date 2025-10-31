@@ -13,6 +13,7 @@ import com.example.plantsvszombies.Resource.AssetAnimation;
 import com.example.plantsvszombies.Resource.AssetSound;
 import com.example.plantsvszombies.Resource.AssetTexture;
 import com.example.plantsvszombies.managers.AssetMan;
+import com.example.plantsvszombies.models.DamageType;
 import com.example.plantsvszombies.models.Plants.BasePlant;
 import com.example.plantsvszombies.models.Texture.AnimationFalling;
 import com.example.plantsvszombies.models.Texture.Falling;
@@ -49,6 +50,7 @@ public abstract class BaseZombie {
     private static final float EAT_SOUND_INTERVAL = 0.5f; // 吃植物声音间隔
     private float eatSoundTimer = 0f; // 吃植物声音计时器
 
+    private boolean beExploded = false;
     private boolean isDying = false;     // 是否在播放死亡动画
     private float dieStateTime = 0f;     // 死亡动画计时
     private boolean removable = false;   // 是否可以从游戏中移除
@@ -149,6 +151,9 @@ public abstract class BaseZombie {
         if (health <= 0 && !isDying) {
             startDying();
         }
+        if (health <= 0 && beExploded) {
+
+        }
         if (health < CRITICAL_POINT && !inCriticalState) {
             inCriticalState = true;
             Falling falling = new Falling(
@@ -177,7 +182,11 @@ public abstract class BaseZombie {
     public void drawAnimation(SpriteBatch batch) {
         AssetMan assetMan = AssetMan.getInstance();
         if (isDying) {
-            animation = AssetAnimation.NORMAL_ZOMBIE_DIE.get(assetMan);
+            if (beExploded) {
+                animation = AssetAnimation.NORMAL_ZOMBIE_BOOM_DIE.get(assetMan);
+            } else {
+                animation = AssetAnimation.NORMAL_ZOMBIE_DIE.get(assetMan);
+            }
             batch.draw(animation.getFrame(dieStateTime), position.x, position.y);
             return;
         }
@@ -205,10 +214,18 @@ public abstract class BaseZombie {
         }
     }
 
-    public void takeDamage(int damage) {
+    public void takeDamage(int damage, DamageType type) {
         if (removable) return;
         this.isHit = true;
         this.health -= damage;
+        if (type == DamageType.EXPLOSIVE && health <= 0) {
+            beExploded = true;
+            startDying();
+        }
+    }
+
+    public void takeDamage(int damage) {
+        takeDamage(damage, DamageType.NORMAL);
     }
 
     /**

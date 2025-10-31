@@ -8,6 +8,7 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.ParticleEffect;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
+import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.scenes.scene2d.Group;
 import com.badlogic.gdx.scenes.scene2d.Touchable;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
@@ -26,6 +27,7 @@ public class PlantCard extends Group {
     private GameScreen screen;
     private final TextureActor cardTexture; // 卡片图片
     private final TextureActor plantTexture; // 植物图片
+    private Vector2 position; // 矫正位置
     private final Label costLabel;   // 显示种植消耗的标签
     public final String plantType;     // 卡片代表的植物类型 (字符串标识)
     private final int cost;            // 种植所需太阳
@@ -44,6 +46,7 @@ public class PlantCard extends Group {
         this.screen = screen;
         this.cardTexture = new TextureActor(AssetTexture.SEED_PACKET_5F.get(assetMan));
         this.plantTexture = new TextureActor(plant.getTexture());
+        this.position = plant.getPosition();
         this.plantType = plant.getName();
         this.cost = plant.getCost();
         this.cooldown = plant.getCooldown();
@@ -181,5 +184,9 @@ public class PlantCard extends Group {
 
     public Texture getPlantTexture() {
         return plantTexture.getTexture();
+    }
+
+    public Vector2 getPlantPosition() {
+        return position;
     }
 }

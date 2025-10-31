@@ -12,6 +12,7 @@ import com.example.plantsvszombies.Resource.AssetParticle;
 import com.example.plantsvszombies.Resource.AssetSound;
 import com.example.plantsvszombies.Resource.AssetTexture;
 import com.example.plantsvszombies.managers.AssetMan;
+import com.example.plantsvszombies.models.DamageType;
 import com.example.plantsvszombies.screens.GameScreen;
 
 import java.util.Timer;
@@ -118,7 +119,7 @@ public class PotatoMine extends BasePlant {
         assetMan.playSound(AssetSound.POTATO_MINE_EXPLODE, 0.6f);
         bounds = new Rectangle(-100, -100, 0, 0); // 移出碰撞框，避免继续与僵尸碰撞
         screen.triggerCameraShake(0.25f, 6f);
-        screen.doAoeDamage(explosionArea, EXPLOSION_DAMAGE);
+        screen.doAoeDamage(explosionArea, EXPLOSION_DAMAGE, DamageType.NORMAL);
         explodeText = AssetTexture.POTATO_MINE_EXPLOSION_WORD.get(assetMan);
         state = State.EXPLODED;
     }
