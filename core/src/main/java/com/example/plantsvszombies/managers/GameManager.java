@@ -13,7 +13,7 @@ public class GameManager {
         STOPPED // 停止
     }
 
-    private boolean cardCooldown = false;
+    private boolean cardCooldown = true;
     private int sun; // 当前太阳数量
     private GameState gameState;
 

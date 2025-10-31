@@ -4,6 +4,9 @@ package com.example.plantsvszombies.models.Plants;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.TextureData;
 import com.example.plantsvszombies.Animation.AnimationClip;
+import com.example.plantsvszombies.Resource.AssetAnimation;
+import com.example.plantsvszombies.Resource.AssetSound;
+import com.example.plantsvszombies.Resource.AssetTexture;
 import com.example.plantsvszombies.managers.AssetMan;
 import com.example.plantsvszombies.models.Projectiles.BaseProjectile;
 import com.example.plantsvszombies.models.Projectiles.Pea;
@@ -32,8 +35,8 @@ public class Peashooter extends BasePlant {
 
     public Peashooter(GameScreen screen, float x, float y) {
         this(screen,
-            AssetMan.getInstance().getTexture("graphics/Plants/Peashooter/Still.png"),
-            AssetMan.getInstance().getAnimation("Peashooter"),
+            AssetTexture.PEASHOOTER_STILL.get(AssetMan.getInstance()),
+            AssetAnimation.PEASHOOTER.get(AssetMan.getInstance()),
             x, y);
     }
 
@@ -46,7 +49,7 @@ public class Peashooter extends BasePlant {
         shootTimer += delta;
         if (shootTimer >= SHOOT_INTERVAL && shouldFire()) {
             shootTimer = 0; // 重置计时器
-            AssetMan.getInstance().playSound("graphics/audio/throw.ogg", 0.7f);
+            AssetMan.getInstance().playSound(AssetSound.PEA_SHOOT, 0.7f);
             fire();
         }
     }
@@ -63,6 +66,6 @@ public class Peashooter extends BasePlant {
         float projectileX = position.x + bounds.width * 2 / 3;
         float projectileY = position.y + bounds.height / 2;
         // 请求GameScreen在指定位置生成一颗子弹
-        screen.spawnProjectile(new Pea(screen.getAssetManager().get("graphics/Bullets/PeaNormal/PeaNormal_0.png", Texture.class), projectileX, projectileY));
+        screen.spawnProjectile(new Pea(AssetTexture.PEA_NORMAL.get(AssetMan.getInstance()), projectileX, projectileY));
     }
 }

@@ -23688,6 +23688,141 @@ com.example.plantsvszombies.PvzGame -> com.example.plantsvszombies.a:
     16:26:void create() -> create
     31:32:void render() -> render
     37:39:void dispose() -> dispose
+com.example.plantsvszombies.Resource.AssetAnimation -> com.example.plantsvszombies.b.a:
+# {"fileName":"AssetAnimation.java","id":"sourceFile"}
+    com.example.plantsvszombies.Resource.AssetAnimation PEASHOOTER -> a
+    com.example.plantsvszombies.Resource.AssetAnimation PEA_SPLAT -> b
+    com.example.plantsvszombies.Resource.AssetAnimation SUN_FLOWER -> c
+    com.example.plantsvszombies.Resource.AssetAnimation SUN_FLOWER_BRIGHT -> d
+    com.example.plantsvszombies.Resource.AssetAnimation WALL_NUT -> e
+    com.example.plantsvszombies.Resource.AssetAnimation WALL_NUT_CRACKED1 -> f
+    com.example.plantsvszombies.Resource.AssetAnimation WALL_NUT_CRACKED2 -> g
+    com.example.plantsvszombies.Resource.AssetAnimation POTATO_MINE -> h
+    com.example.plantsvszombies.Resource.AssetAnimation POTATO_MINE_ARM_UP -> i
+    com.example.plantsvszombies.Resource.AssetAnimation POTATO_MINE_ARMED -> j
+    com.example.plantsvszombies.Resource.AssetAnimation POTATO_MINE_EXPLOSION -> k
+    com.example.plantsvszombies.Resource.AssetAnimation NORMAL_ZOMBIE -> l
+    com.example.plantsvszombies.Resource.AssetAnimation NORMAL_ZOMBIE_DIE -> m
+    com.example.plantsvszombies.Resource.AssetAnimation NORMAL_ZOMBIE_ATTACK -> n
+    com.example.plantsvszombies.Resource.AssetAnimation NORMAL_ZOMBIE_LOST_HEAD -> o
+    com.example.plantsvszombies.Resource.AssetAnimation NORMAL_ZOMBIE_LOST_HEAD_ATTACK -> p
+    com.example.plantsvszombies.Resource.AssetAnimation SUN -> q
+    com.example.plantsvszombies.Resource.AssetTexture source -> r
+    int frames -> s
+    float duration -> t
+    com.example.plantsvszombies.Resource.AssetAnimation[] $VALUES -> u
+    6:6:com.example.plantsvszombies.Resource.AssetAnimation[] values() -> a
+    35:39:void <init>(java.lang.String,int,com.example.plantsvszombies.Resource.AssetTexture,int,float) -> <init>
+    42:43:void load(com.example.plantsvszombies.managers.AssetMan) -> a
+    46:49:void loadAll(com.example.plantsvszombies.managers.AssetMan) -> b
+    52:52:com.example.plantsvszombies.Animation.AnimationClip get(com.example.plantsvszombies.managers.AssetMan) -> c
+    6:6:com.example.plantsvszombies.Resource.AssetAnimation[] $values() -> b
+    6:29:void <clinit>() -> <clinit>
+com.example.plantsvszombies.Resource.AssetMusic -> com.example.plantsvszombies.b.b:
+# {"fileName":"AssetMusic.java","id":"sourceFile"}
+    com.example.plantsvszombies.Resource.AssetMusic GRASSWALK -> a
+    com.example.plantsvszombies.Resource.AssetMusic LOSE_MUSIC -> b
+    com.example.plantsvszombies.Resource.AssetMusic THE_KING_PAPERMAN -> c
+    java.lang.String filePath -> d
+    com.example.plantsvszombies.Resource.AssetMusic[] $VALUES -> e
+    6:6:com.example.plantsvszombies.Resource.AssetMusic[] values() -> a
+    15:17:void <init>(java.lang.String,int,java.lang.String) -> <init>
+    20:21:void load(com.example.plantsvszombies.managers.AssetMan) -> a
+    24:27:void loadAll(com.example.plantsvszombies.managers.AssetMan) -> b
+    30:30:com.badlogic.gdx.audio.Music get(com.example.plantsvszombies.managers.AssetMan) -> c
+    6:6:com.example.plantsvszombies.Resource.AssetMusic[] $values() -> b
+    6:10:void <clinit>() -> <clinit>
+com.example.plantsvszombies.Resource.AssetParticle -> com.example.plantsvszombies.b.c:
+# {"fileName":"AssetParticle.java","id":"sourceFile"}
+    com.example.plantsvszombies.Resource.AssetParticle PLANTING -> a
+    com.example.plantsvszombies.Resource.AssetParticle POTATO_MINE_RISE -> b
+    com.example.plantsvszombies.Resource.AssetParticle POTATO_MINE_EXPLODE -> c
+    com.example.plantsvszombies.Resource.AssetParticle SEED_PACKET_FLASH -> d
+    java.lang.String filePath -> e
+    java.lang.String ImageDirectory -> f
+    com.example.plantsvszombies.Resource.AssetParticle[] $VALUES -> g
+    6:6:com.example.plantsvszombies.Resource.AssetParticle[] values() -> a
+    17:20:void <init>(java.lang.String,int,java.lang.String,java.lang.String) -> <init>
+    23:24:void load(com.example.plantsvszombies.managers.AssetMan) -> a
+    27:30:void loadAll(com.example.plantsvszombies.managers.AssetMan) -> b
+    33:33:com.badlogic.gdx.graphics.g2d.ParticleEffect get(com.example.plantsvszombies.managers.AssetMan) -> c
+    6:6:com.example.plantsvszombies.Resource.AssetParticle[] $values() -> b
+    6:11:void <clinit>() -> <clinit>
+com.example.plantsvszombies.Resource.AssetSound -> com.example.plantsvszombies.b.d:
+# {"fileName":"AssetSound.java","id":"sourceFile"}
+    com.example.plantsvszombies.Resource.AssetSound SEED_LIFT -> a
+    com.example.plantsvszombies.Resource.AssetSound TAP_CANCEL -> b
+    com.example.plantsvszombies.Resource.AssetSound BUZZER -> c
+    com.example.plantsvszombies.Resource.AssetSound COLLECT_SUN -> d
+    com.example.plantsvszombies.Resource.AssetSound PLANT_1 -> e
+    com.example.plantsvszombies.Resource.AssetSound PLANT_2 -> f
+    com.example.plantsvszombies.Resource.AssetSound CHOMP -> g
+    com.example.plantsvszombies.Resource.AssetSound CHOMP_SOFT -> h
+    com.example.plantsvszombies.Resource.AssetSound GULP -> i
+    com.example.plantsvszombies.Resource.AssetSound LIMBS_POP -> j
+    com.example.plantsvszombies.Resource.AssetSound ZOMBIE_FALLING_1 -> k
+    com.example.plantsvszombies.Resource.AssetSound ZOMBIE_FALLING_2 -> l
+    com.example.plantsvszombies.Resource.AssetSound FIRST_ZOMBIE -> m
+    com.example.plantsvszombies.Resource.AssetSound LAWNMOWER_START -> n
+    com.example.plantsvszombies.Resource.AssetSound PEA_SHOOT -> o
+    com.example.plantsvszombies.Resource.AssetSound PEA_SPLAT -> p
+    com.example.plantsvszombies.Resource.AssetSound POTATO_MINE_RISE -> q
+    com.example.plantsvszombies.Resource.AssetSound POTATO_MINE_EXPLODE -> r
+    com.example.plantsvszombies.Resource.AssetSound DAVE_SCREAM -> s
+    java.lang.String filePath -> t
+    com.example.plantsvszombies.Resource.AssetSound[] $VALUES -> u
+    6:6:com.example.plantsvszombies.Resource.AssetSound[] values() -> a
+    30:32:void <init>(java.lang.String,int,java.lang.String) -> <init>
+    35:36:void load(com.example.plantsvszombies.managers.AssetMan) -> a
+    39:42:void loadAll(com.example.plantsvszombies.managers.AssetMan) -> b
+    45:45:com.badlogic.gdx.audio.Sound get(com.example.plantsvszombies.managers.AssetMan) -> c
+    6:6:com.example.plantsvszombies.Resource.AssetSound[] $values() -> b
+    6:26:void <clinit>() -> <clinit>
+com.example.plantsvszombies.Resource.AssetTexture -> com.example.plantsvszombies.b.e:
+# {"fileName":"AssetTexture.java","id":"sourceFile"}
+    com.example.plantsvszombies.Resource.AssetTexture MAP_0 -> a
+    com.example.plantsvszombies.Resource.AssetTexture PEASHOOTER_STILL -> b
+    com.example.plantsvszombies.Resource.AssetTexture PEASHOOTER -> c
+    com.example.plantsvszombies.Resource.AssetTexture PEA_SPLAT -> d
+    com.example.plantsvszombies.Resource.AssetTexture SUNFLOWER_STILL -> e
+    com.example.plantsvszombies.Resource.AssetTexture SUNFLOWER -> f
+    com.example.plantsvszombies.Resource.AssetTexture SUNFLOWER_BRIGHT -> g
+    com.example.plantsvszombies.Resource.AssetTexture NORMAL_WALLNUT_STILL -> h
+    com.example.plantsvszombies.Resource.AssetTexture NORMAL_WALLNUT -> i
+    com.example.plantsvszombies.Resource.AssetTexture NORMAL_WALLNUT_CRACKED_1 -> j
+    com.example.plantsvszombies.Resource.AssetTexture NORMAL_WALLNUT_CRACKED_2 -> k
+    com.example.plantsvszombies.Resource.AssetTexture POTATO_MINE_STILL -> l
+    com.example.plantsvszombies.Resource.AssetTexture POTATO_MINE_ARM_UP -> m
+    com.example.plantsvszombies.Resource.AssetTexture POTATO_MINE_ARMED_UP -> n
+    com.example.plantsvszombies.Resource.AssetTexture POTATO_MINE_ARMED_UP_NO_LIGHT -> o
+    com.example.plantsvszombies.Resource.AssetTexture POTATO_MINE_EXPLOSION -> p
+    com.example.plantsvszombies.Resource.AssetTexture POTATO_MINE_EXPLOSION_WORD -> q
+    com.example.plantsvszombies.Resource.AssetTexture NORMAL_ZOMBIE_STILL -> r
+    com.example.plantsvszombies.Resource.AssetTexture NORMAL_ZOMBIE -> s
+    com.example.plantsvszombies.Resource.AssetTexture NORMAL_ZOMBIE_ATTACK -> t
+    com.example.plantsvszombies.Resource.AssetTexture NORMAL_ZOMBIE_HEAD -> u
+    com.example.plantsvszombies.Resource.AssetTexture NORMAL_ZOMBIE_DIE -> v
+    com.example.plantsvszombies.Resource.AssetTexture NORMAL_ZOMBIE_LOST_HEAD -> w
+    com.example.plantsvszombies.Resource.AssetTexture NORMAL_ZOMBIE_LOST_HEAD_ATTACK -> x
+    com.example.plantsvszombies.Resource.AssetTexture PEA_NORMAL -> y
+    com.example.plantsvszombies.Resource.AssetTexture SEED_BANK -> z
+    com.example.plantsvszombies.Resource.AssetTexture SUN_STILL -> A
+    com.example.plantsvszombies.Resource.AssetTexture SUN -> B
+    com.example.plantsvszombies.Resource.AssetTexture LAWNMOWER -> C
+    com.example.plantsvszombies.Resource.AssetTexture ZOMBIES_ATE_YOUR_BRAINS -> D
+    com.example.plantsvszombies.Resource.AssetTexture SEED_PACKET_LARGER -> E
+    com.example.plantsvszombies.Resource.AssetTexture SEED_PACKET_6F -> F
+    com.example.plantsvszombies.Resource.AssetTexture SEED_PACKET_5F -> G
+    java.lang.String filePath -> H
+    com.example.plantsvszombies.Resource.AssetTexture[] $VALUES -> I
+    6:6:com.example.plantsvszombies.Resource.AssetTexture[] values() -> a
+    44:46:void <init>(java.lang.String,int,java.lang.String) -> <init>
+    49:50:void load(com.example.plantsvszombies.managers.AssetMan) -> a
+    53:56:void loadAll(com.example.plantsvszombies.managers.AssetMan) -> b
+    59:59:com.badlogic.gdx.graphics.Texture get(com.example.plantsvszombies.managers.AssetMan) -> c
+    63:63:java.lang.String getFilePath() -> b
+    6:6:com.example.plantsvszombies.Resource.AssetTexture[] $values() -> c
+    6:40:void <clinit>() -> <clinit>
 com.example.plantsvszombies.lwjgl3.Lwjgl3Launcher -> com.example.plantsvszombies.lwjgl3.Lwjgl3Launcher:
 # {"fileName":"Lwjgl3Launcher.java","id":"sourceFile"}
     8:8:void <init>() -> <init>
@@ -23700,29 +23835,30 @@ com.example.plantsvszombies.lwjgl3.StartupHelper -> com.example.plantsvszombies.
     48:49:void <init>() -> <init>
     77:180:boolean startNewJvmIfRequired(boolean) -> startNewJvmIfRequired
     202:202:boolean startNewJvmIfRequired() -> startNewJvmIfRequired
-com.example.plantsvszombies.managers.AssetMan -> com.example.plantsvszombies.b.a:
+com.example.plantsvszombies.managers.AssetMan -> com.example.plantsvszombies.c.a:
 # {"fileName":"AssetMan.java","id":"sourceFile"}
     com.example.plantsvszombies.managers.AssetMan instance -> a
     com.badlogic.gdx.assets.AssetManager assetManager -> b
     java.util.Map animations -> c
-    19:22:void <init>() -> <init>
-    25:28:com.example.plantsvszombies.managers.AssetMan getInstance() -> a
-    35:40:void loadAssets() -> b
-    43:80:void loadTextureAssets() -> e
-    84:103:void loadSoundAssets() -> f
-    107:110:void loadMusicAssets() -> g
-    114:133:void loadAnimationAssets() -> h
-    136:142:void loadAnimation(java.lang.String,java.lang.String,int,float) -> a
-    145:145:com.badlogic.gdx.graphics.Texture getTexture(java.lang.String) -> a
-    149:149:com.badlogic.gdx.audio.Sound getSound(java.lang.String) -> b
-    153:157:void playSound(java.lang.String,float) -> a
-    160:161:void playSound(java.lang.String) -> c
-    164:167:void playRandomSound(java.util.List,float) -> a
-    174:174:com.badlogic.gdx.audio.Music getMusic(java.lang.String) -> d
-    178:178:com.example.plantsvszombies.Animation.AnimationClip getAnimation(java.lang.String) -> e
-    191:191:com.badlogic.gdx.assets.AssetManager getAssetManager() -> c
-    198:200:void dispose() -> d
-com.example.plantsvszombies.managers.GameManager -> com.example.plantsvszombies.b.b:
+    java.util.Map particleEffects -> d
+    21:27:void <init>() -> <init>
+    30:33:com.example.plantsvszombies.managers.AssetMan getInstance() -> a
+    40:46:void loadAssets() -> b
+    48:48:void loadTexture(java.lang.String) -> a
+    50:50:com.badlogic.gdx.graphics.Texture getTexture(java.lang.String) -> b
+    52:52:void loadSound(java.lang.String) -> c
+    54:54:com.badlogic.gdx.audio.Sound getSound(java.lang.String) -> d
+    56:56:void loadMusic(java.lang.String) -> e
+    58:58:com.badlogic.gdx.audio.Music getMusic(java.lang.String) -> f
+    61:67:void loadAnimation(java.lang.String,java.lang.String,int,float) -> a
+    70:70:com.example.plantsvszombies.Animation.AnimationClip getAnimation(java.lang.String) -> g
+    74:77:void loadParticleEffect(java.lang.String,java.lang.String,java.lang.String) -> a
+    80:84:com.badlogic.gdx.graphics.g2d.ParticleEffect getParticleEffect(java.lang.String) -> h
+    88:92:void playSound(com.example.plantsvszombies.Resource.AssetSound,float) -> a
+    95:98:void playRandomSound(java.util.List,float) -> a
+    115:115:com.badlogic.gdx.assets.AssetManager getAssetManager() -> c
+    122:124:void dispose() -> d
+com.example.plantsvszombies.managers.GameManager -> com.example.plantsvszombies.c.b:
 # {"fileName":"GameManager.java","id":"sourceFile"}
     com.example.plantsvszombies.managers.GameManager instance -> a
     boolean cardCooldown -> b
@@ -23731,13 +23867,12 @@ com.example.plantsvszombies.managers.GameManager -> com.example.plantsvszombies.
     16:24:void <init>() -> <init>
     31:34:com.example.plantsvszombies.managers.GameManager getInstance() -> a
     41:41:boolean isCardCooldownOn() -> b
-    45:46:void setCardCooldown(boolean) -> a
     49:49:int getSun() -> c
     53:54:void addSun(int) -> a
     62:66:boolean spendSun(int) -> b
     70:70:com.example.plantsvszombies.managers.GameManager$GameState getGameState() -> d
     74:75:void setGameState(com.example.plantsvszombies.managers.GameManager$GameState) -> a
-com.example.plantsvszombies.managers.GameManager$GameState -> com.example.plantsvszombies.b.b$a:
+com.example.plantsvszombies.managers.GameManager$GameState -> com.example.plantsvszombies.c.b$a:
 # {"fileName":"GameManager.java","id":"sourceFile"}
     com.example.plantsvszombies.managers.GameManager$GameState PLAYING -> a
     com.example.plantsvszombies.managers.GameManager$GameState PAUSED -> b
@@ -23747,7 +23882,7 @@ com.example.plantsvszombies.managers.GameManager$GameState -> com.example.plants
     9:9:void <init>(java.lang.String,int) -> <init>
     9:9:com.example.plantsvszombies.managers.GameManager$GameState[] $values() -> a
     9:13:void <clinit>() -> <clinit>
-com.example.plantsvszombies.models.LawnMower -> com.example.plantsvszombies.c.a:
+com.example.plantsvszombies.models.LawnMower -> com.example.plantsvszombies.d.a:
 # {"fileName":"LawnMower.java","id":"sourceFile"}
     com.badlogic.gdx.math.Vector2 position -> b
     com.badlogic.gdx.graphics.Texture texture -> c
@@ -23755,21 +23890,21 @@ com.example.plantsvszombies.models.LawnMower -> com.example.plantsvszombies.c.a:
     com.example.plantsvszombies.models.LawnMower$LawnMowerState state -> e
     float speed -> f
     boolean active -> a
-    20:28:void <init>(com.badlogic.gdx.graphics.Texture,float,float) -> <init>
-    31:39:void update(float) -> a
-    42:46:void activate() -> a
-    49:50:void draw(com.badlogic.gdx.graphics.g2d.SpriteBatch) -> a
-    53:53:com.badlogic.gdx.math.Rectangle getBounds() -> b
-    57:57:com.example.plantsvszombies.models.LawnMower$LawnMowerState getState() -> c
-com.example.plantsvszombies.models.LawnMower$LawnMowerState -> com.example.plantsvszombies.c.a$a:
+    21:29:void <init>(com.badlogic.gdx.graphics.Texture,float,float) -> <init>
+    32:40:void update(float) -> a
+    43:47:void activate() -> a
+    50:51:void draw(com.badlogic.gdx.graphics.g2d.SpriteBatch) -> a
+    54:54:com.badlogic.gdx.math.Rectangle getBounds() -> b
+    58:58:com.example.plantsvszombies.models.LawnMower$LawnMowerState getState() -> c
+com.example.plantsvszombies.models.LawnMower$LawnMowerState -> com.example.plantsvszombies.d.a$a:
 # {"fileName":"LawnMower.java","id":"sourceFile"}
     com.example.plantsvszombies.models.LawnMower$LawnMowerState READY -> a
     com.example.plantsvszombies.models.LawnMower$LawnMowerState ACTIVATED -> b
     com.example.plantsvszombies.models.LawnMower$LawnMowerState[] $VALUES -> c
-    12:12:void <init>(java.lang.String,int) -> <init>
-    12:12:com.example.plantsvszombies.models.LawnMower$LawnMowerState[] $values() -> a
-    12:13:void <clinit>() -> <clinit>
-com.example.plantsvszombies.models.Plants.BasePlant -> com.example.plantsvszombies.c.a.a:
+    13:13:void <init>(java.lang.String,int) -> <init>
+    13:13:com.example.plantsvszombies.models.LawnMower$LawnMowerState[] $values() -> a
+    13:14:void <clinit>() -> <clinit>
+com.example.plantsvszombies.models.Plants.BasePlant -> com.example.plantsvszombies.d.a.a:
 # {"fileName":"BasePlant.java","id":"sourceFile"}
     com.badlogic.gdx.math.Vector2 position -> a
     com.badlogic.gdx.graphics.Texture texture -> b
@@ -23801,64 +23936,64 @@ com.example.plantsvszombies.models.Plants.BasePlant -> com.example.plantsvszombi
     144:144:int getHealth() -> e
     148:148:com.badlogic.gdx.math.Rectangle getBounds() -> f
     156:156:com.badlogic.gdx.graphics.Texture getTexture() -> g
-com.example.plantsvszombies.models.Plants.Peashooter -> com.example.plantsvszombies.c.a.b:
+com.example.plantsvszombies.models.Plants.Peashooter -> com.example.plantsvszombies.d.a.b:
 # {"fileName":"Peashooter.java","id":"sourceFile"}
     float shootTimer -> p
-    18:22:void <init>() -> <init>
-    25:31:void <init>(com.example.plantsvszombies.screens.GameScreen,com.badlogic.gdx.graphics.Texture,com.example.plantsvszombies.Animation.AnimationClip,float,float) -> <init>
-    34:38:void <init>(com.example.plantsvszombies.screens.GameScreen,float,float) -> <init>
-    45:52:void update(float) -> a
-    55:55:boolean shouldFire() -> h
-    63:67:void fire() -> i
-com.example.plantsvszombies.models.Plants.PotatoMine -> com.example.plantsvszombies.c.a.c:
+    21:25:void <init>() -> <init>
+    28:34:void <init>(com.example.plantsvszombies.screens.GameScreen,com.badlogic.gdx.graphics.Texture,com.example.plantsvszombies.Animation.AnimationClip,float,float) -> <init>
+    37:41:void <init>(com.example.plantsvszombies.screens.GameScreen,float,float) -> <init>
+    48:55:void update(float) -> a
+    58:58:boolean shouldFire() -> h
+    66:70:void fire() -> i
+com.example.plantsvszombies.models.Plants.PotatoMine -> com.example.plantsvszombies.d.a.c:
 # {"fileName":"PotatoMine.java","id":"sourceFile"}
     com.example.plantsvszombies.models.Plants.PotatoMine$State state -> p
     float armingTimer -> q
     int EXPLOSION_DAMAGE -> r
     float explodeTimer -> s
     com.badlogic.gdx.graphics.Texture explodeText -> t
-    23:35:void <init>() -> <init>
-    23:44:void <init>(com.example.plantsvszombies.screens.GameScreen,com.badlogic.gdx.graphics.Texture,com.example.plantsvszombies.Animation.AnimationClip,float,float) -> <init>
-    47:51:void <init>(com.example.plantsvszombies.screens.GameScreen,float,float) -> <init>
-    55:75:void update(float) -> a
-    79:90:void drawAnimation(com.badlogic.gdx.graphics.g2d.SpriteBatch) -> a
-    96:108:void explode() -> h
-    112:117:void takeDamage(int) -> a
-com.example.plantsvszombies.models.Plants.PotatoMine$State -> com.example.plantsvszombies.c.a.c$a:
+    28:40:void <init>() -> <init>
+    28:49:void <init>(com.example.plantsvszombies.screens.GameScreen,com.badlogic.gdx.graphics.Texture,com.example.plantsvszombies.Animation.AnimationClip,float,float) -> <init>
+    52:56:void <init>(com.example.plantsvszombies.screens.GameScreen,float,float) -> <init>
+    60:86:void update(float) -> a
+    90:101:void drawAnimation(com.badlogic.gdx.graphics.g2d.SpriteBatch) -> a
+    107:124:void explode() -> h
+    128:133:void takeDamage(int) -> a
+com.example.plantsvszombies.models.Plants.PotatoMine$State -> com.example.plantsvszombies.d.a.c$a:
 # {"fileName":"PotatoMine.java","id":"sourceFile"}
     com.example.plantsvszombies.models.Plants.PotatoMine$State IDLE -> a
     com.example.plantsvszombies.models.Plants.PotatoMine$State ARMING -> b
     com.example.plantsvszombies.models.Plants.PotatoMine$State ARMED -> c
     com.example.plantsvszombies.models.Plants.PotatoMine$State EXPLODED -> d
     com.example.plantsvszombies.models.Plants.PotatoMine$State[] $VALUES -> e
-    17:17:void <init>(java.lang.String,int) -> <init>
-    17:17:com.example.plantsvszombies.models.Plants.PotatoMine$State[] $values() -> a
-    17:18:void <clinit>() -> <clinit>
-com.example.plantsvszombies.models.Plants.Sunflower -> com.example.plantsvszombies.c.a.d:
+    22:22:void <init>(java.lang.String,int) -> <init>
+    22:22:com.example.plantsvszombies.models.Plants.PotatoMine$State[] $values() -> a
+    22:23:void <clinit>() -> <clinit>
+com.example.plantsvszombies.models.Plants.Sunflower -> com.example.plantsvszombies.d.a.d:
 # {"fileName":"Sunflower.java","id":"sourceFile"}
     float sunProduceTimer -> p
     com.example.plantsvszombies.models.Plants.Sunflower$State state -> q
-    18:25:void <init>() -> <init>
-    18:41:void <init>(com.example.plantsvszombies.screens.GameScreen,com.badlogic.gdx.graphics.Texture,com.example.plantsvszombies.Animation.AnimationClip,float,float) -> <init>
-    44:48:void <init>(com.example.plantsvszombies.screens.GameScreen,float,float) -> <init>
-    52:63:void update(float) -> a
-    67:77:void drawAnimation(com.badlogic.gdx.graphics.g2d.SpriteBatch) -> a
-    82:83:void produceSun() -> h
-com.example.plantsvszombies.models.Plants.Sunflower$State -> com.example.plantsvszombies.c.a.d$a:
+    20:27:void <init>() -> <init>
+    20:43:void <init>(com.example.plantsvszombies.screens.GameScreen,com.badlogic.gdx.graphics.Texture,com.example.plantsvszombies.Animation.AnimationClip,float,float) -> <init>
+    46:50:void <init>(com.example.plantsvszombies.screens.GameScreen,float,float) -> <init>
+    54:65:void update(float) -> a
+    69:79:void drawAnimation(com.badlogic.gdx.graphics.g2d.SpriteBatch) -> a
+    84:85:void produceSun() -> h
+com.example.plantsvszombies.models.Plants.Sunflower$State -> com.example.plantsvszombies.d.a.d$a:
 # {"fileName":"Sunflower.java","id":"sourceFile"}
     com.example.plantsvszombies.models.Plants.Sunflower$State NORMAL -> a
     com.example.plantsvszombies.models.Plants.Sunflower$State GENERATING -> b
     com.example.plantsvszombies.models.Plants.Sunflower$State[] $VALUES -> c
-    12:12:void <init>(java.lang.String,int) -> <init>
-    12:12:com.example.plantsvszombies.models.Plants.Sunflower$State[] $values() -> a
-    12:14:void <clinit>() -> <clinit>
-com.example.plantsvszombies.models.Plants.Wallnut -> com.example.plantsvszombies.c.a.e:
+    14:14:void <init>(java.lang.String,int) -> <init>
+    14:14:com.example.plantsvszombies.models.Plants.Sunflower$State[] $values() -> a
+    14:16:void <clinit>() -> <clinit>
+com.example.plantsvszombies.models.Plants.Wallnut -> com.example.plantsvszombies.d.a.e:
 # {"fileName":"Wallnut.java","id":"sourceFile"}
-    11:18:void <init>() -> <init>
-    25:32:void <init>(com.example.plantsvszombies.screens.GameScreen,com.badlogic.gdx.graphics.Texture,com.example.plantsvszombies.Animation.AnimationClip,float,float) -> <init>
-    35:39:void <init>(com.example.plantsvszombies.screens.GameScreen,float,float) -> <init>
-    46:52:void update(float) -> a
-com.example.plantsvszombies.models.Projectiles.BaseProjectile -> com.example.plantsvszombies.c.b.a:
+    13:20:void <init>() -> <init>
+    27:34:void <init>(com.example.plantsvszombies.screens.GameScreen,com.badlogic.gdx.graphics.Texture,com.example.plantsvszombies.Animation.AnimationClip,float,float) -> <init>
+    37:41:void <init>(com.example.plantsvszombies.screens.GameScreen,float,float) -> <init>
+    48:55:void update(float) -> a
+com.example.plantsvszombies.models.Projectiles.BaseProjectile -> com.example.plantsvszombies.d.b.a:
 # {"fileName":"BaseProjectile.java","id":"sourceFile"}
     com.badlogic.gdx.math.Vector2 position -> d
     com.badlogic.gdx.graphics.Texture texture -> e
@@ -23876,11 +24011,11 @@ com.example.plantsvszombies.models.Projectiles.BaseProjectile -> com.example.pla
     68:73:void draw(com.badlogic.gdx.graphics.g2d.SpriteBatch) -> a
     76:76:com.badlogic.gdx.math.Rectangle getBounds() -> a
     84:86:void setHitAnimation(com.example.plantsvszombies.Animation.AnimationClip) -> a
-com.example.plantsvszombies.models.Projectiles.Pea -> com.example.plantsvszombies.c.b.b:
+com.example.plantsvszombies.models.Projectiles.Pea -> com.example.plantsvszombies.d.b.b:
 # {"fileName":"Pea.java","id":"sourceFile"}
-    10:12:void <init>(com.badlogic.gdx.graphics.Texture,float,float) -> <init>
-    16:20:void damage(com.example.plantsvszombies.models.Zombies.BaseZombie) -> a
-com.example.plantsvszombies.models.Sun -> com.example.plantsvszombies.c.b:
+    12:14:void <init>(com.badlogic.gdx.graphics.Texture,float,float) -> <init>
+    18:22:void damage(com.example.plantsvszombies.models.Zombies.BaseZombie) -> a
+com.example.plantsvszombies.models.Sun -> com.example.plantsvszombies.d.b:
 # {"fileName":"Sun.java","id":"sourceFile"}
     int value -> b
     com.badlogic.gdx.graphics.Texture texture -> c
@@ -23909,7 +24044,7 @@ com.example.plantsvszombies.models.Sun -> com.example.plantsvszombies.c.b:
     163:163:int getValue() -> b
     135:137:void lambda$collectTo$1() -> c
     118:120:void lambda$update$0() -> d
-com.example.plantsvszombies.models.Sun$SunState -> com.example.plantsvszombies.c.b$a:
+com.example.plantsvszombies.models.Sun$SunState -> com.example.plantsvszombies.d.b$a:
 # {"fileName":"Sun.java","id":"sourceFile"}
     com.example.plantsvszombies.models.Sun$SunState GENERATED -> a
     com.example.plantsvszombies.models.Sun$SunState FALLING -> b
@@ -23919,7 +24054,7 @@ com.example.plantsvszombies.models.Sun$SunState -> com.example.plantsvszombies.c
     17:17:void <init>(java.lang.String,int) -> <init>
     17:17:com.example.plantsvszombies.models.Sun$SunState[] $values() -> a
     17:18:void <clinit>() -> <clinit>
-com.example.plantsvszombies.models.Texture.Falling -> com.example.plantsvszombies.c.c.a:
+com.example.plantsvszombies.models.Texture.Falling -> com.example.plantsvszombies.d.c.a:
 # {"fileName":"Falling.java","id":"sourceFile"}
     com.badlogic.gdx.graphics.Texture texture -> a
     com.badlogic.gdx.math.Vector2 position -> b
@@ -23939,11 +24074,11 @@ com.example.plantsvszombies.models.Texture.Falling -> com.example.plantsvszombie
     50:93:void update(float) -> a
     96:114:void draw(com.badlogic.gdx.graphics.g2d.SpriteBatch) -> a
     116:116:boolean isActive() -> a
-com.example.plantsvszombies.models.Texture.Falling$1 -> com.example.plantsvszombies.c.c.a$1:
+com.example.plantsvszombies.models.Texture.Falling$1 -> com.example.plantsvszombies.d.c.a$1:
 # {"fileName":"Falling.java","id":"sourceFile"}
     int[] $SwitchMap$com$example$plantsvszombies$models$Texture$Falling$State -> a
     52:52:void <clinit>() -> <clinit>
-com.example.plantsvszombies.models.Texture.Falling$State -> com.example.plantsvszombies.c.c.a$a:
+com.example.plantsvszombies.models.Texture.Falling$State -> com.example.plantsvszombies.d.c.a$a:
 # {"fileName":"Falling.java","id":"sourceFile"}
     com.example.plantsvszombies.models.Texture.Falling$State ARC -> a
     com.example.plantsvszombies.models.Texture.Falling$State PHYSICS -> b
@@ -23953,7 +24088,7 @@ com.example.plantsvszombies.models.Texture.Falling$State -> com.example.plantsvs
     9:9:void <init>(java.lang.String,int) -> <init>
     9:9:com.example.plantsvszombies.models.Texture.Falling$State[] $values() -> b
     9:9:void <clinit>() -> <clinit>
-com.example.plantsvszombies.models.Zombies.BaseZombie -> com.example.plantsvszombies.c.d.a:
+com.example.plantsvszombies.models.Zombies.BaseZombie -> com.example.plantsvszombies.d.d.a:
 # {"fileName":"BaseZombie.java","id":"sourceFile"}
     com.badlogic.gdx.math.Vector2 position -> a
     com.badlogic.gdx.graphics.Texture texture -> b
@@ -23984,23 +24119,23 @@ com.example.plantsvszombies.models.Zombies.BaseZombie -> com.example.plantsvszom
     float doorY -> C
     com.badlogic.gdx.math.Rectangle centerBounds -> q
     com.example.plantsvszombies.screens.GameScreen screen -> r
-    26:78:void <init>(com.example.plantsvszombies.screens.GameScreen,com.badlogic.gdx.graphics.Texture,com.example.plantsvszombies.Animation.AnimationClip,float,float) -> <init>
-    85:161:void update(float) -> a
-    164:169:void moveToDoor(float,float) -> a
-    177:204:void drawAnimation(com.badlogic.gdx.graphics.g2d.SpriteBatch) -> a
-    207:210:void takeDamage(int) -> a
-    217:219:void startAttacking(com.example.plantsvszombies.models.Plants.BasePlant) -> a
-    225:227:void stopAttacking() -> a
-    230:237:void startDying() -> b
-    240:240:boolean isRemovable() -> c
-    248:248:com.badlogic.gdx.math.Rectangle getCenterBounds() -> d
-    256:256:float getY() -> e
-    269:270:void stand() -> f
-    273:274:void setAnimation(com.example.plantsvszombies.Animation.AnimationClip) -> a
-com.example.plantsvszombies.models.Zombies.NormalZombie -> com.example.plantsvszombies.c.d.b:
+    29:81:void <init>(com.example.plantsvszombies.screens.GameScreen,com.badlogic.gdx.graphics.Texture,com.example.plantsvszombies.Animation.AnimationClip,float,float) -> <init>
+    88:162:void update(float) -> a
+    165:170:void moveToDoor(float,float) -> a
+    178:206:void drawAnimation(com.badlogic.gdx.graphics.g2d.SpriteBatch) -> a
+    209:212:void takeDamage(int) -> a
+    219:221:void startAttacking(com.example.plantsvszombies.models.Plants.BasePlant) -> a
+    227:229:void stopAttacking() -> a
+    232:239:void startDying() -> b
+    242:242:boolean isRemovable() -> c
+    250:250:com.badlogic.gdx.math.Rectangle getCenterBounds() -> d
+    258:258:float getY() -> e
+    271:272:void stand() -> f
+    275:276:void setAnimation(com.example.plantsvszombies.Animation.AnimationClip) -> a
+com.example.plantsvszombies.models.Zombies.NormalZombie -> com.example.plantsvszombies.d.d.b:
 # {"fileName":"NormalZombie.java","id":"sourceFile"}
     14:15:void <init>(com.example.plantsvszombies.screens.GameScreen,com.badlogic.gdx.graphics.Texture,com.example.plantsvszombies.Animation.AnimationClip,float,float) -> <init>
-com.example.plantsvszombies.screens.GameScreen -> com.example.plantsvszombies.d.a:
+com.example.plantsvszombies.screens.GameScreen -> com.example.plantsvszombies.e.a:
 # {"fileName":"GameScreen.java","id":"sourceFile"}
     com.example.plantsvszombies.PvzGame game -> a
     com.example.plantsvszombies.managers.AssetMan assetManager -> b
@@ -24028,102 +24163,109 @@ com.example.plantsvszombies.screens.GameScreen -> com.example.plantsvszombies.d.
     com.badlogic.gdx.utils.Array suns -> x
     com.badlogic.gdx.utils.Array lawnMowers -> y
     com.badlogic.gdx.utils.Array fallings -> z
-    float gameTime -> A
-    com.badlogic.gdx.math.Rectangle[][] gridCells -> B
-    float zombieSpawnTimer -> C
-    float ZOMBIE_SPAWN_INTERVAL -> D
-    float sunSpawnTimer -> E
-    float SUN_SPAWN_INTERVAL -> F
-    boolean firstZombieSpawned -> G
-    boolean firstWaveSpawned -> H
-    boolean isCameraMoving -> I
-    com.badlogic.gdx.scenes.scene2d.ui.Skin uiSkin -> J
-    com.badlogic.gdx.scenes.scene2d.Stage uiStage -> K
-    com.badlogic.gdx.scenes.scene2d.ui.Label sunLabel -> L
-    com.example.plantsvszombies.ui.PlantCard selectedCard -> M
-    com.badlogic.gdx.scenes.scene2d.ui.Table tooltipTable -> N
-    float endBlackOverlayAlpha -> O
-    float endWordScale -> P
-    64:162:void <init>(com.example.plantsvszombies.PvzGame) -> <init>
-    170:198:com.badlogic.gdx.scenes.scene2d.ui.Label setupUI() -> c
-    205:210:void initializeGrid() -> d
-    213:218:void initializeLawnMowers() -> e
-    223:348:void render(float) -> render
-    351:357:void triggerCameraShake(float,float) -> a
-    361:375:void applyCameraShake(float) -> b
-    381:414:void updateGame(float) -> c
-    417:422:void spawnFallingSun() -> f
-    425:428:void spawnGeneratedSun(int,float,float) -> a
-    434:443:void spawnZombie() -> g
-    446:453:boolean anyZombieInHeight(float) -> a
-    457:458:void addFalling(com.example.plantsvszombies.models.Texture.Falling) -> a
-    464:475:void checkGameOver() -> h
-    478:507:void startGameOver(com.example.plantsvszombies.models.Zombies.BaseZombie) -> a
-    514:562:void checkCollisions() -> i
-    569:604:void cleanupObjects() -> j
-    608:626:void updateTooltipTable(com.example.plantsvszombies.ui.PlantCard) -> a
-    631:683:boolean touchDown(int,int,int,int) -> touchDown
-    687:697:boolean canPlantAt(int,int) -> a
-    702:707:boolean canPlantAt(com.badlogic.gdx.math.Rectangle) -> a
-    717:738:void placePlant(com.badlogic.gdx.math.Rectangle) -> b
-    741:793:boolean mouseMoved(int,int) -> mouseMoved
-    801:807:void resize(int,int) -> resize
-    811:812:void spawnProjectile(com.example.plantsvszombies.models.Projectiles.BaseProjectile) -> a
-    815:822:void doAoeDamage(com.badlogic.gdx.math.Rectangle,int) -> a
-    826:826:com.badlogic.gdx.assets.AssetManager getAssetManager() -> a
-    831:835:void show() -> show
-    838:839:void dispose() -> dispose
-    841:841:void pause() -> pause
-    842:842:void resume() -> resume
-    843:843:void hide() -> hide
-    844:844:boolean keyDown(int) -> keyDown
-    845:845:boolean keyUp(int) -> keyUp
-    846:846:boolean keyTyped(char) -> keyTyped
-    847:847:boolean touchUp(int,int,int,int) -> touchUp
-    848:848:boolean touchDragged(int,int,int) -> touchDragged
-    849:849:boolean touchCancelled(int,int,int,int) -> touchCancelled
-    850:850:boolean scrolled(float,float) -> scrolled
-    853:856:void beginCrazyMode() -> b
-com.example.plantsvszombies.screens.GameScreen$1 -> com.example.plantsvszombies.d.a$1:
+    com.badlogic.gdx.utils.Array particles -> A
+    float gameTime -> B
+    com.badlogic.gdx.math.Rectangle[][] gridCells -> C
+    float zombieSpawnTimer -> D
+    float ZOMBIE_SPAWN_INTERVAL -> E
+    float sunSpawnTimer -> F
+    float SUN_SPAWN_INTERVAL -> G
+    boolean firstZombieSpawned -> H
+    boolean firstWaveSpawned -> I
+    boolean isCameraMoving -> J
+    com.badlogic.gdx.scenes.scene2d.ui.Skin uiSkin -> K
+    com.badlogic.gdx.scenes.scene2d.Stage uiStage -> L
+    com.badlogic.gdx.scenes.scene2d.ui.Label sunLabel -> M
+    com.example.plantsvszombies.ui.PlantCard selectedCard -> N
+    com.badlogic.gdx.scenes.scene2d.ui.Table tooltipTable -> O
+    float endBlackOverlayAlpha -> P
+    float endWordScale -> Q
+    66:166:void <init>(com.example.plantsvszombies.PvzGame) -> <init>
+    174:202:com.badlogic.gdx.scenes.scene2d.ui.Label setupUI() -> b
+    209:214:void initializeGrid() -> c
+    217:222:void initializeLawnMowers() -> d
+    227:353:void render(float) -> render
+    356:362:void triggerCameraShake(float,float) -> a
+    366:380:void applyCameraShake(float) -> b
+    386:421:void updateGame(float) -> c
+    424:429:void spawnFallingSun() -> e
+    432:435:void spawnGeneratedSun(int,float,float) -> a
+    441:450:void spawnZombie() -> f
+    453:460:boolean anyZombieInHeight(float) -> a
+    464:465:void addFalling(com.example.plantsvszombies.models.Texture.Falling) -> a
+    468:469:void addParticle(com.badlogic.gdx.graphics.g2d.ParticleEffect) -> a
+    475:486:void checkGameOver() -> g
+    489:518:void startGameOver(com.example.plantsvszombies.models.Zombies.BaseZombie) -> a
+    525:573:void checkCollisions() -> h
+    580:623:void cleanupObjects() -> i
+    627:645:void updateTooltipTable(com.example.plantsvszombies.ui.PlantCard) -> a
+    650:701:boolean touchDown(int,int,int,int) -> touchDown
+    705:715:boolean canPlantAt(int,int) -> a
+    720:725:boolean canPlantAt(com.badlogic.gdx.math.Rectangle) -> a
+    735:762:void placePlant(com.badlogic.gdx.math.Rectangle) -> b
+    765:817:boolean mouseMoved(int,int) -> mouseMoved
+    825:831:void resize(int,int) -> resize
+    835:836:void spawnProjectile(com.example.plantsvszombies.models.Projectiles.BaseProjectile) -> a
+    839:846:void doAoeDamage(com.badlogic.gdx.math.Rectangle,int) -> a
+    849:849:boolean isSunAvailable(int) -> a
+    854:854:com.badlogic.gdx.assets.AssetManager getAssetManager() -> a
+    858:863:void show() -> show
+    866:867:void dispose() -> dispose
+    869:869:void pause() -> pause
+    870:870:void resume() -> resume
+    871:871:void hide() -> hide
+    872:872:boolean keyDown(int) -> keyDown
+    873:873:boolean keyUp(int) -> keyUp
+    874:874:boolean keyTyped(char) -> keyTyped
+    875:875:boolean touchUp(int,int,int,int) -> touchUp
+    876:876:boolean touchDragged(int,int,int) -> touchDragged
+    877:877:boolean touchCancelled(int,int,int,int) -> touchCancelled
+    878:878:boolean scrolled(float,float) -> scrolled
+com.example.plantsvszombies.screens.GameScreen$1 -> com.example.plantsvszombies.e.a$1:
 # {"fileName":"GameScreen.java","id":"sourceFile"}
     com.example.plantsvszombies.screens.GameScreen this$0 -> a
-    484:484:void <init>(com.example.plantsvszombies.screens.GameScreen) -> <init>
-    487:488:void run() -> run
-com.example.plantsvszombies.screens.GameScreen$2 -> com.example.plantsvszombies.d.a$2:
+    495:495:void <init>(com.example.plantsvszombies.screens.GameScreen) -> <init>
+    498:499:void run() -> run
+com.example.plantsvszombies.screens.GameScreen$2 -> com.example.plantsvszombies.e.a$2:
 # {"fileName":"GameScreen.java","id":"sourceFile"}
     com.example.plantsvszombies.models.Zombies.BaseZombie val$killer -> a
     com.example.plantsvszombies.screens.GameScreen this$0 -> b
-    490:490:void <init>(com.example.plantsvszombies.screens.GameScreen,com.example.plantsvszombies.models.Zombies.BaseZombie) -> <init>
-    493:496:void run() -> run
-com.example.plantsvszombies.screens.GameScreen$3 -> com.example.plantsvszombies.d.a$3:
+    501:501:void <init>(com.example.plantsvszombies.screens.GameScreen,com.example.plantsvszombies.models.Zombies.BaseZombie) -> <init>
+    504:507:void run() -> run
+com.example.plantsvszombies.screens.GameScreen$3 -> com.example.plantsvszombies.e.a$3:
 # {"fileName":"GameScreen.java","id":"sourceFile"}
     com.example.plantsvszombies.screens.GameScreen this$0 -> a
-    498:498:void <init>(com.example.plantsvszombies.screens.GameScreen) -> <init>
-    501:503:void run() -> run
-com.example.plantsvszombies.ui.PlantCard -> com.example.plantsvszombies.e.a:
+    509:509:void <init>(com.example.plantsvszombies.screens.GameScreen) -> <init>
+    512:514:void run() -> run
+com.example.plantsvszombies.ui.PlantCard -> com.example.plantsvszombies.f.a:
 # {"fileName":"PlantCard.java","id":"sourceFile"}
-    com.example.plantsvszombies.ui.TextureActor cardTexture -> b
-    com.example.plantsvszombies.ui.TextureActor plantTexture -> c
-    com.badlogic.gdx.scenes.scene2d.ui.Label costLabel -> d
+    com.example.plantsvszombies.managers.AssetMan assetMan -> b
+    com.example.plantsvszombies.screens.GameScreen screen -> c
+    com.example.plantsvszombies.ui.TextureActor cardTexture -> d
+    com.example.plantsvszombies.ui.TextureActor plantTexture -> e
+    com.badlogic.gdx.scenes.scene2d.ui.Label costLabel -> f
     java.lang.String plantType -> a
-    int cost -> e
-    boolean haveCooldown -> f
-    float cooldown -> g
-    float cooldownTimer -> h
-    java.lang.Class plantClass -> i
-    boolean isSelected -> j
-    25:50:void <init>(com.badlogic.gdx.scenes.scene2d.ui.Skin,com.example.plantsvszombies.models.Plants.BasePlant) -> <init>
-    53:68:void layout() -> g
-    72:73:void select() -> a
-    76:77:void deselect() -> b
-    84:84:int getCost() -> c
-    92:130:void draw(com.badlogic.gdx.graphics.g2d.Batch,float) -> draw
-    133:133:boolean isOnCooldown() -> d
-    137:137:boolean plantInstanceOf(java.lang.Class) -> a
-    141:142:void resetCooldown() -> e
-    146:152:void act(float) -> act
-    155:155:com.badlogic.gdx.graphics.Texture getPlantTexture() -> f
-com.example.plantsvszombies.ui.TextureActor -> com.example.plantsvszombies.e.b:
+    int cost -> g
+    boolean haveCooldown -> h
+    float cooldown -> i
+    float cooldownTimer -> j
+    java.lang.Class plantClass -> k
+    boolean isSelected -> l
+    boolean isSelectable -> m
+    32:60:void <init>(com.example.plantsvszombies.screens.GameScreen,com.badlogic.gdx.scenes.scene2d.ui.Skin,com.example.plantsvszombies.models.Plants.BasePlant) -> <init>
+    63:78:void layout() -> h
+    82:83:void select() -> a
+    86:87:void deselect() -> b
+    98:99:void setSelectable(boolean) -> a
+    102:102:int getCost() -> c
+    110:154:void draw(com.badlogic.gdx.graphics.g2d.Batch,float) -> draw
+    157:157:boolean isOnCooldown() -> d
+    161:161:boolean isSunEnough() -> e
+    165:165:boolean plantInstanceOf(java.lang.Class) -> a
+    169:170:void resetCooldown() -> f
+    174:180:void act(float) -> act
+    183:183:com.badlogic.gdx.graphics.Texture getPlantTexture() -> g
+com.example.plantsvszombies.ui.TextureActor -> com.example.plantsvszombies.f.b:
 # {"fileName":"TextureActor.java","id":"sourceFile"}
     com.badlogic.gdx.graphics.Texture texture -> a
     com.badlogic.gdx.graphics.g2d.TextureRegion region -> b

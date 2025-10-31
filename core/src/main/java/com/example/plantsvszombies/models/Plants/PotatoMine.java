@@ -7,6 +7,10 @@ import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 import com.example.plantsvszombies.Animation.AnimationClip;
+import com.example.plantsvszombies.Resource.AssetAnimation;
+import com.example.plantsvszombies.Resource.AssetParticle;
+import com.example.plantsvszombies.Resource.AssetSound;
+import com.example.plantsvszombies.Resource.AssetTexture;
 import com.example.plantsvszombies.managers.AssetMan;
 import com.example.plantsvszombies.screens.GameScreen;
 
@@ -46,20 +50,21 @@ public class PotatoMine extends BasePlant {
 
     public PotatoMine(GameScreen gameScreen, float x, float y) {
         this(gameScreen,
-            AssetMan.getInstance().getTexture("graphics/Plants/PotatoMine/ArmedUpNoLight.png"),
-            AssetMan.getInstance().getAnimation("PotatoMine"),
+            AssetTexture.POTATO_MINE_ARMED_UP_NO_LIGHT.get(AssetMan.getInstance()),
+            AssetAnimation.POTATO_MINE.get(AssetMan.getInstance()),
             x, y);
     }
 
     @Override
     public void update(float delta) {
         super.update(delta);
+        AssetMan assetMan = AssetMan.getInstance();
         if (state == State.IDLE && stateTime >= ARMING_TIME) {
             state = State.ARMING;
             armingTimer = 0f;
-            animation = AssetMan.getInstance().getAnimation("PotatoMine_ArmUp");
-            AssetMan.getInstance().playSound("graphics/audio/dirt_rise.ogg");
-            ParticleEffect dig_up = AssetMan.getInstance().getParticleEffect("PotatoMine_Up");
+            animation = AssetAnimation.POTATO_MINE_ARM_UP.get(assetMan);
+            AssetMan.getInstance().playSound(AssetSound.POTATO_MINE_RISE, 1f);
+            ParticleEffect dig_up = AssetParticle.POTATO_MINE_RISE.get(assetMan);
             dig_up.setPosition(position.x + animation.getWidth() / 2f, position.y);
             dig_up.scaleEffect(.6f);
             dig_up.start();
@@ -69,7 +74,7 @@ public class PotatoMine extends BasePlant {
             armingTimer += delta;
             if (animation.isAnimationFinished(armingTimer)) {
                 state = State.ARMED;
-                animation = AssetMan.getInstance().getAnimation("PotatoMine_Armed");
+                animation = AssetAnimation.POTATO_MINE_ARMED.get(assetMan);
             }
         }
         if (state == State.EXPLODED) {
@@ -101,20 +106,20 @@ public class PotatoMine extends BasePlant {
     public void explode() {
         AssetMan assetMan = AssetMan.getInstance();
         Rectangle explosionArea = new Rectangle(bounds.x - 20, bounds.y, bounds.width + 40, bounds.height);
-        AnimationClip explosion = assetMan.getAnimation("PotatoMine_Explosion");
+        AnimationClip explosion = AssetAnimation.POTATO_MINE_EXPLOSION.get(assetMan);
         position = new Vector2( position.x - (explosion.getWidth() - bounds.width) / 2,
             position.y - (explosion.getHeight() - bounds.height) / 2);
         animation = explosion;
-        ParticleEffect explosionEffect = assetMan.getParticleEffect("PotatoMine_Explode");
+        ParticleEffect explosionEffect = AssetParticle.POTATO_MINE_EXPLODE.get(assetMan);
         explosionEffect.setPosition(position.x + animation.getWidth() / 2f, position.y + animation.getHeight() / 2f);
         explosionEffect.scaleEffect(0.35f);
         explosionEffect.start();
         screen.addParticle(explosionEffect);
-        assetMan.playSound("graphics/audio/potato_mine.ogg", 0.6f);
+        assetMan.playSound(AssetSound.POTATO_MINE_EXPLODE, 0.6f);
         bounds = new Rectangle(-100, -100, 0, 0); // 移出碰撞框，避免继续与僵尸碰撞
         screen.triggerCameraShake(0.25f, 6f);
         screen.doAoeDamage(explosionArea, EXPLOSION_DAMAGE);
-        explodeText = AssetMan.getInstance().getTexture("graphics/Plants/PotatoMine/ExplosionSpudow.png");
+        explodeText = AssetTexture.POTATO_MINE_EXPLOSION_WORD.get(assetMan);
         state = State.EXPLODED;
     }
 

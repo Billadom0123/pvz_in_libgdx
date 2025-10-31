@@ -6,17 +6,24 @@ import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Batch;
+import com.badlogic.gdx.graphics.g2d.ParticleEffect;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.scenes.scene2d.Group;
 import com.badlogic.gdx.scenes.scene2d.Touchable;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.utils.Align;
+import com.example.plantsvszombies.Resource.AssetParticle;
+import com.example.plantsvszombies.Resource.AssetTexture;
 import com.example.plantsvszombies.managers.AssetMan;
 import com.example.plantsvszombies.managers.GameManager;
 import com.example.plantsvszombies.models.Plants.BasePlant;
+import com.example.plantsvszombies.screens.GameScreen;
 
 public class PlantCard extends Group {
+
+    private AssetMan assetMan;
+    private GameScreen screen;
     private final TextureActor cardTexture; // 卡片图片
     private final TextureActor plantTexture; // 植物图片
     private final Label costLabel;   // 显示种植消耗的标签
@@ -28,11 +35,14 @@ public class PlantCard extends Group {
     private Class<?> plantClass;
 
     private boolean isSelected = false; // 是否被选中
+    private boolean isSelectable = false; // 是否可以被选中
 
 
 
-    public PlantCard(Skin skin, BasePlant plant) {
-        this.cardTexture = new TextureActor(AssetMan.getInstance().getTexture("graphics/Screen/SeedPacket_5f.png"));
+    public PlantCard(GameScreen screen, Skin skin, BasePlant plant) {
+        this.assetMan = AssetMan.getInstance();
+        this.screen = screen;
+        this.cardTexture = new TextureActor(AssetTexture.SEED_PACKET_5F.get(assetMan));
         this.plantTexture = new TextureActor(plant.getTexture());
         this.plantType = plant.getName();
         this.cost = plant.getCost();
@@ -80,6 +90,14 @@ public class PlantCard extends Group {
         return isSelected;
     }
 
+    public boolean isSelectable() {
+        return isSelectable;
+    }
+
+    public void setSelectable(boolean selectable) {
+        isSelectable = selectable;
+    }
+
     public int getCost() {
         return cost;
     }
@@ -102,35 +120,45 @@ public class PlantCard extends Group {
         shapeRenderer.begin(ShapeRenderer.ShapeType.Filled);
 
 
-        // 如果当前太阳数量不足以支付cost，则在卡片上覆盖一层半透明黑色，使其“变灰”
-        if (GameManager.getInstance().getSun() < cost) {
-            shapeRenderer.setColor(0, 0, 0, 0.5f);
-            shapeRenderer.rect(getX(), getY(), getWidth(), getHeight());
-        }
-
+        // 如果冷却还未好，则在卡片上覆盖一层半透明黑色，使其“变灰”
         if (isOnCooldown()) {
             float cooldownRatio = cooldownTimer / cooldown;
             float overlayHeight = getHeight() * (1 - cooldownRatio);
-            if (GameManager.getInstance().getSun() < cost) {
-                // 如果同时缺钱，则先绘制使其变得更灰
+            if (!isSunEnough()) {
+                // 如果同时缺Sun，则先绘制使其变得更灰
                 shapeRenderer.setColor(0, 0, 0, 0.7f);
             } else {
                 shapeRenderer.setColor(0, 0, 0, 0.5f);
             }
             shapeRenderer.rect(getX(), getY() + getHeight() - overlayHeight, getWidth(), overlayHeight);
+            isSelectable = false;
+        } else if (!isSunEnough()) {
+            shapeRenderer.setColor(0, 0, 0, 0.5f);
+            shapeRenderer.rect(getX(), getY(), getWidth(), getHeight());
+            isSelectable = false;
+        } else {
+            if (!isSelectable) {
+                ParticleEffect particleEffect = AssetParticle.SEED_PACKET_FLASH.get(assetMan);
+                particleEffect.setPosition(getX() + getWidth() / 2f, getY() + getHeight() / 2f);
+                particleEffect.start();
+                screen.addParticle(particleEffect);
+                setSelectable(true);
+            }
         }
-
         if (isSelected) {
             shapeRenderer.setColor(0, 0, 0, 0.5f);
             shapeRenderer.rect(getX(), getY(), getWidth(), getHeight());
         }
-
         shapeRenderer.end();
         batch.begin();
     }
 
     public boolean isOnCooldown() {
         return cooldownTimer < cooldown;
+    }
+
+    public boolean isSunEnough() {
+        return screen.isSunAvailable(cost);
     }
 
     public boolean plantInstanceOf(Class<?> clazz) {

@@ -2,6 +2,8 @@ package com.example.plantsvszombies.models.Plants;
 
 import com.badlogic.gdx.graphics.Texture;
 import com.example.plantsvszombies.Animation.AnimationClip;
+import com.example.plantsvszombies.Resource.AssetAnimation;
+import com.example.plantsvszombies.Resource.AssetTexture;
 import com.example.plantsvszombies.managers.AssetMan;
 import com.example.plantsvszombies.screens.GameScreen;
 
@@ -33,8 +35,8 @@ public class Wallnut extends BasePlant {
 
     public Wallnut(GameScreen screen, float x, float y) {
         this(screen,
-            AssetMan.getInstance().getTexture("graphics/Plants/WallNut/StillNormal.png"),
-            AssetMan.getInstance().getAnimation("WallNut"),
+            AssetTexture.NORMAL_WALLNUT_STILL.get(AssetMan.getInstance()),
+            AssetAnimation.WALL_NUT.get(AssetMan.getInstance()),
             x, y);
     }
     /**
@@ -44,10 +46,11 @@ public class Wallnut extends BasePlant {
     @Override
     public void update(float delta) {
         super.update(delta);
+        AssetMan assetMan = AssetMan.getInstance();
         if (health <= maxHealth * 0.33f) {
-            animation = AssetMan.getInstance().getAnimation("WallNut_Cracked2");
+            animation = AssetAnimation.WALL_NUT_CRACKED2.get(assetMan);
         } else if (health <= maxHealth * 0.66f) {
-            animation = AssetMan.getInstance().getAnimation("WallNut_Cracked1");
+            animation = AssetAnimation.WALL_NUT_CRACKED1.get(assetMan);
         }
     }
 }

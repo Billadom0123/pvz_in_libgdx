@@ -25,6 +25,7 @@ import com.badlogic.gdx.utils.Timer;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.example.plantsvszombies.Animation.AnimationClip;
 import com.example.plantsvszombies.PvzGame;
+import com.example.plantsvszombies.Resource.*;
 import com.example.plantsvszombies.managers.AssetMan;
 import com.example.plantsvszombies.managers.GameManager;
 import com.example.plantsvszombies.models.LawnMower;
@@ -158,7 +159,7 @@ public class GameScreen implements Screen, InputProcessor {
         gridCells = new Rectangle[5][9];
         initializeGrid();
         initializeLawnMowers();
-//        for (LawnMower l: lawnMowers) l.activate();
+        for (LawnMower l: lawnMowers) l.activate();
 
         // 5. 将本类设置为输入处理器，这样touchDown等方法才会被调用
         Gdx.input.setInputProcessor(this);
@@ -183,10 +184,10 @@ public class GameScreen implements Screen, InputProcessor {
 
 
         // 创建植物卡片
-        PlantCard peashooterCard = new PlantCard(uiSkin, new Peashooter(this, 0,0));
-        PlantCard sunflowerCard = new PlantCard(uiSkin, new Sunflower(this, 0,0));
-        PlantCard wallnutCard = new PlantCard(uiSkin, new Wallnut(this, 0,0));
-        PlantCard potatoMineCard = new PlantCard(uiSkin, new PotatoMine(this, 0,0));
+        PlantCard peashooterCard = new PlantCard(this, uiSkin, new Peashooter(this, 0,0));
+        PlantCard sunflowerCard = new PlantCard(this, uiSkin, new Sunflower(this, 0,0));
+        PlantCard wallnutCard = new PlantCard(this, uiSkin, new Wallnut(this, 0,0));
+        PlantCard potatoMineCard = new PlantCard(this, uiSkin, new PotatoMine(this, 0,0));
 
         // 将卡片添加到Table中
         topBar.add(peashooterCard).pad(1).padBottom(3).bottom();
@@ -213,7 +214,7 @@ public class GameScreen implements Screen, InputProcessor {
     }
 
     private void initializeLawnMowers() {
-        Texture lawnMowerTexture = assetManager.getTexture("graphics/Screen/car.png");
+        Texture lawnMowerTexture = AssetTexture.LAWNMOWER.get(assetManager);
         for (int row = 0; row < 5; row++) {
             float yPosition = gridCells[row][0].y;
             lawnMowers.add(new LawnMower(lawnMowerTexture, startX - cellWidth, yPosition + 15));
@@ -254,15 +255,14 @@ public class GameScreen implements Screen, InputProcessor {
 
         game.batch.begin();
         // 绘制背景
-        game.batch.draw(assetManager.getTexture("graphics/Map/map0.jpg"), 0, 0, WORLD_WIDTH, WORLD_HEIGHT);
-        game.batch.draw(assetManager.getTexture("graphics/Screen/SeedBank.png"), startX - cellWidth, startY + 5 * cellHeight - 15, 446, 87); // 绘制种子银行背景
+        game.batch.draw(AssetTexture.MAP_0.get(assetManager), 0, 0, WORLD_WIDTH, WORLD_HEIGHT);
+        game.batch.draw(AssetTexture.SEED_BANK.get(assetManager), startX - cellWidth, startY + 5 * cellHeight - 15, 446, 87); // 绘制种子银行背景
         // 绘制所有游戏对象
         for (BasePlant plant : plants) plant.drawAnimation(game.batch);
         for (BaseZombie zombie : zombies) zombie.drawAnimation(game.batch);
         for (BaseProjectile projectile : projectiles) projectile.draw(game.batch);
         for (LawnMower lawnMower : lawnMowers) lawnMower.draw(game.batch);
         for (Falling falling : fallings) falling.draw(game.batch);
-        for (ParticleEffect particleEffect : particles) particleEffect.draw(game.batch);
 
         game.batch.end();
 
@@ -300,6 +300,7 @@ public class GameScreen implements Screen, InputProcessor {
             game.batch.draw(t, worldCoords.x - t.getWidth() / 2f, worldCoords.y - t.getHeight() / 2f);
         }
 
+        for (ParticleEffect particleEffect : particles) particleEffect.draw(game.batch);
         game.batch.end();
 //
 //        ShapeRenderer shapeRenderer = new ShapeRenderer();
@@ -330,7 +331,7 @@ public class GameScreen implements Screen, InputProcessor {
             shapeRenderer.dispose();
 
             game.batch.begin();
-            Texture gameOverTexture = assetManager.getTexture("graphics/Screen/ZombiesAteYourBrains.png");
+            Texture gameOverTexture = AssetTexture.ZOMBIES_ATE_YOUR_BRAINS.get(assetManager);
             // 添加抖动效果
 
             endWordScale += delta * 0.4f;
@@ -422,13 +423,13 @@ public class GameScreen implements Screen, InputProcessor {
     private void spawnFallingSun() {
         float randomX = MathUtils.random(cameraMinX, cameraMaxX - 50f);
         float randomGroundY = MathUtils.random(50f, WORLD_HEIGHT - 200f);
-        Sun sun = new Sun(assetManager.getTexture("graphics/Screen/Sun.gif"), assetManager.getAnimation("Sun"), randomX, WORLD_HEIGHT, randomGroundY);
+        Sun sun = new Sun(AssetTexture.SUN_STILL.get(assetManager), AssetAnimation.SUN.get(assetManager), randomX, WORLD_HEIGHT, randomGroundY);
         suns.add(sun);
         uiStage.addActor(sun);
     }
 
     public void spawnGeneratedSun(int value, float x, float y) {
-        Sun sun = Sun.PlantGeneratedSun(value, assetManager.getTexture("graphics/Screen/Sun.gif"), assetManager.getAnimation("Sun"), x, y, y - 30);
+        Sun sun = Sun.PlantGeneratedSun(value, AssetTexture.SUN_STILL.get(assetManager), AssetAnimation.SUN.get(assetManager), x, y, y - 30);
         suns.add(sun);
         uiStage.addActor(sun);
     }
@@ -439,12 +440,12 @@ public class GameScreen implements Screen, InputProcessor {
     private void spawnZombie() {
         int row = com.badlogic.gdx.math.MathUtils.random(0, 4);
         // 在屏幕右侧外生成
-        Texture zombieTexture = assetManager.getTexture("graphics/Zombies/Zombie/Zombie.gif");
-        AnimationClip zombieAnimation = assetManager.getAnimation("NormalZombie");
+        Texture zombieTexture = AssetTexture.NORMAL_ZOMBIE.get(assetManager);
+        AnimationClip zombieAnimation = AssetAnimation.NORMAL_ZOMBIE.get(assetManager);
         zombies.add(new NormalZombie(this, zombieTexture, zombieAnimation, cameraMaxX + 20f, gridCells[row][0].y));
         if (!firstZombieSpawned) {
             firstZombieSpawned = true;
-            assetManager.playSound("graphics/audio/awooga.ogg", 0.6f);
+            assetManager.playSound(AssetSound.FIRST_ZOMBIE, 0.6f);
         }
     }
 
@@ -488,7 +489,7 @@ public class GameScreen implements Screen, InputProcessor {
         gameManager.setGameState(GameManager.GameState.GAME_OVER);
         killer.moveToDoor(1.5f, startY + 1.5f * cellHeight); // 让这个僵尸走向大门
         bgMusic.stop();
-        bgMusic = assetManager.getMusic("graphics/audio/losemusic.ogg");
+        bgMusic = AssetMusic.LOSE_MUSIC.get(assetManager);
         bgMusic.setVolume(0.5f);
         bgMusic.play();
         Timer.schedule(new Timer.Task() {
@@ -501,14 +502,14 @@ public class GameScreen implements Screen, InputProcessor {
             @Override
             public void run() {
                 killer.stand();
-                killer.setAnimation(assetManager.getAnimation("NormalZombieAttack"));
-                assetManager.playSound("graphics/audio/chomp.ogg", 0.6f);
+                killer.setAnimation(AssetAnimation.NORMAL_ZOMBIE_ATTACK.get(assetManager));
+                assetManager.playSound(AssetSound.CHOMP, 0.6f);
             }
         }, 5f, .5f, 5);
         Timer.schedule(new Timer.Task() {
             @Override
             public void run() {
-                assetManager.playSound("graphics/audio/scream.ogg", 0.6f);
+                assetManager.playSound(AssetSound.DAVE_SCREAM, 0.6f);
                 gameManager.setGameState(GameManager.GameState.STOPPED);
             }
         }, 7.5f);
@@ -629,7 +630,7 @@ public class GameScreen implements Screen, InputProcessor {
             cooldownLabel.setColor(Color.RED);
             cooldownLabel.setFontScale(.6f);
             tooltipTable.add(cooldownLabel).row();
-        } else if (gameManager.getSun() < card.getCost()) {
+        } else if (!card.isSunEnough()) {
             Label noSunLabel = new Label("not enough sun", uiSkin);
             noSunLabel.setColor(Color.RED);
             noSunLabel.setFontScale(.6f);
@@ -656,7 +657,7 @@ public class GameScreen implements Screen, InputProcessor {
         for (Iterator<Sun> it = suns.iterator(); it.hasNext();) {
             Sun sun = it.next();
             if (sun.getBounds().contains(uiCoords.x, uiCoords.y)) {
-                assetManager.playSound("graphics/audio/points.ogg", 0.7f);
+                assetManager.playSound(AssetSound.COLLECT_SUN, 0.7f);
                 sun.collectTo((int) (startX - cellWidth + 15), (int) (startY + 5 * cellHeight + 15)); // 收集太阳
                 gameManager.addSun(sun.getValue());
                 it.remove();
@@ -670,15 +671,15 @@ public class GameScreen implements Screen, InputProcessor {
             if (selectedCard != null) { // 如果卡片已经被选中，则取消选中
                 selectedCard.deselect();
                 selectedCard = null;
-                assetManager.playSound("graphics/audio/tap2.ogg", 0.5f); // 播放取消选卡音效
+                assetManager.playSound(AssetSound.TAP_CANCEL, 0.5f); // 播放取消选卡音效
             } else {
-                if (gameManager.getSun() < card.getCost() || card.isOnCooldown()) {
-                    assetManager.playSound("graphics/audio/buzzer.ogg", 0.5f);
+                if (!card.isSunEnough() || card.isOnCooldown()) {
+                    assetManager.playSound(AssetSound.BUZZER, 0.5f);
                     return true; // 太阳不够，点击无效，事件结束
                 }
                 card.select();
                 selectedCard = card; // 选中新卡片
-                assetManager.playSound("graphics/audio/seedlift.ogg", 0.5f); // 播放选卡音效
+                assetManager.playSound(AssetSound.SEED_LIFT, 0.5f); // 播放选卡音效
             }
             return true; // 事件被UI处理，结束
         }
@@ -745,8 +746,8 @@ public class GameScreen implements Screen, InputProcessor {
             } else {
                 return;
             }
-            assetManager.playRandomSound(List.of("graphics/audio/plant1.ogg", "graphics/audio/plant2.ogg"), 0.3f);
-            ParticleEffect plantEffect = assetManager.getParticleEffect("Planting");
+            assetManager.playRandomSound(List.of(AssetSound.PLANT_1, AssetSound.PLANT_2), 0.3f);
+            ParticleEffect plantEffect = AssetParticle.PLANTING.get(assetManager);
             plantEffect.setPosition(cell.x + cell.width / 2f, cell.y + 5);
             plantEffect.scaleEffect(.4f);
             plantEffect.start();
@@ -844,14 +845,18 @@ public class GameScreen implements Screen, InputProcessor {
         }
     }
 
+    public boolean isSunAvailable(int cost) {
+        return gameManager.getSun() >= cost;
+    }
+
     // 让GameScreen能够获取AssetManager (被Peashooter调用)
     public AssetManager getAssetManager() {
         return assetManager.getAssetManager();
     }
 
     @Override public void show() {
-        bgMusic = assetManager.getMusic("graphics/audio/Grasswalk.ogg");
-//        bgMusic = assetManager.getMusic("graphics/audio/The-King-Paperman.mp3");
+        bgMusic = AssetMusic.GRASSWALK.get(assetManager);
+        // bgMusic = AssetMusic.THE_KING_PAPERMAN.get(assetManager);
         bgMusic.setLooping(true);
         bgMusic.setVolume(0.5f);
         bgMusic.play();

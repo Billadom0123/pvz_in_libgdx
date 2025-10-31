@@ -4,6 +4,8 @@ import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.example.plantsvszombies.Animation.AnimationClip;
+import com.example.plantsvszombies.Resource.AssetAnimation;
+import com.example.plantsvszombies.Resource.AssetTexture;
 import com.example.plantsvszombies.managers.AssetMan;
 import com.example.plantsvszombies.screens.GameScreen;
 
@@ -42,8 +44,8 @@ public class Sunflower extends BasePlant {
 
     public Sunflower(GameScreen screen, float x, float y) {
         this(screen,
-            AssetMan.getInstance().getTexture("graphics/Plants/SunFlower/Still.png"),
-            AssetMan.getInstance().getAnimation("SunFlower"),
+            AssetTexture.SUNFLOWER_STILL.get(AssetMan.getInstance()),
+            AssetAnimation.SUN_FLOWER.get(AssetMan.getInstance()),
             x, y);
     }
 
@@ -71,7 +73,7 @@ public class Sunflower extends BasePlant {
             // 这里可以添加具体的动画绘制代码
             float alpha = (float) (Math.sin((sunProduceTimer - (SUN_PRODUCE_INTERVAL - 2f)) / 4 * Math.PI));
             batch.setColor(1, 1, 1, alpha * .8f);
-            batch.draw(AssetMan.getInstance().getAnimation("SunFlowerBright").getFrame(stateTime), position.x, position.y);
+            batch.draw(AssetAnimation.SUN_FLOWER_BRIGHT.get(AssetMan.getInstance()).getFrame(stateTime), position.x, position.y);
             batch.setColor(1,1,1,1);
         }
     }
