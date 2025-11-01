@@ -21,6 +21,7 @@ public enum AssetSound {
     LAWNMOWER_START("graphics/audio/lawnmower.ogg"), // 小推车的音效
     PEA_SHOOT("graphics/audio/throw.ogg"), // 射豌豆的音效
     PEA_SPLAT("graphics/audio/splat2.ogg"), // 豌豆攻击普通僵尸的音效
+    PEA_SPLAT_CONEHEAD("graphics/audio/plastichit.ogg"), // 豌豆攻击路障僵尸的音效
     POTATO_MINE_RISE("graphics/audio/dirt_rise.ogg"), // 土豆地雷出土的音效
     POTATO_MINE_EXPLODE("graphics/audio/potato_mine.ogg"), // 土豆地雷爆炸的音效
     DAVE_SCREAM("graphics/audio/scream.ogg"), // 失败时戴夫的尖叫声

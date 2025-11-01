@@ -23,7 +23,6 @@ import com.badlogic.gdx.utils.Align;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.Timer;
 import com.badlogic.gdx.utils.viewport.FitViewport;
-import com.example.plantsvszombies.Animation.AnimationClip;
 import com.example.plantsvszombies.PvzGame;
 import com.example.plantsvszombies.Resource.*;
 import com.example.plantsvszombies.managers.AssetMan;
@@ -35,6 +34,7 @@ import com.example.plantsvszombies.models.Projectiles.BaseProjectile;
 import com.example.plantsvszombies.models.Sun;
 import com.example.plantsvszombies.models.Texture.Falling;
 import com.example.plantsvszombies.models.Zombies.BaseZombie;
+import com.example.plantsvszombies.models.Zombies.ConeHeadZombie;
 import com.example.plantsvszombies.models.Zombies.NormalZombie;
 import com.example.plantsvszombies.ui.PlantCard;
 
@@ -52,6 +52,7 @@ public class GameScreen implements Screen, InputProcessor {
     // --- 渲染相关 ---
     private final OrthographicCamera gameCamera; // 游戏世界的相机
     private final FitViewport gameViewport;     // 保持游戏世界比例的视口
+    private final ShapeRenderer shapeRenderer;
     public static final float WORLD_WIDTH = 1400;  // 游戏世界的宽度
     public static final float WORLD_HEIGHT = 600; // 游戏世界的高度
 
@@ -128,6 +129,7 @@ public class GameScreen implements Screen, InputProcessor {
         gameViewport = new FitViewport(800, 600, gameCamera);
         gameCamera.position.set(400, 300, 0); // 相机居中到可视范围
         gameCamera.update();
+        shapeRenderer = new ShapeRenderer();
 
         // 2. 初始化游戏对象列表
         plants = new Array<>();
@@ -158,7 +160,7 @@ public class GameScreen implements Screen, InputProcessor {
         gridCells = new Rectangle[5][9];
         initializeGrid();
         initializeLawnMowers();
-        for (LawnMower l: lawnMowers) l.activate();
+//        for (LawnMower l: lawnMowers) l.activate();
 
         // 5. 将本类设置为输入处理器，这样touchDown等方法才会被调用
         Gdx.input.setInputProcessor(this);
@@ -272,15 +274,15 @@ public class GameScreen implements Screen, InputProcessor {
         int screenY = Gdx.input.getY();
         Vector2 worldCoords = gameViewport.unproject(new Vector2(screenX, screenY));
 
-//        ShapeRenderer shapeRenderer = new ShapeRenderer();
-//        shapeRenderer.setProjectionMatrix(gameCamera.combined);
-//        shapeRenderer.begin(ShapeRenderer.ShapeType.Line);
-//        shapeRenderer.setColor(Color.RED);
-//        for (BaseZombie z: zombies) {
-//            Rectangle r = z.getCenterBounds();
-//            shapeRenderer.rect(r.x, r.y, r.width, r.height);
-//        }
-//        shapeRenderer.end();
+
+        shapeRenderer.setProjectionMatrix(gameCamera.combined);
+        shapeRenderer.begin(ShapeRenderer.ShapeType.Line);
+        shapeRenderer.setColor(Color.RED);
+        for (BaseZombie z: zombies) {
+            Rectangle r = z.getCenterBounds();
+            shapeRenderer.rect(r.x, r.y, r.width, r.height);
+        }
+        shapeRenderer.end();
 
         // 4. 渲染UI
         sunLabel.setText(String.valueOf(gameManager.getSun())); // 更新UI标签
@@ -305,7 +307,6 @@ public class GameScreen implements Screen, InputProcessor {
         for (ParticleEffect particleEffect : particles) particleEffect.draw(game.batch);
         game.batch.end();
 //
-//        ShapeRenderer shapeRenderer = new ShapeRenderer();
 //        shapeRenderer.setProjectionMatrix(gameCamera.combined);
 //        shapeRenderer.begin(ShapeRenderer.ShapeType.Line);
 //        shapeRenderer.setColor(1, 0, 0, 1); // 红色边框
@@ -324,7 +325,6 @@ public class GameScreen implements Screen, InputProcessor {
             endBlackOverlayAlpha += delta * 0.2f;
             if (endBlackOverlayAlpha > 1f) endBlackOverlayAlpha = 1f;
 
-            ShapeRenderer shapeRenderer = new ShapeRenderer();
             shapeRenderer.setProjectionMatrix(gameCamera.combined);
             shapeRenderer.begin(ShapeRenderer.ShapeType.Filled);
             shapeRenderer.setColor(0, 0, 0, endBlackOverlayAlpha); // 设置黑色和透明度
@@ -395,9 +395,9 @@ public class GameScreen implements Screen, InputProcessor {
         for (ParticleEffect particleEffect : particles) particleEffect.update(delta);
 
 
-        if (gameTime >= 41f) {
-            beginCrazyMode();
-        }
+//        if (gameTime >= 41f) {
+//            beginCrazyMode();
+//        }
 
         // 计时生成僵尸
         zombieSpawnTimer += delta;
@@ -440,11 +440,17 @@ public class GameScreen implements Screen, InputProcessor {
      * 在随机一行生成一个僵尸
      */
     private void spawnZombie() {
-        int row = com.badlogic.gdx.math.MathUtils.random(0, 4);
-        // 在屏幕右侧外生成
-        Texture zombieTexture = AssetTexture.NORMAL_ZOMBIE.get(assetManager);
-        AnimationClip zombieAnimation = AssetAnimation.NORMAL_ZOMBIE.get(assetManager);
-        zombies.add(new NormalZombie(this, zombieTexture, zombieAnimation, cameraMaxX + 20f, gridCells[row][0].y));
+        int row = MathUtils.random(0, 4);
+        if (gameTime >= 30f) {
+            float r = MathUtils.random();
+            if (r < 0.5f) {
+                zombies.add(new NormalZombie(this, cameraMaxX + 20f, gridCells[row][0].y));
+            } else {
+                zombies.add(new ConeHeadZombie(this, cameraMaxX + 20f, gridCells[row][0].y));
+            }
+        } else {
+            zombies.add(new NormalZombie(this, cameraMaxX + 20f, gridCells[row][0].y));
+        }
         if (!firstZombieSpawned) {
             firstZombieSpawned = true;
             assetManager.playSound(AssetSound.FIRST_ZOMBIE, 0.6f);
@@ -660,7 +666,7 @@ public class GameScreen implements Screen, InputProcessor {
             Sun sun = it.next();
             if (sun.getBounds().contains(uiCoords.x, uiCoords.y)) {
                 assetManager.playSound(AssetSound.COLLECT_SUN, 0.7f);
-                sun.collectTo((int) (startX - cellWidth + 15), (int) (startY + 5 * cellHeight + 15)); // 收集太阳
+                sun.collectTo((int) (cameraMinX + 15), (int) (startY + 5 * cellHeight + 15)); // 收集太阳
                 gameManager.addSun(sun.getValue());
                 it.remove();
                 return true; // 事件被UI处理，结束
@@ -859,8 +865,8 @@ public class GameScreen implements Screen, InputProcessor {
     }
 
     @Override public void show() {
-//        bgMusic = AssetMusic.GRASSWALK.get(assetManager);
-        bgMusic = AssetMusic.THE_KING_PAPERMAN.get(assetManager);
+        bgMusic = AssetMusic.GRASSWALK.get(assetManager);
+//        bgMusic = AssetMusic.THE_KING_PAPERMAN.get(assetManager);
         bgMusic.setLooping(true);
         bgMusic.setVolume(0.5f);
         bgMusic.play();

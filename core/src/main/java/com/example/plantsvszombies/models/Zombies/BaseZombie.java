@@ -23,12 +23,11 @@ import java.util.List;
 
 public abstract class BaseZombie {
     protected Vector2 position;
-    protected Texture texture;
     protected float speed; // 僵尸有自己的移动速度
     protected int health;
     protected Rectangle bounds;
     public boolean alive = true;
-    protected AnimationClip animation;
+
     protected float stateTime;
     protected boolean isHit = false;
     protected float hitStateTime = 0f;
@@ -65,6 +64,24 @@ public abstract class BaseZombie {
     protected Rectangle centerBounds;
     protected GameScreen screen;
 
+    // 材质动画相关
+    protected Texture texture;
+    protected AnimationClip animation;
+    protected AnimationClip normalAnimation;
+    protected AnimationClip dieAnimation;
+    protected AnimationClip explodeAnimation;
+    protected AnimationClip attackAnimation;
+    protected Texture headTexture;
+    protected AnimationClip lostHeadAnimation;
+    protected AnimationClip lostHeadAttackAnimation;
+
+    public BaseZombie(GameScreen screen, float x, float y) {
+        this.screen = screen;
+        this.position = new Vector2(x, y);
+        this.speed = MathUtils.random(15f, 17f); // 给每个僵尸一个随机的速度，让它们看起来更自然
+        this.health = 270;
+    }
+
     public BaseZombie(Texture texture, AnimationClip animation, float x, float y) {
         this(null, texture, animation, x, y);
     }
@@ -77,9 +94,19 @@ public abstract class BaseZombie {
         this.speed = MathUtils.random(15f, 17f); // 给每个僵尸一个随机的速度，让它们看起来更自然
         this.health = 270;
         this.bounds = new Rectangle(x, y, animation.getWidth(), animation.getHeight());
-        stateTime = 0f;
+        this.stateTime = 0f;
         this.centerBounds = new Rectangle(x + animation.getWidth() * 0.6f, y + animation.getHeight() * 0.2f,
             animation.getWidth() * 0.1f, animation.getHeight() * 0.3f);
+    }
+
+    public static BaseZombie create(Class<? extends BaseZombie> zombieClass, GameScreen screen, float x, float y) {
+        try {
+            return zombieClass.getConstructor(GameScreen.class, float.class, float.class)
+                .newInstance(screen, x, y);
+        } catch (Exception e) {
+            Gdx.app.error("BaseZombie", "Failed to create zombie instance", e);
+            return null;
+        }
     }
 
     /**
@@ -87,7 +114,6 @@ public abstract class BaseZombie {
      * @param delta 时间差
      */
     public void update(float delta) {
-        AssetMan assetMan = AssetMan.getInstance();
         if (isDying) {
             dieStateTime += delta;
             // 死亡动画播完，允许移除
@@ -112,7 +138,7 @@ public abstract class BaseZombie {
         }
         if (isAttacking && targetPlant != null) {
             // 如果正在攻击，就不移动，而是累加攻击计时器
-            animation = AssetAnimation.NORMAL_ZOMBIE_ATTACK.get(assetMan);
+            animation = attackAnimation;
             attackTimer += delta;
             eatSoundTimer += delta;
             if (attackTimer >= ATTACK_INTERVAL) {
@@ -129,7 +155,7 @@ public abstract class BaseZombie {
             }
         } else {
             // 如果没有在攻击，就从右向左移动
-            animation = AssetAnimation.NORMAL_ZOMBIE.get(assetMan);
+            animation = normalAnimation;
             position.x -= speed * delta;
             bounds.x -= speed * delta;
             centerBounds.x -= speed * delta;
@@ -157,8 +183,7 @@ public abstract class BaseZombie {
         if (health < CRITICAL_POINT && !inCriticalState) {
             inCriticalState = true;
             Falling falling = new Falling(
-                AssetTexture.NORMAL_ZOMBIE_HEAD.get(assetMan),
-                position.x + animation.getWidth() * .5f, position.y + animation.getHeight() * .5f,
+                headTexture, position.x + animation.getWidth() * .5f, position.y + animation.getHeight() * .5f,
                 new Vector2(MathUtils.random(-30f, 30f), MathUtils.random(100f, 200f)),
                 MathUtils.random(-90f, 90f), position.y);
             screen.addFalling(falling);
@@ -180,19 +205,18 @@ public abstract class BaseZombie {
     }
 
     public void drawAnimation(SpriteBatch batch) {
-        AssetMan assetMan = AssetMan.getInstance();
         if (isDying) {
             if (beExploded) {
-                animation = AssetAnimation.NORMAL_ZOMBIE_BOOM_DIE.get(assetMan);
+                animation = explodeAnimation;
             } else {
-                animation = AssetAnimation.NORMAL_ZOMBIE_DIE.get(assetMan);
+                animation = dieAnimation;
             }
             batch.draw(animation.getFrame(dieStateTime), position.x, position.y);
             return;
         }
         if (inCriticalState) {
-            if (isAttacking) { animation = AssetAnimation.NORMAL_ZOMBIE_LOST_HEAD_ATTACK.get(assetMan); }
-            else { animation = AssetAnimation.NORMAL_ZOMBIE_LOST_HEAD.get(assetMan); }
+            if (isAttacking) { animation = lostHeadAttackAnimation; }
+            else { animation = lostHeadAnimation; }
         }
         batch.draw(animation.getFrame(stateTime), position.x, position.y);
         if (isHit && showHitEffect) {
@@ -273,15 +297,6 @@ public abstract class BaseZombie {
 
     public float getY() {
         return position.y;
-    }
-
-    private void spawnFalling(Texture texture) {
-        float groundY = position.y;
-        Falling falling = new Falling(texture, position.x, position.y + 50,
-                new Vector2(MathUtils.random(-30f, 30f), MathUtils.random(100f, 200f)),
-                MathUtils.random(-90f, 90f), groundY);
-        // 将掉落物添加到游戏的掉落物管理器中
-        screen.addFalling(falling);
     }
 
     public void stand() {

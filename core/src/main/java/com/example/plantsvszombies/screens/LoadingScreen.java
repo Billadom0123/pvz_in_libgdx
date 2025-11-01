@@ -20,6 +20,7 @@ public class LoadingScreen implements Screen {
     private float elapsedTime = 0f;
     private boolean assetsLoaded = false;
     private final AssetMan assetMan;
+    private Music music;
 
     private static final float WORLD_WIDTH = 800f;
     private static final float WORLD_HEIGHT = 600f;
@@ -41,10 +42,10 @@ public class LoadingScreen implements Screen {
 
     @Override
     public void show() {
-        Music mainTheme = AssetMusic.MAINTHEME.loadAndGet(assetMan);
-        mainTheme.setLooping(true);
-        mainTheme.setVolume(0.5f);
-        mainTheme.play();
+        music = AssetMusic.MAINTHEME.loadAndGet(assetMan);
+        music.setLooping(true);
+        music.setVolume(0.5f);
+        music.play();
         assetMan.loadAssets();
         assetsLoaded = true;
     }
@@ -75,6 +76,10 @@ public class LoadingScreen implements Screen {
 
     @Override public void pause() {}
     @Override public void resume() {}
-    @Override public void hide() {}
-    @Override public void dispose() {}
+    @Override public void hide() {
+        music.stop();
+    }
+    @Override public void dispose() {
+        music.dispose();
+    }
 }

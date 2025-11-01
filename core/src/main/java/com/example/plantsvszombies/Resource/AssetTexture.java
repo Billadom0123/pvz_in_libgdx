@@ -46,6 +46,11 @@ public enum AssetTexture {
     NORMAL_ZOMBIE_LOST_HEAD("graphics/Zombies/Zombie/ZombieLostHead.png"),
     NORMAL_ZOMBIE_LOST_HEAD_ATTACK("graphics/Zombies/Zombie/ZombieLostHeadAttack.png"),
 
+    CONEHEAD_ZOMBIE_STILL("graphics/Zombies/ConeheadZombie/Still.png"),
+    CONEHEAD_ZOMBIE("graphics/Zombies/ConeheadZombie/ConeheadZombie.png"),
+    CONEHEAD_ZOMBIE_ATTACK("graphics/Zombies/ConeheadZombie/ConeheadZombieAttack.png"),
+    CONE("graphics/Zombies/ConeheadZombie/Zombie_cone2.png"),
+
 
     SEED_BANK("graphics/Screen/SeedBank.png"),
     SUN_STILL("graphics/Screen/SunStill.png"),

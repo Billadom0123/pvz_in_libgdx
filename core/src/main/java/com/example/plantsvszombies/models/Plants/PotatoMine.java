@@ -92,7 +92,7 @@ public class PotatoMine extends BasePlant {
             batch.draw(animation.getFrame(armingTimer), 0, 0);
             super.drawAnimation(batch);
         } else if (state == State.EXPLODED) {
-            super.drawAnimation(batch);
+            batch.draw(animation.getFrame(explodeTimer), position.x, position.y);
             batch.draw(explodeText,
                 position.x + (animation.getWidth() - explodeText.getWidth()) / 2 + (MathUtils.random() - 0.5f) * 4,
                 position.y + (animation.getHeight() - explodeText.getHeight()) / 2 + 35 + (MathUtils.random() - 0.5f) * 2);

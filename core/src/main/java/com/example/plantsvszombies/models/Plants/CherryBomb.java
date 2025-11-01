@@ -30,6 +30,7 @@ public class CherryBomb extends BasePlant {
         this.name = "CherryBomb";
         this.cost = 150;
         this.cooldown = 50f;
+        this.init_cd = 35f;
     }
 
     public CherryBomb(GameScreen screen, float x, float y) {
