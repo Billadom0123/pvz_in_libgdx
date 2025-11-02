@@ -5,6 +5,7 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
+import com.example.plantsvszombies.models.Zombies.BaseZombie;
 import com.example.plantsvszombies.screens.GameScreen;
 
 public class BaseProjectile {
@@ -44,5 +45,10 @@ public class BaseProjectile {
 
     public int getDamage() {
         return damage;
+    }
+
+    public void damage(BaseZombie zombie) {
+        zombie.takeDamage(damage);
+        active = false; // 命中后标记为待移除
     }
 }
