@@ -26,7 +26,9 @@ public enum AssetSound {
     POTATO_MINE_EXPLODE("graphics/audio/potato_mine.ogg"), // 土豆地雷爆炸的音效
     DAVE_SCREAM("graphics/audio/scream.ogg"), // 失败时戴夫的尖叫声
     CHERRY_BOMB_READY("graphics/audio/reverse_explosion.ogg"), // 樱桃炸弹准备爆炸的音效
-    CHERRY_BOMB_EXPLODE("graphics/audio/cherrybomb.ogg"); // 樱桃炸弹爆炸的音效
+    CHERRY_BOMB_EXPLODE("graphics/audio/cherrybomb.ogg"), // 樱桃炸弹爆炸的音效
+    DIAMOND("graphics/audio/chime.ogg"), // 钻石收集音效
+    SHOVEL_SELECT("graphics/audio/shovel.ogg"); // 铲子选择音效
 
     private final String filePath;
     private boolean loaded;

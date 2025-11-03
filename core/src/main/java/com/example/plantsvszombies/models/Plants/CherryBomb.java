@@ -85,8 +85,6 @@ public class CherryBomb extends BasePlant {
         position = new Vector2(position.x - (explosion.getWidth() - bounds.width) / 2,
             position.y - (explosion.getHeight() - bounds.height) / 2);
         animation = explosion;
-
-
+        bounds = new Rectangle(-100, -100, 0, 0); // 移出碰撞框，避免继续与僵尸碰撞
     }
-
 }

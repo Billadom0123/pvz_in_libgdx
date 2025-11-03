@@ -161,4 +161,6 @@ public class Sun extends Actor {
     }
 
     public int getValue() { return value; }
+
+    public SunState getState() { return state; }
 }

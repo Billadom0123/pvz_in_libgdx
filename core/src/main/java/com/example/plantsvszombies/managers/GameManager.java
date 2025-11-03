@@ -13,13 +13,14 @@ public class GameManager {
         STOPPED // 停止
     }
 
-    private boolean cardCooldown = false;
+    private boolean autoCollect = true;
+    private boolean cardCooldown = true;
     private int sun; // 当前太阳数量
     private GameState gameState;
 
     // 私有构造函数，防止外部直接创建实例
     private GameManager() {
-        sun = 1000; // 游戏开始时给予100个太阳
+        sun = 100; // 游戏开始时给予100个太阳
         gameState = GameState.PLAYING;
     }
 
@@ -44,6 +45,10 @@ public class GameManager {
     public void setCardCooldown(boolean cardCooldown) {
         this.cardCooldown = cardCooldown;
     }
+
+    public boolean isAutoCollect() { return autoCollect; }
+
+    public void setAutoCollect(boolean autoCollect) { this.autoCollect = autoCollect; }
 
     public int getSun() {
         return sun;

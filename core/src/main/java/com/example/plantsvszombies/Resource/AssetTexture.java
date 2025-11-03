@@ -59,7 +59,9 @@ public enum AssetTexture {
     ZOMBIES_ATE_YOUR_BRAINS("graphics/Screen/ZombiesAteYourBrains.png"),
     SEED_PACKET_LARGER("graphics/Screen/SeedPacket_Larger.png"),
     SEED_PACKET_6F("graphics/Screen/SeedPacket_6f.png"),
-    SEED_PACKET_5F("graphics/Screen/SeedPacket_5f.png");
+    SEED_PACKET_5F("graphics/Screen/SeedPacket_5f.png"),
+    SHOVEL_BANK("graphics/Screen/ShovelBank.png"),
+    SHOVEL("graphics/Screen/Shovel.png");
 
     private final String filePath;
     private boolean loaded;

@@ -7,7 +7,7 @@ com.example.plantsvszombies.Animation.AnimationClip:
     48:48:public int getFrames()
 com.example.plantsvszombies.Resource.AssetAnimation:
     6:6:public static com.example.plantsvszombies.Resource.AssetAnimation valueOf(java.lang.String)
-    66:68:public com.example.plantsvszombies.Animation.AnimationClip loadAndGet(com.example.plantsvszombies.managers.AssetMan)
+    69:71:public com.example.plantsvszombies.Animation.AnimationClip loadAndGet(com.example.plantsvszombies.managers.AssetMan)
 com.example.plantsvszombies.Resource.AssetMusic:
     6:6:public static com.example.plantsvszombies.Resource.AssetMusic valueOf(java.lang.String)
 com.example.plantsvszombies.Resource.AssetParticle:
@@ -15,10 +15,10 @@ com.example.plantsvszombies.Resource.AssetParticle:
     42:44:public com.badlogic.gdx.graphics.g2d.ParticleEffect loadAndGet(com.example.plantsvszombies.managers.AssetMan)
 com.example.plantsvszombies.Resource.AssetSound:
     6:6:public static com.example.plantsvszombies.Resource.AssetSound valueOf(java.lang.String)
-    56:58:public com.badlogic.gdx.audio.Sound loadAndGet(com.example.plantsvszombies.managers.AssetMan)
+    58:60:public com.badlogic.gdx.audio.Sound loadAndGet(com.example.plantsvszombies.managers.AssetMan)
 com.example.plantsvszombies.Resource.AssetTexture:
     6:6:public static com.example.plantsvszombies.Resource.AssetTexture valueOf(java.lang.String)
-    89:91:public com.badlogic.gdx.graphics.Texture loadAndGet(com.example.plantsvszombies.managers.AssetMan)
+    94:96:public com.badlogic.gdx.graphics.Texture loadAndGet(com.example.plantsvszombies.managers.AssetMan)
 com.example.plantsvszombies.managers.AssetMan:
     101:102:public void playRandomSound(java.util.List)
     107:110:public void unloadAsset(java.lang.String)
@@ -76,24 +76,28 @@ com.example.plantsvszombies.models.Zombies.BaseZombie:
     private static final float HIT_EFFECT_DURATION
     private static final float HIT_EFFECT_INTERVAL
     private static final float EAT_SOUND_INTERVAL
-    69:70:public BaseZombie(com.badlogic.gdx.graphics.Texture,com.example.plantsvszombies.Animation.AnimationClip,float,float)
-    179:180:public void draw(com.badlogic.gdx.graphics.g2d.SpriteBatch)
-    263:263:public com.badlogic.gdx.math.Rectangle getBounds()
-    271:271:public float getX()
-    279:285:private void spawnFalling(com.badlogic.gdx.graphics.Texture)
+    86:87:public BaseZombie(com.badlogic.gdx.graphics.Texture,com.example.plantsvszombies.Animation.AnimationClip,float,float)
+    29:100:public BaseZombie(com.example.plantsvszombies.screens.GameScreen,com.badlogic.gdx.graphics.Texture,com.example.plantsvszombies.Animation.AnimationClip,float,float)
+    104:108:public static com.example.plantsvszombies.models.Zombies.BaseZombie create(java.lang.Class,com.example.plantsvszombies.screens.GameScreen,float,float)
+    204:205:public void draw(com.badlogic.gdx.graphics.g2d.SpriteBatch)
+    287:287:public com.badlogic.gdx.math.Rectangle getBounds()
+    295:295:public float getX()
+com.example.plantsvszombies.models.Zombies.ConeHeadZombie:
+    private static final int CONE_HEAD_HEALTH
+    19:23:public ConeHeadZombie(com.badlogic.gdx.graphics.Texture,com.example.plantsvszombies.Animation.AnimationClip,float,float)
 com.example.plantsvszombies.models.Zombies.NormalZombie:
-    10:11:public NormalZombie(com.badlogic.gdx.graphics.Texture,com.example.plantsvszombies.Animation.AnimationClip,float,float)
+    14:15:public NormalZombie(com.badlogic.gdx.graphics.Texture,com.example.plantsvszombies.Animation.AnimationClip,float,float)
 com.example.plantsvszombies.screens.GameScreen:
     public static final float WORLD_WIDTH
     public static final float WORLD_HEIGHT
-    858:858:public com.badlogic.gdx.assets.AssetManager getAssetManager()
+    887:887:public com.badlogic.gdx.assets.AssetManager getAssetManager()
 com.example.plantsvszombies.screens.HomeScreen
 com.example.plantsvszombies.screens.LoadingScreen:
     private static final float WORLD_WIDTH
     private static final float WORLD_HEIGHT
 com.example.plantsvszombies.ui.PlantCard:
-    93:93:public boolean isSelected()
-    97:97:public boolean isSelectable()
+    95:95:public boolean isSelected()
+    99:99:public boolean isSelectable()
 com.example.plantsvszombies.ui.TextureActor:
     36:39:public void setTexture(com.badlogic.gdx.graphics.Texture)
 com.jcraft.jogg.Buffer:

@@ -1,19 +1,17 @@
 package com.example.plantsvszombies.ui;
 
 
-import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
-import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.ParticleEffect;
-import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.scenes.scene2d.Group;
 import com.badlogic.gdx.scenes.scene2d.Touchable;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.utils.Align;
+import com.badlogic.gdx.scenes.scene2d.utils.Drawable;
 import com.example.plantsvszombies.Resource.AssetParticle;
 import com.example.plantsvszombies.Resource.AssetTexture;
 import com.example.plantsvszombies.managers.AssetMan;
@@ -39,6 +37,8 @@ public class PlantCard extends Group {
     private boolean isSelected = false; // 是否被选中
     private boolean isSelectable = false; // 是否可以被选中
 
+    // 使用 Skin 的 white 区域创建可复用的黑色半透明遮罩
+    private final Drawable overlay; // alpha 0.5
 
 
     public PlantCard(GameScreen screen, Skin skin, BasePlant plant) {
@@ -54,6 +54,8 @@ public class PlantCard extends Group {
         this.plantClass = plant.getClass();
         this.costLabel = new Label(String.valueOf(cost), skin);
 
+        // 复用 skin 的 white 作为遮罩底图，并一次性创建带不同透明度的变体
+        this.overlay = skin.newDrawable("white", new Color(0f, 0f, 0f, 0.6f));
 
         addActor(this.cardTexture);
         addActor(this.plantTexture);
@@ -106,40 +108,29 @@ public class PlantCard extends Group {
     }
 
     /**
-     * 重写draw方法，定义自己的绘制逻辑
+     * 重写draw方法，定义自己的绘制逻辑（仅使用 Batch，不打断批处理，不创建临时渲染器）
      */
     @Override
     public void draw(Batch batch, float parentAlpha) {
         super.draw(batch, parentAlpha);
-        // 继承父Actor的颜色和透明度
-
-        batch.end();
-
-        Gdx.gl.glEnable(GL20.GL_BLEND);
-        Gdx.gl.glBlendFunc(GL20.GL_SRC_ALPHA, GL20.GL_ONE_MINUS_SRC_ALPHA);
-
-        ShapeRenderer shapeRenderer = new ShapeRenderer();
-        shapeRenderer.setProjectionMatrix(batch.getProjectionMatrix());
-        shapeRenderer.begin(ShapeRenderer.ShapeType.Filled);
-
+        // 使用 Drawable 绘制半透明遮罩，避免每帧 new ShapeRenderer 和 batch 切换
 
         // 如果冷却还未好，则在卡片上覆盖一层半透明黑色，使其“变灰”
         if (isOnCooldown()) {
             float cooldownRatio = cooldownTimer / cooldown;
             float overlayHeight = getHeight() * (1 - cooldownRatio);
             if (!isSunEnough()) {
-                // 如果同时缺Sun，则先绘制使其变得更灰
-                shapeRenderer.setColor(0, 0, 0, 0.7f);
-            } else {
-                shapeRenderer.setColor(0, 0, 0, 0.5f);
+                // 同时缺阳光，再加一层遮罩加深颜色
+                overlay.draw(batch, getX(), getY(), getWidth(), getHeight());
             }
-            shapeRenderer.rect(getX(), getY() + getHeight() - overlayHeight, getWidth(), overlayHeight);
+            overlay.draw(batch, getX(), getY() + getHeight() - overlayHeight, getWidth(), overlayHeight);
             isSelectable = false;
         } else if (!isSunEnough()) {
-            shapeRenderer.setColor(0, 0, 0, 0.5f);
-            shapeRenderer.rect(getX(), getY(), getWidth(), getHeight());
+            // 冷却好但太阳不足：整张卡加一层遮罩
+            overlay.draw(batch, getX(), getY(), getWidth(), getHeight());
             isSelectable = false;
         } else {
+            // 可选状态切换为 true 时触发一次闪光粒子
             if (!isSelectable) {
                 ParticleEffect particleEffect = AssetParticle.SEED_PACKET_FLASH.get(assetMan);
                 particleEffect.setPosition(getX() + getWidth() / 2f, getY() + getHeight() / 2f);
@@ -149,11 +140,8 @@ public class PlantCard extends Group {
             }
         }
         if (isSelected) {
-            shapeRenderer.setColor(0, 0, 0, 0.5f);
-            shapeRenderer.rect(getX(), getY(), getWidth(), getHeight());
+            overlay.draw(batch, getX(), getY(), getWidth(), getHeight());
         }
-        shapeRenderer.end();
-        batch.begin();
     }
 
     public boolean isOnCooldown() {

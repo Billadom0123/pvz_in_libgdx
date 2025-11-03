@@ -25,6 +25,7 @@ public abstract class BasePlant {
     protected AnimationClip animation;
     protected float stateTime;
     protected GameScreen screen;
+    protected boolean isHighlighted = false; // 是否高亮显示（选中状态）
 
     protected boolean isHit = false;
     protected float hitStateTime = 0f;
@@ -96,10 +97,13 @@ public abstract class BasePlant {
 
     public void drawAnimation(SpriteBatch batch) {
         batch.draw(animation.getFrame(stateTime), position.x, position.y);
-        if (isHit && showHitEffect) {
+        if ((isHit && showHitEffect) || isHighlighted) {
             // 根据受击时间做一个从强到弱的衰减（0..1）
             float percent = hitStateTime / HIT_EFFECT_DURATION;
             float intensity = Math.min((float) (4*(percent - Math.pow(percent, 2))), 1f);
+            if (isHighlighted) {
+                intensity = .5f;
+            }
             if (intensity > 0f) {
                 // 设置为白色并开启加法混合（GL_SRC_ALPHA, GL_ONE）
                 batch.setColor(1f, 1f, 1f, intensity);
@@ -154,5 +158,13 @@ public abstract class BasePlant {
 
     public Texture getTexture() {
         return texture;
+    }
+
+    public void setHighlighted(boolean highlighted) {
+        isHighlighted = highlighted;
+    }
+
+    public void isHighlighted(boolean highlighted) {
+        isHighlighted = highlighted;
     }
 }
