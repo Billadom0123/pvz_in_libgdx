@@ -6,7 +6,6 @@ import com.badlogic.gdx.Input;
 import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.assets.AssetManager;
-import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.graphics.*;
 import com.badlogic.gdx.graphics.g2d.ParticleEffect;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
@@ -35,9 +34,7 @@ import com.example.plantsvszombies.models.Plants.*;
 import com.example.plantsvszombies.models.Projectiles.BaseProjectile;
 import com.example.plantsvszombies.models.Sun;
 import com.example.plantsvszombies.models.Texture.Falling;
-import com.example.plantsvszombies.models.Zombies.BaseZombie;
-import com.example.plantsvszombies.models.Zombies.ConeHeadZombie;
-import com.example.plantsvszombies.models.Zombies.NormalZombie;
+import com.example.plantsvszombies.models.Zombies.*;
 import com.example.plantsvszombies.ui.PlantCard;
 import com.example.plantsvszombies.ui.Shovel;
 
@@ -59,9 +56,6 @@ public class GameScreen implements Screen, InputProcessor {
     public static final float WORLD_WIDTH = 1400;  // 游戏世界的宽度
     public static final float WORLD_HEIGHT = 600; // 游戏世界的高度
 
-    // --- 背景音乐 ---
-    private Music bgMusic;
-
     // 相机相关（坐标缓存为字段，避免在 resize 时丢失）
     private final float cameraMinX;
     private final float cameraMaxX;
@@ -73,7 +67,7 @@ public class GameScreen implements Screen, InputProcessor {
     private float cameraShakeMagnitude = 0f;
     private final Vector2 cameraShakeOrigin = new Vector2();
 
-    private final float cellWidth = 81;   // 这些数值需要根据你的背景图精确测量
+    private final float cellWidth = 81;   // 这些数值由背景图测量得到
     private final float cellHeight = 98;
     private final float startX = 255;
     private final float startY = 35;
@@ -166,7 +160,7 @@ public class GameScreen implements Screen, InputProcessor {
         gridCells = new Rectangle[5][9];
         initializeGrid();
         initializeLawnMowers();
-        for (LawnMower l: lawnMowers) l.activate();
+//        for (LawnMower l: lawnMowers) l.activate();
 
         // 5. 将本类设置为输入处理器，这样touchDown等方法才会被调用
         Gdx.input.setInputProcessor(this);
@@ -298,6 +292,10 @@ public class GameScreen implements Screen, InputProcessor {
 //            Rectangle r = z.getCenterBounds();
 //            shapeRenderer.rect(r.x, r.y, r.width, r.height);
 //        }
+//        for (BasePlant p: plants) {
+//            Rectangle r = p.getBounds();
+//            shapeRenderer.rect(r.x, r.y, r.width, r.height);
+//        }
 //        shapeRenderer.end();
 
         // 4. 渲染UI
@@ -326,7 +324,7 @@ public class GameScreen implements Screen, InputProcessor {
 
         for (ParticleEffect particleEffect : particles) particleEffect.draw(game.batch);
         game.batch.end();
-//
+
 //        shapeRenderer.setProjectionMatrix(gameCamera.combined);
 //        shapeRenderer.begin(ShapeRenderer.ShapeType.Line);
 //        shapeRenderer.setColor(1, 0, 0, 1); // 红色边框
@@ -350,7 +348,6 @@ public class GameScreen implements Screen, InputProcessor {
             shapeRenderer.setColor(0, 0, 0, endBlackOverlayAlpha); // 设置黑色和透明度
             shapeRenderer.rect(0, 0, WORLD_WIDTH, WORLD_HEIGHT); // 绘制全屏矩形
             shapeRenderer.end();
-            shapeRenderer.dispose();
 
             game.batch.begin();
             Texture gameOverTexture = AssetTexture.ZOMBIES_ATE_YOUR_BRAINS.get(assetManager);
@@ -469,7 +466,17 @@ public class GameScreen implements Screen, InputProcessor {
      */
     private void spawnZombie() {
         int row = MathUtils.random(0, 4);
-        if (gameTime >= 30f) {
+        if (gameTime >= 60f) {
+            float r = MathUtils.random();
+            if (r < 0.5f) {
+                zombies.add(new NormalZombie(this, cameraMaxX + 20f, gridCells[row][0].y));
+            } else if (r < 0.8f) {
+                zombies.add(new ConeHeadZombie(this, cameraMaxX + 20f, gridCells[row][0].y));
+            } else {
+                zombies.add(new BucketHeadZombie(this, cameraMaxX + 20f, gridCells[row][0].y));
+            }
+            return;
+        } else if (gameTime >= 30f) {
             float r = MathUtils.random();
             if (r < 0.5f) {
                 zombies.add(new NormalZombie(this, cameraMaxX + 20f, gridCells[row][0].y));
@@ -524,10 +531,10 @@ public class GameScreen implements Screen, InputProcessor {
     private void startGameOver(BaseZombie killer) {
         gameManager.setGameState(GameManager.GameState.GAME_OVER);
         killer.moveToDoor(1.5f, startY + 1.5f * cellHeight); // 让这个僵尸走向大门
-        bgMusic.stop();
-        bgMusic = AssetMusic.LOSE_MUSIC.get(assetManager);
-        bgMusic.setVolume(0.5f);
-        bgMusic.play();
+        game.bgMusic.stop();
+        game.bgMusic = AssetMusic.LOSE_MUSIC.get(assetManager);
+        game.bgMusic.setVolume(0.5f);
+        game.bgMusic.play();
         Timer.schedule(new Timer.Task() {
             @Override
             public void run() {
@@ -754,13 +761,13 @@ public class GameScreen implements Screen, InputProcessor {
     private void tryLiftSeedCard(PlantCard card) {
         if (shovel.isSelected()) {
             shovel.deselect();
-            assetManager.playSound(AssetSound.TAP_CANCEL, .5f);
+            assetManager.playSound(AssetSound.TAP2, .5f);
             return; // 铲子处于选中状态，取消铲子选择
         }
         if (selectedCard != null) {
             selectedCard.deselect();
             selectedCard = null;
-            assetManager.playSound(AssetSound.TAP_CANCEL, .5f);
+            assetManager.playSound(AssetSound.TAP2, .5f);
             return; // 已有选中卡片，取消选择
         }
         if (!card.isSunEnough() || card.isOnCooldown()) {
@@ -776,7 +783,7 @@ public class GameScreen implements Screen, InputProcessor {
         if (selectedCard != null) {
             selectedCard.deselect();
             selectedCard = null;
-            assetManager.playSound(AssetSound.TAP_CANCEL, .5f);
+            assetManager.playSound(AssetSound.TAP2, .5f);
         } else if (shovel.isSelected()) {
             shovel.deselect();
         } else {
@@ -956,21 +963,24 @@ public class GameScreen implements Screen, InputProcessor {
         return assetManager.getAssetManager();
     }
 
-    @Override public void show() {
-        bgMusic = AssetMusic.GRASSWALK.get(assetManager);
-//        bgMusic = AssetMusic.THE_KING_PAPERMAN.get(assetManager);
-        bgMusic.setLooping(true);
-        bgMusic.setVolume(0.5f);
-        bgMusic.play();
+    @Override
+    public void show() {
+        game.bgMusic = AssetMusic.GRASSWALK.get(assetManager);
+//        game.bgMusic = AssetMusic.THE_KING_PAPERMAN.get(assetManager);
+        game.bgMusic.setLooping(true);
+        game.bgMusic.setVolume(0.5f);
+        game.bgMusic.play();
     }
 
-    @Override public void dispose() {
+    @Override
+    public void dispose() {
         uiStage.dispose();
         shapeRenderer.dispose();
-        bgMusic.stop();
+        game.bgMusic.stop();
     }
 
-    @Override public boolean keyDown(int keycode) {
+    @Override
+    public boolean keyDown(int keycode) {
         if (keycode == Input.Keys.NUM_1) {
             tryLiftSeedCard(plantCards.get(0));
             return true;
@@ -1030,6 +1040,8 @@ public class GameScreen implements Screen, InputProcessor {
         } else if (keycode == Input.Keys.GRAVE) {
             tryLiftShovel();
             return true;
+//        } else if (keycode == Input.Keys.B) {
+//            zombies.add(new BucketHeadZombie(this, cameraMaxX + 20f, gridCells[2][0].y));
         }
         return false;
     }

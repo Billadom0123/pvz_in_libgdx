@@ -6,6 +6,16 @@ import com.example.plantsvszombies.managers.AssetMan;
 public enum AssetTexture {
     // 加载页相关
     TITLE_SCREEN("graphics/Screen/titlescreen.jpg"),
+    MAIN_SCREEN("graphics/Screen/MainMenu.png"),
+    ADVENTURE_BUTTON("graphics/Screen/SelectorScreen_Adventure_button.png"),
+    START_ADVENTURE_BUTTON("graphics/Screen/SelectorScreen_StartAdventure_Button1.png"),
+    START_ADVENTURE_HIGHLIGHT("graphics/Screen/SelectorScreen_StartAdventure_Highlight.png"),
+    MINI_GAME_BUTTON("graphics/Screen/SelectorScreen_Survival_button.png"), // 这，这对吗……
+    MINI_GAME_HIGHLIGHT("graphics/Screen/SelectorScreen_Survival_highlight.png"),
+    PUZZLE_BUTTON("graphics/Screen/SelectorScreen_Challenges_button.png"), // 一觉醒来，剩下三个按钮全部崩坏，唯独冒险不变……
+    PUZZLE_HIGHLIGHT("graphics/Screen/SelectorScreen_Challenges_highlight.png"),
+    CHALLENGE_BUTTON("graphics/Screen/SelectorScreen_Vasebreaker_button.png"),
+    CHALLENGE_HIGHLIGHT("graphics/Screen/SelectorScreen_vasebreaker_highlight.png"),
 
 
 
@@ -50,6 +60,11 @@ public enum AssetTexture {
     CONEHEAD_ZOMBIE("graphics/Zombies/ConeheadZombie/ConeheadZombie.png"),
     CONEHEAD_ZOMBIE_ATTACK("graphics/Zombies/ConeheadZombie/ConeheadZombieAttack.png"),
     CONE("graphics/Zombies/ConeheadZombie/Zombie_cone2.png"),
+
+    BUCKETHEAD_ZOMBIE_STILL("graphics/Zombies/BucketheadZombie/Still.png"),
+    BUCKETHEAD_ZOMBIE("graphics/Zombies/BucketheadZombie/BucketheadZombie.png"),
+    BUCKETHEAD_ZOMBIE_ATTACK("graphics/Zombies/BucketheadZombie/BucketheadZombieAttack.png"),
+    BUCKET("graphics/Zombies/BucketheadZombie/Zombie_bucket3.png"),
 
 
     SEED_BANK("graphics/Screen/SeedBank.png"),

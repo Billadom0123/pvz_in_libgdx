@@ -26,7 +26,6 @@ public abstract class BaseZombie {
     protected float speed; // 僵尸有自己的移动速度
     protected int health;
     protected Rectangle bounds;
-    public boolean alive = true;
 
     protected float stateTime;
     protected boolean isHit = false;

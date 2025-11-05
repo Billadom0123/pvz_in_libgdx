@@ -2,7 +2,6 @@ package com.example.plantsvszombies.ui;
 
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Batch;
-import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.Group;
 import com.badlogic.gdx.scenes.scene2d.Touchable;
 import com.example.plantsvszombies.Resource.AssetSound;
@@ -38,7 +37,7 @@ public class Shovel extends Group {
     }
 
     public void deselect() {
-        assetMan.playSound(AssetSound.TAP_CANCEL, .5f);
+        assetMan.playSound(AssetSound.TAP2, .5f);
         shovelTexture.setVisible(true);
         isSelected = false;
     }

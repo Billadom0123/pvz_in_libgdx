@@ -70,4 +70,6 @@ public class ConeHeadZombie extends NormalZombie {
     public void update(float delta) {
         super.update(delta);
     }
+
+    public boolean isConeGone() { return coneHeadHealth <= 0; }
 }

@@ -9,7 +9,7 @@ import com.example.plantsvszombies.Animation.AnimationClip;
 import com.example.plantsvszombies.models.Zombies.BaseZombie;
 import com.example.plantsvszombies.screens.GameScreen;
 
-public class BaseProjectile {
+public abstract class BaseProjectile {
     private Vector2 position;
     private Texture texture;
     private float speed;

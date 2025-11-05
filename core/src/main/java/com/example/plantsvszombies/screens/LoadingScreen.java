@@ -7,7 +7,6 @@ import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.utils.viewport.FitViewport;
-import com.badlogic.gdx.utils.viewport.Viewport;
 import com.example.plantsvszombies.PvzGame;
 import com.example.plantsvszombies.Resource.AssetMusic;
 import com.example.plantsvszombies.Resource.AssetTexture;
@@ -20,7 +19,6 @@ public class LoadingScreen implements Screen {
     private float elapsedTime = 0f;
     private boolean assetsLoaded = false;
     private final AssetMan assetMan;
-    private Music music;
 
     private static final float WORLD_WIDTH = 800f;
     private static final float WORLD_HEIGHT = 600f;
@@ -42,10 +40,10 @@ public class LoadingScreen implements Screen {
 
     @Override
     public void show() {
-        music = AssetMusic.MAINTHEME.loadAndGet(assetMan);
-        music.setLooping(true);
-        music.setVolume(0.5f);
-        music.play();
+        game.bgMusic = AssetMusic.MAINTHEME.loadAndGet(assetMan);
+        game.bgMusic.setLooping(true);
+        game.bgMusic.setVolume(0.5f);
+        game.bgMusic.play();
         assetMan.loadAssets();
         assetsLoaded = true;
     }
@@ -60,7 +58,9 @@ public class LoadingScreen implements Screen {
         camera.update();
 
         if (assetsLoaded && assetMan.getAssetManager().update() && elapsedTime >= MIN_DISPLAY_TIME) {
-            game.setScreen(new GameScreen(game));
+//            game.setScreen(new GameScreen(game));
+            game.setScreen(new HomeScreen(game));
+            return;
         }
 
         game.batch.setProjectionMatrix(camera.combined);
@@ -76,10 +76,6 @@ public class LoadingScreen implements Screen {
 
     @Override public void pause() {}
     @Override public void resume() {}
-    @Override public void hide() {
-        music.stop();
-    }
-    @Override public void dispose() {
-        music.dispose();
-    }
+    @Override public void hide() {}
+    @Override public void dispose() {}
 }

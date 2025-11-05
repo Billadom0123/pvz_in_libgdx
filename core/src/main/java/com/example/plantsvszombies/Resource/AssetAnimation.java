@@ -33,6 +33,9 @@ public enum AssetAnimation {
     CONEHEAD_ZOMBIE(AssetTexture.CONEHEAD_ZOMBIE, 21, 3690),
     CONEHEAD_ZOMBIE_ATTACK(AssetTexture.CONEHEAD_ZOMBIE_ATTACK, 11, 990),
 
+    BUCKETHEAD_ZOMBIE(AssetTexture.BUCKETHEAD_ZOMBIE, 15, 2700),
+    BUCKETHEAD_ZOMBIE_ATTACK(AssetTexture.BUCKETHEAD_ZOMBIE_ATTACK, 11, 990),
+
     SUN(AssetTexture.SUN, 29, 2900);
 
     private final AssetTexture source;

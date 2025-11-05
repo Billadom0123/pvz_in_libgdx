@@ -5,8 +5,11 @@ import com.example.plantsvszombies.Resource.AssetAnimation;
 import com.example.plantsvszombies.Resource.AssetSound;
 import com.example.plantsvszombies.managers.AssetMan;
 import com.example.plantsvszombies.models.Zombies.BaseZombie;
+import com.example.plantsvszombies.models.Zombies.BucketHeadZombie;
 import com.example.plantsvszombies.models.Zombies.ConeHeadZombie;
 import com.example.plantsvszombies.models.Zombies.NormalZombie;
+
+import java.util.List;
 
 public class Pea extends BaseProjectile {
     public Pea(Texture texture, float x, float y) {
@@ -16,11 +19,24 @@ public class Pea extends BaseProjectile {
 
     @Override
     public void damage(BaseZombie zombie) {
-        if (!hit && zombie instanceof ConeHeadZombie) {
-            AssetMan.getInstance().playSound(AssetSound.PEA_SPLAT_CONEHEAD, .5f);
-            AssetMan.getInstance().playSound(AssetSound.PEA_SPLAT, 0.5f);
-        } else if (!hit && zombie instanceof NormalZombie) {
-            AssetMan.getInstance().playSound(AssetSound.PEA_SPLAT, 0.5f);
+        if (hit) {
+            return;
+        }
+        AssetMan assetMan = AssetMan.getInstance();
+        if (zombie instanceof ConeHeadZombie) {
+            if (!((ConeHeadZombie)zombie).isConeGone()) {
+                assetMan.playSound(AssetSound.PEA_SPLAT_CONEHEAD, .5f);
+            } else {
+                assetMan.playSound(AssetSound.PEA_SPLAT, .5f);
+            }
+        } else if (zombie instanceof BucketHeadZombie) {
+            if (!((BucketHeadZombie)zombie).isBucketGone()) {
+                assetMan.playRandomSound(List.of(AssetSound.PEA_SPLAT_BUCKETHEAD_1, AssetSound.PEA_SPLAT_BUCKETHEAD_2), .5f);
+            } else {
+                assetMan.playSound(AssetSound.PEA_SPLAT, .5f);
+            }
+        } else if (zombie instanceof NormalZombie) {
+            assetMan.playSound(AssetSound.PEA_SPLAT, .5f);
         }
         super.damage(zombie);
     }

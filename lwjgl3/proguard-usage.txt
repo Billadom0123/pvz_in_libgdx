@@ -15,10 +15,10 @@ com.example.plantsvszombies.Resource.AssetParticle:
     42:44:public com.badlogic.gdx.graphics.g2d.ParticleEffect loadAndGet(com.example.plantsvszombies.managers.AssetMan)
 com.example.plantsvszombies.Resource.AssetSound:
     6:6:public static com.example.plantsvszombies.Resource.AssetSound valueOf(java.lang.String)
-    58:60:public com.badlogic.gdx.audio.Sound loadAndGet(com.example.plantsvszombies.managers.AssetMan)
+    59:61:public com.badlogic.gdx.audio.Sound loadAndGet(com.example.plantsvszombies.managers.AssetMan)
 com.example.plantsvszombies.Resource.AssetTexture:
     6:6:public static com.example.plantsvszombies.Resource.AssetTexture valueOf(java.lang.String)
-    94:96:public com.badlogic.gdx.graphics.Texture loadAndGet(com.example.plantsvszombies.managers.AssetMan)
+    96:98:public com.badlogic.gdx.graphics.Texture loadAndGet(com.example.plantsvszombies.managers.AssetMan)
 com.example.plantsvszombies.managers.AssetMan:
     101:102:public void playRandomSound(java.util.List)
     107:110:public void unloadAsset(java.lang.String)
@@ -34,8 +34,9 @@ com.example.plantsvszombies.models.LawnMower$LawnMowerState:
 com.example.plantsvszombies.models.Plants.BasePlant:
     private static final float HIT_EFFECT_DURATION
     private static final float HIT_EFFECT_INTERVAL
-    46:47:public BasePlant(com.badlogic.gdx.graphics.Texture,float,float)
-    94:95:public void draw(com.badlogic.gdx.graphics.g2d.SpriteBatch)
+    47:48:public BasePlant(com.badlogic.gdx.graphics.Texture,float,float)
+    95:96:public void draw(com.badlogic.gdx.graphics.g2d.SpriteBatch)
+    168:169:public void isHighlighted(boolean)
 com.example.plantsvszombies.models.Plants.CherryBomb:
     private static final float EXPLOSION_RADIUS
 com.example.plantsvszombies.models.Plants.Peashooter:
@@ -90,7 +91,7 @@ com.example.plantsvszombies.models.Zombies.NormalZombie:
 com.example.plantsvszombies.screens.GameScreen:
     public static final float WORLD_WIDTH
     public static final float WORLD_HEIGHT
-    887:887:public com.badlogic.gdx.assets.AssetManager getAssetManager()
+    956:956:public com.badlogic.gdx.assets.AssetManager getAssetManager()
 com.example.plantsvszombies.screens.HomeScreen
 com.example.plantsvszombies.screens.LoadingScreen:
     private static final float WORLD_WIDTH

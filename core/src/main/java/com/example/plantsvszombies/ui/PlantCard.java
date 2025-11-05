@@ -108,7 +108,7 @@ public class PlantCard extends Group {
     }
 
     /**
-     * 重写draw方法，定义自己的绘制逻辑（仅使用 Batch，不打断批处理，不创建临时渲染器）
+     * 重写draw方法，定义绘制逻辑
      */
     @Override
     public void draw(Batch batch, float parentAlpha) {

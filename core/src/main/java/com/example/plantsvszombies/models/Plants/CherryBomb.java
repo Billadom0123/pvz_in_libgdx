@@ -31,6 +31,7 @@ public class CherryBomb extends BasePlant {
         this.cost = 150;
         this.cooldown = 50f;
         this.init_cd = 35f;
+        this.bounds = new Rectangle(position.x + 20, position.y, texture.getWidth() - 40, texture.getHeight());
     }
 
     public CherryBomb(GameScreen screen, float x, float y) {
@@ -82,8 +83,8 @@ public class CherryBomb extends BasePlant {
         screen.doAoeDamage(explosionArea, 1800, DamageType.EXPLOSIVE);
         assetMan.playSound(AssetSound.CHERRY_BOMB_EXPLODE, .6f);
         AnimationClip explosion = AssetAnimation.CHERRY_BOMB_BOOM.get(assetMan);
-        position = new Vector2(position.x - (explosion.getWidth() - bounds.width) / 2,
-            position.y - (explosion.getHeight() - bounds.height) / 2);
+        position = new Vector2(position.x - (explosion.getWidth() - animation.getWidth()) / 2,
+            position.y - (explosion.getHeight() - animation.getHeight()) / 2);
         animation = explosion;
         bounds = new Rectangle(-100, -100, 0, 0); // 移出碰撞框，避免继续与僵尸碰撞
     }

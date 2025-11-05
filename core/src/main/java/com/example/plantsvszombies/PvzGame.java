@@ -1,6 +1,7 @@
 package com.example.plantsvszombies;
 
 import com.badlogic.gdx.Game;
+import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.example.plantsvszombies.managers.AssetMan;
 import com.example.plantsvszombies.screens.GameScreen;
@@ -12,11 +13,12 @@ public class PvzGame extends Game {
     // 全局唯一的资源管理器
     public AssetMan assetManager;
 
+    public Music bgMusic;
+
     @Override
     public void create() {
         batch = new SpriteBatch();
         assetManager = AssetMan.getInstance();
-
 
         // 资源加载完毕后，设置并切换到游戏主屏幕
         setScreen(new LoadingScreen(this));
@@ -31,7 +33,13 @@ public class PvzGame extends Game {
     @Override
     public void dispose() {
         // 游戏退出时，释放所有资源
-        batch.dispose();
-        assetManager.dispose();
+        if (batch != null) { batch.dispose(); }
+        if (assetManager != null) { assetManager.dispose(); }
+        if (bgMusic != null) {
+            bgMusic.stop();
+            bgMusic.dispose();
+            bgMusic = null;
+        }
+        super.dispose();
     }
 }
