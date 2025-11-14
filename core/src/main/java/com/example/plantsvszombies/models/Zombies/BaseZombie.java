@@ -9,25 +9,23 @@ import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 import com.example.plantsvszombies.Animation.AnimationClip;
-import com.example.plantsvszombies.Resource.AssetAnimation;
 import com.example.plantsvszombies.Resource.AssetSound;
-import com.example.plantsvszombies.Resource.AssetTexture;
 import com.example.plantsvszombies.managers.AssetMan;
 import com.example.plantsvszombies.models.DamageType;
 import com.example.plantsvszombies.models.Plants.BasePlant;
-import com.example.plantsvszombies.models.Texture.AnimationFalling;
 import com.example.plantsvszombies.models.Texture.Falling;
-import com.example.plantsvszombies.screens.GameScreen;
+import com.example.plantsvszombies.screens.BaseGameScreen;
 
+import java.util.Arrays;
 import java.util.List;
 
 public abstract class BaseZombie {
     protected Vector2 position;
-    protected float speed; // 僵尸有自己的移动速度
+    protected float speed = MathUtils.random(15f, 20f); // 僵尸有自己的移动速度
     protected int health;
     protected Rectangle bounds;
 
-    protected float stateTime;
+    protected float stateTime = MathUtils.random(0f, 2f);
     protected boolean isHit = false;
     protected float hitStateTime = 0f;
 
@@ -59,12 +57,19 @@ public abstract class BaseZombie {
     private float moveToDoorTimer;
     private float doorY;
 
+    // 防具相关，包括一类（头盔）和二类（门）
+    protected boolean hasHelmet = false;
+    protected boolean hasShield = false;
+    protected int helmetHealth = 0;
+    protected int shieldHealth = 0;
+
 
     protected Rectangle centerBounds;
-    protected GameScreen screen;
+    protected BaseGameScreen screen;
 
     // 材质动画相关
     protected Texture texture;
+    protected Texture shadow;
     protected AnimationClip animation;
     protected AnimationClip normalAnimation;
     protected AnimationClip dieAnimation;
@@ -74,10 +79,9 @@ public abstract class BaseZombie {
     protected AnimationClip lostHeadAnimation;
     protected AnimationClip lostHeadAttackAnimation;
 
-    public BaseZombie(GameScreen screen, float x, float y) {
+    public BaseZombie(BaseGameScreen screen, float x, float y) {
         this.screen = screen;
         this.position = new Vector2(x, y);
-        this.speed = MathUtils.random(15f, 17f); // 给每个僵尸一个随机的速度，让它们看起来更自然
         this.health = 270;
     }
 
@@ -85,12 +89,11 @@ public abstract class BaseZombie {
         this(null, texture, animation, x, y);
     }
 
-    public BaseZombie(GameScreen screen, Texture texture, AnimationClip animation, float x, float y) {
+    public BaseZombie(BaseGameScreen screen, Texture texture, AnimationClip animation, float x, float y) {
         this.screen = screen;
         this.texture = texture;
         this.animation = animation;
         this.position = new Vector2(x, y);
-        this.speed = MathUtils.random(15f, 17f); // 给每个僵尸一个随机的速度，让它们看起来更自然
         this.health = 270;
         this.bounds = new Rectangle(x, y, animation.getWidth(), animation.getHeight());
         this.stateTime = 0f;
@@ -98,9 +101,9 @@ public abstract class BaseZombie {
             animation.getWidth() * 0.1f, animation.getHeight() * 0.3f);
     }
 
-    public static BaseZombie create(Class<? extends BaseZombie> zombieClass, GameScreen screen, float x, float y) {
+    public static BaseZombie create(Class<? extends BaseZombie> zombieClass, BaseGameScreen screen, float x, float y) {
         try {
-            return zombieClass.getConstructor(GameScreen.class, float.class, float.class)
+            return zombieClass.getConstructor(BaseGameScreen.class, float.class, float.class)
                 .newInstance(screen, x, y);
         } catch (Exception e) {
             Gdx.app.error("BaseZombie", "Failed to create zombie instance", e);
@@ -147,7 +150,7 @@ public abstract class BaseZombie {
             if (eatSoundTimer >= EAT_SOUND_INTERVAL) {
                 eatSoundTimer = 0f;
                 // 播放吃植物的声音
-                AssetMan.getInstance().playRandomSound(List.of(AssetSound.CHOMP, AssetSound.CHOMP_SOFT), 0.4f);
+                AssetMan.getInstance().playRandomSound(Arrays.asList(AssetSound.CHOMP, AssetSound.CHOMP_SOFT), 0.4f);
             }
             if (targetPlant.getHealth() <= 0) {
                 AssetMan.getInstance().playSound(AssetSound.GULP, 0.4f);
@@ -188,6 +191,14 @@ public abstract class BaseZombie {
             screen.addFalling(falling);
             AssetMan.getInstance().playSound(AssetSound.LIMBS_POP, 0.5f);
         }
+    }
+
+    /**
+     * 静态僵尸的更新逻辑，用于图鉴和准备页面展示
+     * @param delta 时间差
+     */
+    public void stillUpdate(float delta) {
+        stateTime += delta;
     }
 
     public void moveToDoor(float duration, float doorY) {
@@ -237,18 +248,61 @@ public abstract class BaseZombie {
         }
     }
 
+    public void drawShadow(SpriteBatch batch) {
+        if (isDying) return;
+        batch.draw(shadow, centerBounds.x + (centerBounds.width - shadow.getWidth()) / 2f,
+            position.y - shadow.getHeight() / 4f);
+    }
+
+
+
     public void takeDamage(int damage, DamageType type) {
+        // 如果已经可以移除，忽略伤害
         if (removable) return;
         this.isHit = true;
-        this.health -= damage;
-        if (type == DamageType.EXPLOSIVE && health <= 0) {
-            beExploded = true;
-            startDying();
+        // 先处理防具
+        if (hasShield && shieldHealth > 0 && !type.isIgnoreShield()) {
+            damageToDoor(damage, type);
+        } else if (hasHelmet && helmetHealth > 0 && !type.isIgnoreHelmet()) {
+            damageToHelmet(damage, type);
+        } else {
+            // 直接对僵尸本体造成伤害
+            this.health -= damage;
+            if (type == DamageType.EXPLOSIVE && health <= 0) {
+                beExploded = true;
+                startDying();
+            }
         }
     }
 
     public void takeDamage(int damage) {
         takeDamage(damage, DamageType.NORMAL);
+    }
+
+    protected void damageToHelmet(int damage, DamageType type) {
+        helmetHealth -= damage;
+        if (helmetHealth <= 0) {
+            hasHelmet = false;
+            if (type == DamageType.BOWLING) return; // 保龄球伤害溢出
+            health += helmetHealth; // 溢出伤害传递给僵尸本体
+        }
+    }
+
+    protected void damageToDoor(int damage, DamageType type) {
+        shieldHealth -= damage;
+        if (shieldHealth <= 0) {
+            hasShield = false;
+            if (type == DamageType.BOWLING) return; // 保龄球伤害溢出
+            if (type.isIgnoreHelmet()) {
+                health += shieldHealth; // 溢出伤害传递给僵尸本体
+            } else {
+                if (hasHelmet && helmetHealth > 0) {
+                    damageToHelmet(-shieldHealth, type); // 溢出伤害传递给头盔
+                } else {
+                    health += shieldHealth; // 溢出伤害传递给僵尸本体
+                }
+            }
+        }
     }
 
     /**
@@ -275,7 +329,7 @@ public abstract class BaseZombie {
         targetPlant = null;
         speed = 0f;
         centerBounds = new Rectangle(-100, -100, 0, 0); // 移出中心碰撞框，避免继续与植物碰撞
-        AssetMan.getInstance().playRandomSound(List.of(AssetSound.ZOMBIE_FALLING_1, AssetSound.ZOMBIE_FALLING_2), 0.3f);
+        AssetMan.getInstance().playRandomSound(Arrays.asList(AssetSound.ZOMBIE_FALLING_1, AssetSound.ZOMBIE_FALLING_2), 0.3f);
     }
 
     public boolean isRemovable() {
@@ -304,5 +358,13 @@ public abstract class BaseZombie {
 
     public void setAnimation(AnimationClip animation) {
         this.animation = animation;
+    }
+
+    public boolean hasHelmet() {
+        return hasHelmet;
+    }
+
+    public boolean hasShield() {
+        return hasShield;
     }
 }

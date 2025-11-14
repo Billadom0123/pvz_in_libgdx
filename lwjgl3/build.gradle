@@ -1,3 +1,4 @@
+
 buildscript {
   repositories {
     gradlePluginPortal()
@@ -21,96 +22,25 @@ sourceSets.main.resources.srcDirs += [ rootProject.file('assets').path ]
 mainClassName = 'com.example.plantsvszombies.lwjgl3.Lwjgl3Launcher'
 application.setMainClass(mainClassName)
 eclipse.project.name = appName + '-lwjgl3'
-java.sourceCompatibility = 17
-java.targetCompatibility = 17
+java.sourceCompatibility = 8
+java.targetCompatibility = 8
 if (JavaVersion.current().isJava9Compatible()) {
-        compileJava.options.release.set(17)
+        compileJava.options.release.set(8)
 }
 
 dependencies {
   implementation "com.badlogicgames.gdx:gdx-backend-lwjgl3:$gdxVersion"
+  implementation "com.badlogicgames.gdx:gdx-box2d-platform:$gdxVersion:natives-desktop"
   implementation "com.badlogicgames.gdx:gdx-lwjgl3-angle:$gdxVersion"
   implementation "com.badlogicgames.gdx:gdx-platform:$gdxVersion:natives-desktop"
+  implementation "com.badlogicgames.gdx:gdx-freetype-platform:$gdxVersion:natives-desktop"
   implementation project(':core')
 
   if(enableGraalNative == 'true') {
     implementation "io.github.berstanio:gdx-svmhelper-backend-lwjgl3:$graalHelperVersion"
+      implementation "io.github.berstanio:gdx-svmhelper-extension-box2d:$graalHelperVersion"
 
     }
-}
-
-// ---- ProGuard integration (desktop only) ----
-configurations {
-  proguard
-}
-
-dependencies {
-  proguard "com.guardsquare:proguard-base:7.5.0"
-}
-
-// ProGuard task: takes the fat jar produced by :lwjgl3:jar and outputs an obfuscated jar
-tasks.register("proguardRelease", JavaExec) {
-  group = "build"
-  description = "Run ProGuard to shrink and obfuscate the desktop fat jar."
-  dependsOn(tasks.jar)
-  mustRunAfter(tasks.jar)
-
-  // Always run (avoid up-to-date issues while iterating)
-  outputs.upToDateWhen { false }
-
-  classpath = configurations.proguard
-  mainClass = 'proguard.ProGuard'
-
-  // Set a stable working directory (where JAR resides)
-  doFirst {
-    workingDir = tasks.jar.destinationDirectory.get().asFile
-
-    // Resolve input/output
-    def inJar = tasks.jar.archiveFile.get().asFile
-    def outJar = new File(inJar.parentFile, inJar.name.replace('.jar', '-obf.jar'))
-
-    // Ensure reports dir exists
-    def reportsDir = new File(project.buildDir, 'reports/proguard')
-    reportsDir.mkdirs()
-
-    logger.lifecycle("[proguardRelease] In:  ${inJar}")
-    logger.lifecycle("[proguardRelease] Out: ${outJar}")
-    logger.lifecycle("[proguardRelease] Reports: ${reportsDir}")
-
-    // Java modules used at runtime; adjust if needed
-    def jmods = new File(System.getProperty('java.home'), 'jmods')
-    def libJars = [
-      new File(jmods, 'java.base.jmod'),
-      new File(jmods, 'java.desktop.jmod'),
-      new File(jmods, 'java.logging.jmod'),
-      new File(jmods, 'java.xml.jmod'),
-      new File(jmods, 'jdk.unsupported.jmod')
-    ].findAll { it.exists() }.collect { it.absolutePath + '(!**.jar;!module-info.class)' }
-
-    // Build args dynamically on execution
-    args(
-      '-injars', inJar.absolutePath,
-      '-outjars', outJar.absolutePath,
-    )
-    libJars.each { lj ->
-      args('-libraryjars', lj)
-    }
-    // Override report output locations to a predictable place
-    args(
-      '-printmapping', new File(reportsDir, 'mapping.txt').absolutePath,
-      '-printusage', new File(reportsDir, 'usage.txt').absolutePath,
-      '-printseeds', new File(reportsDir, 'seeds.txt').absolutePath,
-    )
-    // Finally, include our rules
-    args('@' + project.file('proguard-lwjgl3.pro').absolutePath)
-  }
-}
-
-// Convenience aggregate task
-tasks.register('releaseObfuscated') {
-  group = 'build'
-  description = 'Build fat jar and obfuscate it for desktop release.'
-  dependsOn 'proguardRelease'
 }
 
 def os = System.properties['os.name'].toLowerCase()

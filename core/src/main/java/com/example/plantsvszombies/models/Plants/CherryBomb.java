@@ -10,7 +10,7 @@ import com.example.plantsvszombies.Resource.AssetSound;
 import com.example.plantsvszombies.Resource.AssetTexture;
 import com.example.plantsvszombies.managers.AssetMan;
 import com.example.plantsvszombies.models.DamageType;
-import com.example.plantsvszombies.screens.GameScreen;
+import com.example.plantsvszombies.screens.BaseGameScreen;
 
 public class CherryBomb extends BasePlant {
 
@@ -25,7 +25,7 @@ public class CherryBomb extends BasePlant {
         this.cooldown = 50f;
     }
 
-    public CherryBomb(GameScreen screen, Texture texture, AnimationClip animation, float x, float y) {
+    public CherryBomb(BaseGameScreen screen, Texture texture, AnimationClip animation, float x, float y) {
         super(screen, texture, animation, x - 20, y); // 调整X坐标以居中
         this.name = "CherryBomb";
         this.cost = 150;
@@ -34,11 +34,12 @@ public class CherryBomb extends BasePlant {
         this.bounds = new Rectangle(position.x + 20, position.y, texture.getWidth() - 40, texture.getHeight());
     }
 
-    public CherryBomb(GameScreen screen, float x, float y) {
+    public CherryBomb(BaseGameScreen screen, float x, float y) {
         this(screen,
             AssetTexture.CHERRY_BOMB_STILL.get(AssetMan.getInstance()),
             AssetAnimation.CHERRY_BOMB.get(AssetMan.getInstance()),
             x, y);
+        this.shadow = AssetTexture.PLANT_SHADOW.get(AssetMan.getInstance());
     }
 
     @Override

@@ -17,22 +17,21 @@ import com.example.plantsvszombies.Resource.AssetTexture;
 import com.example.plantsvszombies.managers.AssetMan;
 import com.example.plantsvszombies.managers.GameManager;
 import com.example.plantsvszombies.models.Plants.BasePlant;
-import com.example.plantsvszombies.screens.GameScreen;
+import com.example.plantsvszombies.screens.BaseGameScreen;
 
 public class PlantCard extends Group {
 
-    private AssetMan assetMan;
-    private GameScreen screen;
-    private final TextureActor cardTexture; // 卡片图片
-    private final TextureActor plantTexture; // 植物图片
-    private Vector2 position; // 矫正位置
-    private final Label costLabel;   // 显示种植消耗的标签
-    public final String plantType;     // 卡片代表的植物类型 (字符串标识)
+    private final AssetMan assetMan;
+    protected final BaseGameScreen screen;
+    protected final TextureActor cardTexture; // 卡片图片
+    protected final TextureActor plantTexture; // 植物图片
+    private final Vector2 position; // 矫正位置
+    protected final Label costLabel;   // 显示种植消耗的标签
+    protected final String plantType;     // 卡片代表的植物类型 (字符串标识)
     private final int cost;            // 种植所需太阳
-    private final boolean haveCooldown = false;
     private final float cooldown;
-    private float cooldownTimer = 0f;
-    private Class<?> plantClass;
+    private float cooldownTimer;
+    private final Class<? extends BasePlant> plantClass;
 
     private boolean isSelected = false; // 是否被选中
     private boolean isSelectable = false; // 是否可以被选中
@@ -41,9 +40,9 @@ public class PlantCard extends Group {
     private final Drawable overlay; // alpha 0.5
 
 
-    public PlantCard(GameScreen screen, Skin skin, BasePlant plant) {
-        this.assetMan = AssetMan.getInstance();
+    public PlantCard(BaseGameScreen screen, Skin skin, BasePlant plant) {
         this.screen = screen;
+        this.assetMan = AssetMan.getInstance();
         this.cardTexture = new TextureActor(AssetTexture.SEED_PACKET_5F.get(assetMan));
         this.plantTexture = new TextureActor(plant.getTexture());
         this.position = plant.getPosition();
@@ -54,7 +53,7 @@ public class PlantCard extends Group {
         this.plantClass = plant.getClass();
         this.costLabel = new Label(String.valueOf(cost), skin);
 
-        // 复用 skin 的 white 作为遮罩底图，并一次性创建带不同透明度的变体
+        // 复用 skin 的 white 作为遮罩底图
         this.overlay = skin.newDrawable("white", new Color(0f, 0f, 0f, 0.6f));
 
         addActor(this.cardTexture);
@@ -64,7 +63,7 @@ public class PlantCard extends Group {
         layout();
     }
 
-    private void layout() {
+    protected void layout() {
         setSize(cardTexture.getWidth(), cardTexture.getHeight());
 
         this.cardTexture.setTouchable(Touchable.disabled);
@@ -113,8 +112,10 @@ public class PlantCard extends Group {
     @Override
     public void draw(Batch batch, float parentAlpha) {
         super.draw(batch, parentAlpha);
-        // 使用 Drawable 绘制半透明遮罩，避免每帧 new ShapeRenderer 和 batch 切换
+        drawShadow(batch, parentAlpha);
+    }
 
+    public void drawShadow(Batch batch, float parentAlpha) {
         // 如果冷却还未好，则在卡片上覆盖一层半透明黑色，使其“变灰”
         if (isOnCooldown()) {
             float cooldownRatio = cooldownTimer / cooldown;
@@ -135,7 +136,6 @@ public class PlantCard extends Group {
                 ParticleEffect particleEffect = AssetParticle.SEED_PACKET_FLASH.get(assetMan);
                 particleEffect.setPosition(getX() + getWidth() / 2f, getY() + getHeight() / 2f);
                 particleEffect.start();
-                screen.addParticle(particleEffect);
                 setSelectable(true);
             }
         }
@@ -151,6 +151,8 @@ public class PlantCard extends Group {
     public boolean isSunEnough() {
         return screen.isSunAvailable(cost);
     }
+
+    public Class<? extends BasePlant> getPlantClass() { return plantClass; }
 
     public boolean plantInstanceOf(Class<?> clazz) {
         return plantClass.equals(clazz);
@@ -176,5 +178,9 @@ public class PlantCard extends Group {
 
     public Vector2 getPlantPosition() {
         return position;
+    }
+
+    public String getPlantType() {
+        return plantType;
     }
 }

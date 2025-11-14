@@ -11,10 +11,15 @@ public class GameManager {
     }
 
     private static final int DEFAULT_SUN = 100;
+    private static final float DEFAULT_CONVEYOR_SPEED = 1.0f;
     private boolean autoCollect = true;
     private boolean cardCooldown = true;
     private int sun; // 当前太阳数量
+    private float conveyorSpeed;
     private GameState gameState;
+    private boolean crazyMode = true; // 疯狂模式开关，默认为关闭，不可更改
+    private float musicMasterVolume = 0.5f;
+    private float sfxMasterVolume = 0.5f;
 
     private GameManager() {
         resetToDefaults();
@@ -32,6 +37,7 @@ public class GameManager {
         this.autoCollect = false;
         this.cardCooldown = true;
         this.sun = DEFAULT_SUN;
+        this.conveyorSpeed = DEFAULT_CONVEYOR_SPEED;
         this.gameState = GameState.PLAYING;
     }
 
@@ -47,6 +53,20 @@ public class GameManager {
      */
     public void reset(int initialSun, boolean autoCollect, boolean cardCooldown, GameState state) {
         this.sun = initialSun;
+        this.autoCollect = autoCollect;
+        this.cardCooldown = cardCooldown;
+        this.gameState = state;
+    }
+
+    /**
+     * 传送带模式的重置
+     * @param conveyorSpeed 传送带速度
+     * @param autoCollect   自动收集开关
+     * @param cardCooldown 卡片冷却开关
+     * @param state        初始游戏状态
+     */
+    public void reset(float conveyorSpeed, boolean autoCollect, boolean cardCooldown, GameState state) {
+        this.conveyorSpeed = conveyorSpeed;
         this.autoCollect = autoCollect;
         this.cardCooldown = cardCooldown;
         this.gameState = state;
@@ -102,4 +122,14 @@ public class GameManager {
     public void setGameState(GameState gameState) {
         this.gameState = gameState;
     }
+
+    public boolean isCrazyMode() { return crazyMode; }
+
+    public float getMusicMasterVolume() { return musicMasterVolume; }
+
+    public void setMusicMasterVolume(float musicMasterVolume) { this.musicMasterVolume = musicMasterVolume; }
+
+    public float getSfxMasterVolume() { return sfxMasterVolume; }
+
+    public void setSfxMasterVolume(float sfxMasterVolume) { this.sfxMasterVolume = sfxMasterVolume; }
 }

@@ -1,23 +1,25 @@
 package com.example.plantsvszombies.screens;
 
 
+import com.badlogic.gdx.Application;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
-import com.badlogic.gdx.InputProcessor;
-import com.badlogic.gdx.Screen;
-import com.badlogic.gdx.assets.AssetManager;
+import com.badlogic.gdx.InputMultiplexer;
 import com.badlogic.gdx.graphics.*;
+import com.badlogic.gdx.graphics.g2d.Batch;
+import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.ParticleEffect;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
-import com.badlogic.gdx.scenes.scene2d.Actor;
-import com.badlogic.gdx.scenes.scene2d.Stage;
+import com.badlogic.gdx.scenes.scene2d.*;
+import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
+import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.badlogic.gdx.utils.Align;
 import com.badlogic.gdx.utils.Array;
@@ -36,13 +38,13 @@ import com.example.plantsvszombies.models.Sun;
 import com.example.plantsvszombies.models.Texture.Falling;
 import com.example.plantsvszombies.models.Zombies.*;
 import com.example.plantsvszombies.ui.PlantCard;
+import com.example.plantsvszombies.ui.PvzDialogBox;
+import com.example.plantsvszombies.ui.PvzGraveButton;
 import com.example.plantsvszombies.ui.Shovel;
 
-import java.util.Iterator;
-import java.util.List;
-import java.util.Random;
+import java.util.*;
 
-public class GameScreen implements Screen, InputProcessor {
+public class GameScreen implements BaseGameScreen {
 
     // --- 核心引用 ---
     private final PvzGame game; // 对主游戏类的引用，用于访问全局对象如SpriteBatch
@@ -84,6 +86,7 @@ public class GameScreen implements Screen, InputProcessor {
     private final Array<Falling> fallings;
     private final Array<ParticleEffect> particles;
     private final Array<PlantCard> plantCards; // 植物卡片列表，仅作获取用途
+    private final Array<GameDialog> gameDialogs;
 
     // --- 游戏逻辑 ---
     private float gameTime = 0f;          // 游戏进行的总时间
@@ -103,6 +106,9 @@ public class GameScreen implements Screen, InputProcessor {
     private PlantCard selectedCard; // 当前被玩家选中的植物卡片
     private Table tooltipTable;    // 显示卡片信息的提示框
     private Shovel shovel;;          // 铲子UI元素
+    private PvzGraveButton pauseButton; // 暂停按钮
+    private Texture whitePixel;
+    private Group modalOverlay;
 
     private float endBlackOverlayAlpha = 0f; // 黑色覆盖层的透明度
     private float endWordScale = 0f; // 抖动计时器
@@ -139,6 +145,7 @@ public class GameScreen implements Screen, InputProcessor {
         fallings = new Array<>();
         particles = new Array<>();
         plantCards = new Array<>();
+        gameDialogs = new Array<>();
 
         // 3. 初始化UI（与游戏共用同一 viewport，避免相机裁切后的偏移）
         uiSkin = new Skin(Gdx.files.internal("graphics/Skin/uiskin.json"));
@@ -163,7 +170,10 @@ public class GameScreen implements Screen, InputProcessor {
 //        for (LawnMower l: lawnMowers) l.activate();
 
         // 5. 将本类设置为输入处理器，这样touchDown等方法才会被调用
-        Gdx.input.setInputProcessor(this);
+        InputMultiplexer multiplexer = new InputMultiplexer();
+        multiplexer.addProcessor(uiStage);
+        multiplexer.addProcessor(this);
+        Gdx.input.setInputProcessor(multiplexer);
     }
 
     /**
@@ -204,13 +214,24 @@ public class GameScreen implements Screen, InputProcessor {
         topBar.add(potatoMineCard).pad(1).padBottom(3).bottom();
         topBar.add(cherryBombCard).pad(1).padBottom(3).bottom();
 
-        shovel = new Shovel(this);
+        shovel = new Shovel();
         shovel.setPosition(cameraMinX + 446, startY + 5 * cellHeight);
+
+        BitmapFont font = AssetFont.DWARVEN_STONECRAFT_SIZE30_DEFAULT.get(assetManager);
+        pauseButton = new PvzGraveButton("Pause", font);
+        pauseButton.setPosition(cameraMaxX - pauseButton.getWidth(), cameraMaxY - pauseButton.getHeight());
+        pauseButton.addListener(new ClickListener() {
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                pause();
+            }
+        });
 
 
         uiStage.addActor(topBar);
         uiStage.addActor(tooltipTable);
         uiStage.addActor(shovel);
+        uiStage.addActor(pauseButton);
         tooltipTable.pack();
         return label;
     }
@@ -234,6 +255,11 @@ public class GameScreen implements Screen, InputProcessor {
         }
     }
 
+    /**
+     * 渲染方法，每帧调用一次
+     * 绘制顺序：背景 -> ui -> 游戏对象 -> 阳光等特殊UI -> 种植预览 -> 粒子和对话框 -> 暂停窗口（如果是暂停状态）
+     * @param delta The time in seconds since the last render.
+     */
     @Override
     public void render(float delta) {
 
@@ -259,6 +285,8 @@ public class GameScreen implements Screen, InputProcessor {
         // 2. 更新游戏逻辑 (仅在游戏进行时)
         if (gameManager.getGameState() == GameManager.GameState.PLAYING || gameManager.getGameState() == GameManager.GameState.GAME_OVER) {
             updateGame(delta);
+        } else if (gameManager.getGameState() == GameManager.GameState.PAUSED) {
+            modalOverlay.act(delta);
         }
 
         // 3. 渲染游戏世界
@@ -269,13 +297,8 @@ public class GameScreen implements Screen, InputProcessor {
         game.batch.begin();
         // 绘制背景
         game.batch.draw(AssetTexture.MAP_0.get(assetManager), 0, 0, WORLD_WIDTH, WORLD_HEIGHT);
-        game.batch.draw(AssetTexture.SEED_BANK.get(assetManager), cameraMinX, startY + 5 * cellHeight - 15, 446, 87); // 绘制种子银行背景
+        game.batch.draw(AssetTexture.SEED_BANK.get(assetManager), cameraMinX, startY + 5 * cellHeight - 15); // 绘制种子银行背景
         // 绘制所有游戏对象
-        for (BasePlant plant : plants) plant.drawAnimation(game.batch);
-        for (BaseZombie zombie : zombies) zombie.drawAnimation(game.batch);
-        for (BaseProjectile projectile : projectiles) projectile.draw(game.batch);
-        for (LawnMower lawnMower : lawnMowers) lawnMower.draw(game.batch);
-        for (Falling falling : fallings) falling.draw(game.batch);
 
         game.batch.end();
 
@@ -301,10 +324,18 @@ public class GameScreen implements Screen, InputProcessor {
         // 4. 渲染UI
         sunLabel.setText(String.valueOf(gameManager.getSun())); // 更新UI标签
         uiStage.getViewport().apply(); // 应用UI视口
-        uiStage.act(delta); // 更新UI舞台（例如，执行Action）
         uiStage.draw();     // 绘制UI舞台
 
         game.batch.begin();
+
+        for (BasePlant plant : plants) plant.drawShadow(game.batch);
+        for (BaseZombie zombie : zombies) zombie.drawShadow(game.batch);
+        for (BaseProjectile projectile : projectiles) projectile.drawShadow(game.batch);
+        for (BasePlant plant : plants) plant.drawAnimation(game.batch);
+        for (BaseZombie zombie : zombies) zombie.drawAnimation(game.batch);
+        for (BaseProjectile projectile : projectiles) projectile.draw(game.batch);
+        for (LawnMower lawnMower : lawnMowers) lawnMower.draw(game.batch);
+        for (Falling falling : fallings) falling.draw(game.batch);
 
         if (selectedCard != null) {
             Texture t = selectedCard.getPlantTexture();
@@ -324,6 +355,17 @@ public class GameScreen implements Screen, InputProcessor {
 
         for (ParticleEffect particleEffect : particles) particleEffect.draw(game.batch);
         game.batch.end();
+
+        Batch batch = uiStage.getBatch();
+        batch.setProjectionMatrix(uiStage.getCamera().combined);
+
+        batch.begin();
+        for (Sun s : suns) s.draw(batch, 1f);
+        for (GameDialog dialog : gameDialogs) dialog.getDialogTable().draw(batch, 1f);
+        if (gameManager.getGameState() == GameManager.GameState.PAUSED) {
+            modalOverlay.draw(batch, 1f);
+        }
+        batch.end();
 
 //        shapeRenderer.setProjectionMatrix(gameCamera.combined);
 //        shapeRenderer.begin(ShapeRenderer.ShapeType.Line);
@@ -412,9 +454,9 @@ public class GameScreen implements Screen, InputProcessor {
         for (ParticleEffect particleEffect : particles) particleEffect.update(delta);
 
 
-//        if (gameTime >= 41f) {
-//            beginCrazyMode();
-//        }
+        if (gameManager.isCrazyMode() && gameTime >= 41f) {
+            beginCrazyMode();
+        }
 
         // 计时生成僵尸
         zombieSpawnTimer += delta;
@@ -445,6 +487,8 @@ public class GameScreen implements Screen, InputProcessor {
 
         // 检查游戏是否结束
         checkGameOver();
+
+        uiStage.act(delta); // 更新UI舞台（例如，执行Action）
     }
 
     private void spawnFallingSun() {
@@ -522,8 +566,6 @@ public class GameScreen implements Screen, InputProcessor {
             float zombieX = z.getCenterBounds().getX();
             if(zombieX < startX - 20f && zombieX >= cameraMinX) { // 如果有僵尸走到了屏幕最左边
                 startGameOver(z);
-                // 在实际游戏中，这里应该切换到游戏结束画面
-                // game.setScreen(new GameOverScreen(game));
             }
         }
     }
@@ -663,6 +705,13 @@ public class GameScreen implements Screen, InputProcessor {
                 it.remove();
             }
         }
+
+        for (Iterator<GameDialog> it = gameDialogs.iterator(); it.hasNext();) {
+            GameDialog dialog = it.next();
+            if (dialog.hasShown()) {
+                it.remove();
+            }
+        }
     }
 
 
@@ -679,7 +728,7 @@ public class GameScreen implements Screen, InputProcessor {
             noSunLabel.setFontScale(.6f);
             tooltipTable.add(noSunLabel).row();
         }
-        Label nameLabel = new Label(card.plantType, uiSkin);
+        Label nameLabel = new Label(card.getPlantType(), uiSkin);
         nameLabel.setColor(Color.BLACK);
         nameLabel.setFontScale(.6f);
         tooltipTable.add(nameLabel).row();
@@ -705,7 +754,8 @@ public class GameScreen implements Screen, InputProcessor {
         }
 
         Actor hitActor = uiStage.hit(uiCoords.x, uiCoords.y, true); // 检测是否点中UI演员
-        if (hitActor instanceof PlantCard card) {
+        if (hitActor instanceof PlantCard) {
+            PlantCard card = (PlantCard) hitActor;
             tryLiftSeedCard(card);
             return true; // 事件被UI处理，结束
         } else if (hitActor instanceof Shovel) {
@@ -792,9 +842,22 @@ public class GameScreen implements Screen, InputProcessor {
     }
 
     public void collectSun(Sun sun) {
+        if (sun.getState() == Sun.SunState.COLLECTED) {
+            return; // 已经在收集中了，忽略重复点击
+        }
         assetManager.playSound(AssetSound.COLLECT_SUN, 0.7f);
         sun.collectTo((int) (cameraMinX + 15), (int) (startY + 5 * cellHeight + 15)); // 收集太阳
         gameManager.addSun(sun.getValue());
+    }
+
+    @Override
+    public int getRow(float y) {
+        return (int)((y - startY) / cellHeight);
+    }
+
+    @Override
+    public int getCol(float x) {
+        return (int)((x - startX) / cellWidth);
     }
 
 
@@ -805,22 +868,8 @@ public class GameScreen implements Screen, InputProcessor {
     private void placePlant(Rectangle cell) {
         // 尝试花费太阳
         if (gameManager.spendSun(selectedCard.getCost())) {
-            BasePlant newPlant;
-            // 根据选中的卡片类型，创建不同的植物实例
-            if (selectedCard.plantInstanceOf(Peashooter.class)) {
-                newPlant = new Peashooter(this, cell.x, cell.y);
-            } else if (selectedCard.plantInstanceOf(Sunflower.class)) {
-                newPlant = new Sunflower(this, cell.x, cell.y);
-            } else if (selectedCard.plantInstanceOf(Wallnut.class)) {
-                newPlant = new Wallnut(this, cell.x, cell.y);
-            } else if (selectedCard.plantInstanceOf(PotatoMine.class)) {
-                newPlant = new PotatoMine(this, cell.x, cell.y);
-            } else if (selectedCard.plantInstanceOf(CherryBomb.class)) {
-                newPlant = new CherryBomb(this, cell.x, cell.y);
-            } else {
-                return;
-            }
-            assetManager.playRandomSound(List.of(AssetSound.PLANT_1, AssetSound.PLANT_2), 0.3f);
+            BasePlant newPlant = BasePlant.create(selectedCard.getPlantClass(), this, cell.x, cell.y);
+            assetManager.playRandomSound(Arrays.asList(AssetSound.PLANT_1, AssetSound.PLANT_2), 0.3f);
             ParticleEffect plantEffect = AssetParticle.PLANTING.get(assetManager);
             plantEffect.setPosition(cell.x + cell.width / 2f, cell.y + 5);
             plantEffect.scaleEffect(.4f);
@@ -874,7 +923,8 @@ public class GameScreen implements Screen, InputProcessor {
         uiStage.getViewport().unproject(uiCoords);
 
         Actor hitActor = uiStage.hit(uiCoords.x, uiCoords.y, true); // 检测是否点中UI演员
-        if (hitActor instanceof PlantCard card) {
+        if (hitActor instanceof PlantCard) {
+            PlantCard card = (PlantCard) hitActor;
             updateTooltipTable(card);
 
             // card 在 stage 的左下角坐标
@@ -889,9 +939,7 @@ public class GameScreen implements Screen, InputProcessor {
             float ty = stagePos.y - ph - 6f;
 
             // 边界限制
-            float maxX = uiStage.getViewport().getWorldWidth() - pw;
             if (tx < 0f) tx = 0f;
-            if (tx > maxX) tx = maxX;
             if (ty < 0f) ty = 0f;
 
             tooltipTable.setPosition(tx, ty);
@@ -935,7 +983,7 @@ public class GameScreen implements Screen, InputProcessor {
         // 手动把相机定位到用户提供的范围中心
         gameCamera.position.set((cameraMinX + cameraMaxX) / 2f, (cameraMinY + cameraMaxY) / 2f, 0f);
         gameCamera.update();
-        // 同步 UI 的 viewport（与游戏共用对象，这里冗余但安全）
+        // 同步 UI 的 viewport
         uiStage.getViewport().update(width, height, false);
     }
 
@@ -958,15 +1006,10 @@ public class GameScreen implements Screen, InputProcessor {
         return gameManager.getSun() >= cost;
     }
 
-    // 让GameScreen能够获取AssetManager (被Peashooter调用)
-    public AssetManager getAssetManager() {
-        return assetManager.getAssetManager();
-    }
-
     @Override
     public void show() {
         game.bgMusic = AssetMusic.GRASSWALK.get(assetManager);
-//        game.bgMusic = AssetMusic.THE_KING_PAPERMAN.get(assetManager);
+        if (gameManager.isCrazyMode()) game.bgMusic = AssetMusic.THE_KING_PAPERMAN.get(assetManager);
         game.bgMusic.setLooping(true);
         game.bgMusic.setVolume(0.5f);
         game.bgMusic.play();
@@ -998,64 +1041,176 @@ public class GameScreen implements Screen, InputProcessor {
             return true;
         } else if (keycode == Input.Keys.Q) {
             assetManager.playSound(AssetSound.DIAMOND, .5f);
-            GameDialog gameDialog;
             if (gameManager.isAutoCollect()) {
-                gameDialog = new GameDialog(uiSkin, "Auto Collect has been closed!",
-                gameCamera.position.x, gameCamera.position.y, gameCamera.viewportWidth, gameCamera.viewportHeight, 5f);
+                addGameDialog("Auto Collect has been closed!", 5f);
             } else {
-                gameDialog = new GameDialog(uiSkin, "Auto Collect has been opened!",
-                gameCamera.position.x, gameCamera.position.y, gameCamera.viewportWidth, gameCamera.viewportHeight, 5f);
+                addGameDialog("Auto Collect has been opened!", 5f);
             }
-            uiStage.addActor(gameDialog.getDialogTable());
             gameManager.setAutoCollect(!gameManager.isAutoCollect());
 
             return true;
         } else if (keycode == Input.Keys.W) {
             assetManager.playSound(AssetSound.DIAMOND, .5f);
-            GameDialog gameDialog;
             if (gameManager.isCardCooldownOn()) {
-                gameDialog = new GameDialog(uiSkin, "Card Cooldown has been closed!",
-                gameCamera.position.x, gameCamera.position.y, gameCamera.viewportWidth, gameCamera.viewportHeight, 5f);
+                addGameDialog("Card Cooldown has been closed!", 5f);
             } else {
-                gameDialog = new GameDialog(uiSkin, "Card Cooldown has been opened!",
-                gameCamera.position.x, gameCamera.position.y, gameCamera.viewportWidth, gameCamera.viewportHeight, 5f);
+                addGameDialog("Card Cooldown has been opened!", 5f);
             }
-            uiStage.addActor(gameDialog.getDialogTable());
             gameManager.setCardCooldown(!gameManager.isCardCooldownOn());
             return true;
         } else if (keycode == Input.Keys.S) {
             assetManager.playSound(AssetSound.DIAMOND, .5f);
-            GameDialog gameDialog = new GameDialog(uiSkin, "Sun +500!",
-                gameCamera.position.x, gameCamera.position.y, gameCamera.viewportWidth, gameCamera.viewportHeight, 5f);
-            uiStage.addActor(gameDialog.getDialogTable());
+            addGameDialog("Sun +500!", 5f);
             gameManager.addSun(500);
             return true;
-        } else if (keycode == Input.Keys.C) {
-            assetManager.playSound(AssetSound.DIAMOND, .5f);
-            GameDialog gameDialog = new GameDialog(uiSkin, "Crazy Mode Activated!",
-                gameCamera.position.x, gameCamera.position.y, gameCamera.viewportWidth, gameCamera.viewportHeight, 5f);
-            uiStage.addActor(gameDialog.getDialogTable());
-            beginCrazyMode();
-            return true;
+//        } else if (keycode == Input.Keys.C) {
+//            assetManager.playSound(AssetSound.DIAMOND, .5f);
+//            GameDialog gameDialog = new GameDialog(uiSkin, "Crazy Mode Activated!",
+//                gameCamera.position.x, gameCamera.position.y, gameCamera.viewportWidth, gameCamera.viewportHeight, 5f);
+//            uiStage.addActor(gameDialog.getDialogTable());
+//            beginCrazyMode();
+//            return true;
         } else if (keycode == Input.Keys.GRAVE) {
             tryLiftShovel();
             return true;
-//        } else if (keycode == Input.Keys.B) {
-//            zombies.add(new BucketHeadZombie(this, cameraMaxX + 20f, gridCells[2][0].y));
+        } else if (keycode == Input.Keys.SPACE) {
+            if (gameManager.getGameState() == GameManager.GameState.PAUSED) {
+                resume();
+            } else if (gameManager.getGameState() == GameManager.GameState.PLAYING) {
+                pause();
+            }
+            return true;
         }
         return false;
     }
 
-    @Override public void pause() { }
-    @Override public void resume() { }
+    private void ensureWhitePixel() {
+        if (whitePixel == null) {
+            Pixmap pixmap = new Pixmap(1, 1, Pixmap.Format.RGBA8888);
+            pixmap.setColor(1f, 1f, 1f, 1f);
+            pixmap.fill();
+            whitePixel = new Texture(pixmap);
+            pixmap.dispose();
+        }
+    }
+
+    // 显示模态对话框
+    private void showModal(Actor dialog, float overlayAlpha) {
+        ensureWhitePixel();
+        if (modalOverlay != null) modalOverlay.remove();
+
+        modalOverlay = new Group();
+        float w = uiStage.getViewport().getWorldWidth();
+        float h = uiStage.getViewport().getWorldHeight();
+        modalOverlay.setSize(w, h);
+        modalOverlay.setPosition(cameraMinX, cameraMinY);
+        modalOverlay.setTouchable(Touchable.enabled);
+
+        Image bg = new Image(whitePixel);
+        bg.setSize(w, h);
+        bg.setColor(0f, 0f, 0f, overlayAlpha);
+        bg.setTouchable(Touchable.enabled);
+
+        bg.addListener(new InputListener() {
+            @Override
+            public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
+                Vector2 stageCoords = modalOverlay.localToStageCoordinates(new Vector2(x, y));
+                Vector2 dialogLocal = dialog.stageToLocalCoordinates(stageCoords);
+                com.badlogic.gdx.scenes.scene2d.Actor hit = dialog.hit(dialogLocal.x, dialogLocal.y, true);
+                // 如果点在 dialog 内，返回 false 让事件继续传递给 dialog；否则消费事件
+                return hit == null;
+            }
+        });
+
+        modalOverlay.addActor(bg);
+
+        // 确保 dialog 尺寸已计算（如果是 Table/Widget 可调用 validate/pref size）
+        dialog.setPosition((w - dialog.getWidth()) / 2f, (h - dialog.getHeight()) / 2f);
+        modalOverlay.addActor(dialog);
+
+        uiStage.addActor(modalOverlay);
+    }
+
+    // 隐藏模态对话框
+    private void hideModal() {
+        if (modalOverlay != null) {
+            modalOverlay.remove();
+            modalOverlay = null;
+        }
+    }
+
+    @Override public void pause() {
+        if (gameManager.getGameState() == GameManager.GameState.PAUSED ||
+            gameManager.getGameState() == GameManager.GameState.GAME_OVER ||
+            gameManager.getGameState() == GameManager.GameState.STOPPED) {
+            return; // 已经暂停或游戏结束，忽略
+        }
+        gameManager.setGameState(GameManager.GameState.PAUSED);
+        game.bgMusic.pause();
+
+        BitmapFont font = AssetFont.DWARVEN_STONECRAFT_SIZE30_DEFAULT.get(assetManager);
+        PvzGraveButton resumeButton = new PvzGraveButton("Resume", font);
+        PvzDialogBox pauseDialog = new PvzDialogBox("Game Paused", "Click to resume game", new PvzGraveButton[] {resumeButton});
+        resumeButton.addListener(new ClickListener() {
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                hideModal();
+                resume();
+            }
+        });
+        showModal(pauseDialog, 0f);
+        assetManager.playSound(AssetSound.PAUSE, .7f);
+    }
+    @Override public void resume() {
+        if (gameManager.getGameState() != GameManager.GameState.PAUSED) {
+            return; // 不是暂停状态，忽略
+        }
+        gameManager.setGameState(GameManager.GameState.PLAYING);
+        game.bgMusic.play();
+        hideModal();
+    }
     @Override public void hide() { }
 
     @Override public boolean keyUp(int keycode) { return false; }
     @Override public boolean keyTyped(char character) { return false; }
-    @Override public boolean touchUp(int screenX, int screenY, int pointer, int button) { return false; }
-    @Override public boolean touchDragged(int screenX, int screenY, int pointer) { return false; }
+    @Override public boolean touchUp(int screenX, int screenY, int pointer, int button) {
+        if (Gdx.app.getType() == Application.ApplicationType.Android ||
+            Gdx.app.getType() == Application.ApplicationType.iOS) {
+            touchDown(screenX, screenY, pointer, button);
+            if (selectedCard != null) {
+                selectedCard.deselect();
+                selectedCard = null;
+            }
+            if (shovel.isSelected()) {
+                shovel.deselect();
+            }
+            return true;
+        }
+        return false;
+    }
+    @Override public boolean touchDragged(int screenX, int screenY, int pointer) {
+        mouseMoved(screenX, screenY);
+        // --- 第一步：处理UI输入（舞台与游戏共用 viewport） ---
+        Vector2 uiCoords = new Vector2(screenX, screenY);
+        uiStage.getViewport().unproject(uiCoords);
+
+        for (Sun sun : suns) {
+            if (sun.getBounds().contains(uiCoords.x, uiCoords.y)) {
+                collectSun(sun);
+                return true; // 事件被UI处理，结束
+            }
+        }
+        return false;
+    }
     @Override public boolean touchCancelled(int screenX, int screenY, int pointer, int button) { return false; }
     @Override public boolean scrolled(float amountX, float amountY) { return false; }
+
+    @Override
+    public void addGameDialog(String message, float duration) {
+        GameDialog gameDialog = new GameDialog(uiSkin, message,
+            gameCamera.position.x, gameCamera.position.y, gameCamera.viewportWidth, gameCamera.viewportHeight, duration);
+        gameDialogs.add(gameDialog);
+    }
 
     public void beginCrazyMode() {
         ZOMBIE_SPAWN_INTERVAL = .5f;

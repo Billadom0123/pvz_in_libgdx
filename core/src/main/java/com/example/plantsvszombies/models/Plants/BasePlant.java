@@ -1,20 +1,24 @@
 package com.example.plantsvszombies.models.Plants;
 
 
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 import com.example.plantsvszombies.Animation.AnimationClip;
-import com.example.plantsvszombies.screens.GameScreen;
+import com.example.plantsvszombies.Resource.AssetTexture;
+import com.example.plantsvszombies.managers.AssetMan;
+import com.example.plantsvszombies.screens.BaseGameScreen;
 
 public abstract class BasePlant {
     // --- 属性 ---
-    protected Vector2 position; // 位置 (使用Vector2更专业)
+    protected Vector2 position; // 位置
     protected Texture texture;    // 纹理 (贴图)
+    protected Texture shadow;
     protected String name;        // 植物名称
-    protected int cost;        // 种植成本
+    protected int cost;        // 种植消耗阳光
     protected float cooldown;    // 冷却时间
     protected float init_cd = 0f; // 初始冷却时间
 
@@ -24,7 +28,7 @@ public abstract class BasePlant {
     public boolean alive = true;  // 存活状态
     protected AnimationClip animation;
     protected float stateTime;
-    protected GameScreen screen;
+    protected BaseGameScreen screen;
     protected boolean isHighlighted = false; // 是否高亮显示（选中状态）
 
     protected boolean isHit = false;
@@ -51,7 +55,7 @@ public abstract class BasePlant {
         this(null, texture, animation, x, y);
     }
 
-    public BasePlant(GameScreen screen, Texture texture, AnimationClip animation, float x, float y) {
+    public BasePlant(BaseGameScreen screen, Texture texture, AnimationClip animation, float x, float y) {
         this.screen = screen;
         this.texture = texture;
         this.animation = animation;
@@ -60,6 +64,16 @@ public abstract class BasePlant {
         this.maxHealth = 300;
         this.health = maxHealth; // 默认生命值
         this.stateTime = 0f;
+    }
+
+    public static BasePlant create(Class<? extends BasePlant> plantClass, BaseGameScreen screen, float x, float y) {
+        try {
+            return plantClass.getConstructor(BaseGameScreen.class, float.class, float.class)
+                             .newInstance(screen, x, y);
+        } catch (Exception e) {
+            Gdx.app.error("BasePlant", "Failed to create plant instance: " + e.getMessage());
+            return null;
+        }
     }
 
     /**
@@ -85,6 +99,14 @@ public abstract class BasePlant {
                 hitDelayTimer = 0f;
             }
         }
+    }
+
+    /**
+     * 更新，只更新状态时间，用于静态植物展示使用
+     * @param delta 距离上一帧的时间差，用于实现更新
+     */
+    public void stillUpdate(float delta) {
+        stateTime += delta;
     }
 
     /**
@@ -117,6 +139,12 @@ public abstract class BasePlant {
                 batch.setColor(1f, 1f, 1f, 1f);
             }
         }
+    }
+
+    public void drawShadow(SpriteBatch batch) {
+        batch.draw(shadow,
+            bounds.x + (bounds.width - shadow.getWidth()) / 2f,
+            position.y - shadow.getHeight() / 4f);
     }
 
     /**
@@ -166,5 +194,10 @@ public abstract class BasePlant {
 
     public void isHighlighted(boolean highlighted) {
         isHighlighted = highlighted;
+    }
+
+    public void dispose() {
+        this.alive = false;
+        // 如果有需要释放或停止播放的资源，可以在这里处理
     }
 }

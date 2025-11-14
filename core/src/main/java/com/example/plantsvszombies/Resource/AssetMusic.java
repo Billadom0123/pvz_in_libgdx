@@ -10,7 +10,10 @@ public enum AssetMusic {
 
     GRASSWALK("graphics/audio/Grasswalk.ogg"),
     LOSE_MUSIC("graphics/audio/losemusic.ogg"),
-    THE_KING_PAPERMAN("graphics/audio/The-King-Paperman.mp3");
+    THE_KING_PAPERMAN("graphics/audio/The-King-Paperman.mp3"),
+    MINI_GAME("graphics/audio/MiniGame.ogg"),
+    HLSNW("graphics/audio/hlsnw.ogg"),
+    CHOOSE_YOUR_SEEDS("graphics/audio/ChooseYourSeeds.ogg");
 
 
     private final String filePath;

@@ -7,20 +7,17 @@ import com.badlogic.gdx.scenes.scene2d.Touchable;
 import com.example.plantsvszombies.Resource.AssetSound;
 import com.example.plantsvszombies.Resource.AssetTexture;
 import com.example.plantsvszombies.managers.AssetMan;
-import com.example.plantsvszombies.screens.GameScreen;
 
 public class Shovel extends Group {
 
     private AssetMan assetMan;
-    private GameScreen gameScreen;
     private TextureActor shovelBankTexture;
     private TextureActor shovelTexture;
 
     private boolean isSelected = false;
 
-    public Shovel(GameScreen screen) {
+    public Shovel() {
         this.assetMan = AssetMan.getInstance();
-        this.gameScreen = screen;
         this.shovelBankTexture = new TextureActor(AssetTexture.SHOVEL_BANK.get(assetMan));
         this.shovelTexture = new TextureActor(AssetTexture.SHOVEL.get(assetMan));
 

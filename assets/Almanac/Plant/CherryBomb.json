@@ -1,0 +1,12 @@
+{
+  "name": "Cherry Bomb",
+  "description": "Cherry Bombs can blow up all zombies in an area. They have a short fuse so plant them near zombies.",
+  "tips": {
+    "Damage": "massive",
+    "Range": "all zombies in a medium area",
+    "Usage": "single use, instant"
+  },
+  "story": "\"I wanna explode,\" says Cherry #1. \"No, let's detonate instead!\" says his brother, Cherry #2. After intense consultation they agree to explodonate.",
+  "cost": 150,
+  "recharge": "very slow"
+}

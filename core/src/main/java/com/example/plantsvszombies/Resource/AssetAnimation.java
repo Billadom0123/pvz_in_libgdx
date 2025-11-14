@@ -14,6 +14,8 @@ public enum AssetAnimation {
     WALL_NUT(AssetTexture.NORMAL_WALLNUT, 16, 1920),
     WALL_NUT_CRACKED1(AssetTexture.NORMAL_WALLNUT_CRACKED_1, 11, 1100),
     WALL_NUT_CRACKED2(AssetTexture.NORMAL_WALLNUT_CRACKED_2, 15, 1500),
+    BOOM_WALLNUT(AssetTexture.BOOM_WALLNUT, 1, 1000),
+    HUGE_WALLNUT(AssetTexture.HUGE_WALLNUT, 1, 1000),
 
     POTATO_MINE(AssetTexture.POTATO_MINE_STILL, 1, 1000),
     POTATO_MINE_ARM_UP(AssetTexture.POTATO_MINE_ARM_UP, 30, 1500),
@@ -36,7 +38,9 @@ public enum AssetAnimation {
     BUCKETHEAD_ZOMBIE(AssetTexture.BUCKETHEAD_ZOMBIE, 15, 2700),
     BUCKETHEAD_ZOMBIE_ATTACK(AssetTexture.BUCKETHEAD_ZOMBIE_ATTACK, 11, 990),
 
-    SUN(AssetTexture.SUN, 29, 2900);
+    SUN(AssetTexture.SUN, 29, 2900),
+
+    CONVEYOR_BELT(AssetTexture.CONVEYOR_BELT, 6, 200);
 
     private final AssetTexture source;
     private final int frames;

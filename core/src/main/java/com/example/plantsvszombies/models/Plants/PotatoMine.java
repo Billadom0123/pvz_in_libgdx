@@ -13,10 +13,7 @@ import com.example.plantsvszombies.Resource.AssetSound;
 import com.example.plantsvszombies.Resource.AssetTexture;
 import com.example.plantsvszombies.managers.AssetMan;
 import com.example.plantsvszombies.models.DamageType;
-import com.example.plantsvszombies.screens.GameScreen;
-
-import java.util.Timer;
-import java.util.TimerTask;
+import com.example.plantsvszombies.screens.BaseGameScreen;
 
 public class PotatoMine extends BasePlant {
 
@@ -40,8 +37,8 @@ public class PotatoMine extends BasePlant {
         this.state = State.IDLE;
     }
 
-    public PotatoMine(GameScreen gameScreen, Texture texture, AnimationClip animation, float x, float y) {
-        super(gameScreen, texture, animation, x, y);
+    public PotatoMine(BaseGameScreen screen, Texture texture, AnimationClip animation, float x, float y) {
+        super(screen, texture, animation, x, y);
         this.name = "PotatoMine";
         this.cost = 25;
         this.cooldown = 30f;
@@ -49,11 +46,12 @@ public class PotatoMine extends BasePlant {
         this.state = State.IDLE;
     }
 
-    public PotatoMine(GameScreen gameScreen, float x, float y) {
-        this(gameScreen,
+    public PotatoMine(BaseGameScreen screen, float x, float y) {
+        this(screen,
             AssetTexture.POTATO_MINE_ARMED_UP_NO_LIGHT.get(AssetMan.getInstance()),
             AssetAnimation.POTATO_MINE.get(AssetMan.getInstance()),
             x, y);
+        this.shadow = AssetTexture.PLANT_SHADOW.get(AssetMan.getInstance());
     }
 
     @Override
@@ -101,6 +99,13 @@ public class PotatoMine extends BasePlant {
         }
     }
 
+    @Override
+    public void drawShadow(SpriteBatch batch) {
+        if (state != State.IDLE) {
+            super.drawShadow(batch);
+        }
+    }
+
     /**
      * 土豆爆炸！
      */
@@ -119,7 +124,7 @@ public class PotatoMine extends BasePlant {
         assetMan.playSound(AssetSound.POTATO_MINE_EXPLODE, 0.6f);
         bounds = new Rectangle(-100, -100, 0, 0); // 移出碰撞框，避免继续与僵尸碰撞
         screen.triggerCameraShake(0.25f, 6f);
-        screen.doAoeDamage(explosionArea, EXPLOSION_DAMAGE, DamageType.NORMAL);
+        screen.doAoeDamage(explosionArea, EXPLOSION_DAMAGE, DamageType.POTATO);
         explodeText = AssetTexture.POTATO_MINE_EXPLOSION_WORD.get(assetMan);
         state = State.EXPLODED;
     }

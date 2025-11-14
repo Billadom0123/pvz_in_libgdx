@@ -2,15 +2,13 @@ package com.example.plantsvszombies.models.Plants;
 
 
 import com.badlogic.gdx.graphics.Texture;
-import com.badlogic.gdx.graphics.TextureData;
 import com.example.plantsvszombies.Animation.AnimationClip;
 import com.example.plantsvszombies.Resource.AssetAnimation;
 import com.example.plantsvszombies.Resource.AssetSound;
 import com.example.plantsvszombies.Resource.AssetTexture;
 import com.example.plantsvszombies.managers.AssetMan;
-import com.example.plantsvszombies.models.Projectiles.BaseProjectile;
 import com.example.plantsvszombies.models.Projectiles.Pea;
-import com.example.plantsvszombies.screens.GameScreen;
+import com.example.plantsvszombies.screens.BaseGameScreen;
 
 public class Peashooter extends BasePlant {
     // 需要一个对GameScreen的引用，这样它才能调用GameScreen的方法来在世界中生成一个子弹实体
@@ -24,7 +22,7 @@ public class Peashooter extends BasePlant {
         this.cooldown = 7.5f;
     }
 
-    public Peashooter(GameScreen screen, Texture texture, AnimationClip animation, float x, float y) {
+    public Peashooter(BaseGameScreen screen, Texture texture, AnimationClip animation, float x, float y) {
         super(texture, animation, x, y);
         this.name = "Peashooter";
         this.screen = screen;
@@ -33,11 +31,12 @@ public class Peashooter extends BasePlant {
         this.cooldown = 7.5f;
     }
 
-    public Peashooter(GameScreen screen, float x, float y) {
+    public Peashooter(BaseGameScreen screen, float x, float y) {
         this(screen,
             AssetTexture.PEASHOOTER_STILL.get(AssetMan.getInstance()),
             AssetAnimation.PEASHOOTER.get(AssetMan.getInstance()),
             x, y);
+        this.shadow = AssetTexture.PLANT_SHADOW.get(AssetMan.getInstance());
     }
 
     /**

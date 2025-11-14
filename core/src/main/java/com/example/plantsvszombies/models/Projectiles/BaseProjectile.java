@@ -10,11 +10,12 @@ import com.example.plantsvszombies.models.Zombies.BaseZombie;
 import com.example.plantsvszombies.screens.GameScreen;
 
 public abstract class BaseProjectile {
-    private Vector2 position;
-    private Texture texture;
-    private float speed;
-    private int damage;
-    private Rectangle bounds;
+    protected Vector2 position;
+    protected Texture texture;
+    protected Texture shadow;
+    protected float speed;
+    protected int damage;
+    protected Rectangle bounds;
     public boolean active = true; // 标记是否存活，用于后续移除
     protected boolean hit = false;
     private boolean hasHitAnimation = false;
@@ -69,6 +70,14 @@ public abstract class BaseProjectile {
             batch.draw(hitAnimation.getFrame(hitTimer), position.x, position.y);
         } else {
             batch.draw(texture, position.x, position.y);
+        }
+    }
+
+    public void drawShadow(SpriteBatch batch) {
+        if (shadow != null && !hit) {
+            batch.draw(shadow,
+                bounds.x + (bounds.width - shadow.getWidth()) / 2f,
+                position.y - shadow.getHeight() / 4f);
         }
     }
 

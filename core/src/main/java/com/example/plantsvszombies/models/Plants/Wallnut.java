@@ -5,7 +5,7 @@ import com.example.plantsvszombies.Animation.AnimationClip;
 import com.example.plantsvszombies.Resource.AssetAnimation;
 import com.example.plantsvszombies.Resource.AssetTexture;
 import com.example.plantsvszombies.managers.AssetMan;
-import com.example.plantsvszombies.screens.GameScreen;
+import com.example.plantsvszombies.screens.BaseGameScreen;
 
 public class Wallnut extends BasePlant {
 
@@ -23,7 +23,7 @@ public class Wallnut extends BasePlant {
         this(null, texture, animation, x, y);
     }
 
-    public Wallnut(GameScreen screen, Texture texture, AnimationClip animation, float x, float y) {
+    public Wallnut(BaseGameScreen screen, Texture texture, AnimationClip animation, float x, float y) {
         super(screen, texture, animation, x, y);
         this.name = "WallNut";
         this.cost = 50;
@@ -33,11 +33,12 @@ public class Wallnut extends BasePlant {
         this.health = maxHealth;
     }
 
-    public Wallnut(GameScreen screen, float x, float y) {
+    public Wallnut(BaseGameScreen screen, float x, float y) {
         this(screen,
             AssetTexture.NORMAL_WALLNUT_STILL.get(AssetMan.getInstance()),
             AssetAnimation.WALL_NUT.get(AssetMan.getInstance()),
             x, y);
+        this.shadow = AssetTexture.PLANT_SHADOW.get(AssetMan.getInstance());
     }
     /**
      * 坚果墙是静态的，它自己没有任何行为，

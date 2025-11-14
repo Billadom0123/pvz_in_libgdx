@@ -1,0 +1,10 @@
+{
+  "name": "Sunflower",
+  "description": "Sunflowers are essential for you to produce extra sun. Try planting as many as you can!",
+  "tips": {
+    "Sun production": "normal"
+  },
+  "story": "Sunflower can't resist bouncing to the beat. Which beat is that? Why, the life-giving jazzy rhythm of the Earth itself, thumping at a frequency only Sunflower can hear.",
+  "cost": 50,
+  "recharge": "fast"
+}

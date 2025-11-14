@@ -1,13 +1,12 @@
 package com.example.plantsvszombies.models.Plants;
 
-import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.example.plantsvszombies.Animation.AnimationClip;
 import com.example.plantsvszombies.Resource.AssetAnimation;
 import com.example.plantsvszombies.Resource.AssetTexture;
 import com.example.plantsvszombies.managers.AssetMan;
-import com.example.plantsvszombies.screens.GameScreen;
+import com.example.plantsvszombies.screens.BaseGameScreen;
 
 public class Sunflower extends BasePlant {
 
@@ -26,15 +25,11 @@ public class Sunflower extends BasePlant {
         this.cooldown = 7.5f;
     }
 
-    public Sunflower(Texture texture, float x, float y) {
-        this(texture, null, x, y);
-    }
-
     public Sunflower(Texture texture, AnimationClip animation, float x, float y) {
         this(null, texture, animation, x, y);
     }
 
-    public Sunflower(GameScreen screen, Texture texture, AnimationClip animation, float x, float y) {
+    public Sunflower(BaseGameScreen screen, Texture texture, AnimationClip animation, float x, float y) {
         super(screen, texture, animation, x, y);
         this.name = "SunFlower";
         this.sunProduceTimer = 0f;
@@ -42,11 +37,12 @@ public class Sunflower extends BasePlant {
         this.cooldown = 7.5f;
     }
 
-    public Sunflower(GameScreen screen, float x, float y) {
+    public Sunflower(BaseGameScreen screen, float x, float y) {
         this(screen,
             AssetTexture.SUNFLOWER_STILL.get(AssetMan.getInstance()),
             AssetAnimation.SUN_FLOWER.get(AssetMan.getInstance()),
             x, y);
+        this.shadow = AssetTexture.PLANT_SHADOW.get(AssetMan.getInstance());
     }
 
     @Override

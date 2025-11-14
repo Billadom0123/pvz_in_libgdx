@@ -1,0 +1,12 @@
+{
+  "name": "Potato Mine",
+  "description": "Potato Mines pack a powerful punch, but they need a while to arm themselves. You should plant them ahead of zombies. They will explode on contact.",
+  "tips": {
+    "Damage": "massive",
+    "Range": "all zombies in a small area",
+    "Usage": "single use, delayed activation"
+  },
+  "story": "Some folks say Potato Mine is lazy, that he leaves everything to the last minute. Potato Mine says nothing. He's too busy thinking about his investment strategy.",
+  "cost": 25,
+  "recharge": "slow"
+}

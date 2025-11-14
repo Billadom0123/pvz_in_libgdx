@@ -6,7 +6,9 @@ import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.ParticleEffect;
+import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator;
 import com.example.plantsvszombies.Animation.AnimationClip;
 import com.example.plantsvszombies.Resource.*;
 
@@ -17,12 +19,15 @@ import java.util.Map;
 public class AssetMan {
     private static AssetMan instance;
     private final AssetManager assetManager;
+    private final GameManager gameManager;
     private final Map<String, AnimationClip> animations;
     private final Map<String, ParticleEffect> particleEffects = new HashMap<>();
+    private final Map<String, BitmapFont> fonts = new HashMap<>();
 
 
     private AssetMan() {
         assetManager = new AssetManager();
+        gameManager = GameManager.getInstance();
         animations = new HashMap<>();
     }
 
@@ -43,11 +48,24 @@ public class AssetMan {
         AssetParticle.loadAll(this);
         assetManager.finishLoading();
         AssetAnimation.loadAll(this);
+        AssetFont.loadAll(this);
     }
 
     public void loadTexture(String filePath) { assetManager.load(filePath, Texture.class); }
 
     public Texture getTexture(String filePath) { return assetManager.get(filePath, Texture.class); }
+
+    public void loadFont(String key, String filepath, FreeTypeFontGenerator.FreeTypeFontParameter parameter) {
+        FreeTypeFontGenerator generator = new FreeTypeFontGenerator(Gdx.files.internal(filepath));
+        BitmapFont font = generator.generateFont(parameter);
+//        font.getData().setLineHeight(font.getLineHeight() + 5f);
+        fonts.put(key, font);
+        generator.dispose();
+    }
+
+    public BitmapFont getFont(String key) {
+        return fonts.get(key);
+    }
 
     public void loadSound(String filePath) { assetManager.load(filePath, Sound.class); }
 
@@ -86,6 +104,7 @@ public class AssetMan {
 
     public void playSound(AssetSound sound, float volume) {
         Sound s = sound.get(this);
+//        float multiplier = gameManager.getSfxMasterVolume();
         if (s != null) {
             s.play(volume);
         }
@@ -96,12 +115,6 @@ public class AssetMan {
         int index = (int) (Math.random() * sounds.size());
         playSound(sounds.get(index), volume);
     }
-
-    public void playRandomSound(List<AssetSound> sounds) {
-        playRandomSound(sounds, 1.0f);
-    }
-
-
 
     public void unloadAsset(String filePath) {
         if (assetManager.isLoaded(filePath)) {

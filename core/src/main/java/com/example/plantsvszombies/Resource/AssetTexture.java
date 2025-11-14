@@ -16,6 +16,46 @@ public enum AssetTexture {
     PUZZLE_HIGHLIGHT("graphics/Screen/SelectorScreen_Challenges_highlight.png"),
     CHALLENGE_BUTTON("graphics/Screen/SelectorScreen_Vasebreaker_button.png"),
     CHALLENGE_HIGHLIGHT("graphics/Screen/SelectorScreen_vasebreaker_highlight.png"),
+    HELP_BUTTON("graphics/Screen/SelectorScreen_Help1.png"),
+    HELP_HIGHLIGHT("graphics/Screen/SelectorScreen_Help2.png"),
+    OPTIONS_BUTTON("graphics/Screen/SelectorScreen_Options1.png"),
+    OPTIONS_HIGHLIGHT("graphics/Screen/SelectorScreen_Options2.png"),
+    QUIT_BUTTON("graphics/Screen/SelectorScreen_Quit1.png"),
+    QUIT_HIGHLIGHT("graphics/Screen/SelectorScreen_Quit2.png"),
+    ALMANAC("graphics/Screen/SelectorScreen_Almanac.png"),
+    ALMANAC_HIGHLIGHT("graphics/Screen/SelectorScreen_AlmanacHighlight.png"),
+
+    // UI 相关，包括对话框和按钮
+    DIALOG_HEADER("graphics/Skin/dialog_header.png"),
+    DIALOG_TOP_LEFT("graphics/Skin/dialog_topleft.png"),
+    DIALOG_TOP_MIDDLE("graphics/Skin/dialog_topmiddle.png"),
+    DIALOG_TOP_RIGHT("graphics/Skin/dialog_topright.png"),
+    DIALOG_CENTER_LEFT("graphics/Skin/dialog_centerleft.png"),
+    DIALOG_CENTER_MIDDLE("graphics/Skin/dialog_centermiddle.png"),
+    DIALOG_CENTER_RIGHT("graphics/Skin/dialog_centerright.png"),
+    DIALOG_BOTTOM_LEFT("graphics/Skin/dialog_bottomleft.png"),
+    DIALOG_BOTTOM_MIDDLE("graphics/Skin/dialog_bottommiddle.png"),
+    DIALOG_BOTTOM_RIGHT("graphics/Skin/dialog_bottomright.png"),
+    DIALOG_BIG_BOTTOM_LEFT("graphics/Skin/dialog_bigbottomleft.png"),
+    DIALOG_BIG_BOTTOM_MIDDLE("graphics/Skin/dialog_bigbottommiddle.png"),
+    DIALOG_BIG_BOTTOM_RIGHT("graphics/Skin/dialog_bigbottomright.png"),
+
+    BUTTON_LEFT("graphics/Skin/button_left.png"),
+    BUTTON_MIDDLE("graphics/Skin/button_middle.png"),
+    BUTTON_RIGHT("graphics/Skin/button_right.png"),
+    BUTTON_DOWN_LEFT("graphics/Skin/button_down_left.png"),
+    BUTTON_DOWN_MIDDLE("graphics/Skin/button_down_middle.png"),
+    BUTTON_DOWN_RIGHT("graphics/Skin/button_down_right.png"),
+
+    // 图鉴相关
+    ALMANAC_INDEX_BACKGROUND("graphics/Screen/Almanac_IndexBack.jpg"),
+    ALMANAC_CLOSE_BUTTON("graphics/Screen/Almanac_CloseButton.png"),
+    ALMANAC_CLOSE_BUTTON_HIGHLIGHT("graphics/Screen/Almanac_CloseButtonHighlight.png"),
+    ALMANAC_PLANT_BACK("graphics/Screen/Almanac_PlantBack.jpg"),
+    ALMANAC_PLANT_CARD("graphics/Screen/Almanac_PlantCard.png"),
+    ALMANAC_GROUND_DAY("graphics/Screen/Almanac_GroundDay.jpg"),
+    SEED_CHOOSER_BUTTON("graphics/Screen/SeedChooser_Button.png"),
+    SEED_CHOOSER_BUTTON_GLOW("graphics/Screen/SeedChooser_Button_Glow.png"),
 
 
 
@@ -26,6 +66,7 @@ public enum AssetTexture {
     PEASHOOTER("graphics/Plants/Peashooter/Peashooter.png"),
     PEA_SPLAT("graphics/Bullets/PeaNormalExplode/pea_splats.png"),
     PEA_NORMAL("graphics/Bullets/PeaNormal/PeaNormal_0.png"),
+    PEA_SHADOW("graphics/Screen/Pea_Shadow.png"),
 
     SUNFLOWER_STILL("graphics/Plants/SunFlower/Still.png"),
     SUNFLOWER("graphics/Plants/SunFlower/SunFlower.png"),
@@ -35,6 +76,8 @@ public enum AssetTexture {
     NORMAL_WALLNUT("graphics/Plants/WallNut/WallNut.png"),
     NORMAL_WALLNUT_CRACKED_1("graphics/Plants/WallNut/Wallnut_cracked1.png"),
     NORMAL_WALLNUT_CRACKED_2("graphics/Plants/WallNut/Wallnut_cracked2.png"),
+    BOOM_WALLNUT("graphics/Plants/WallNut/boom.png"),
+    HUGE_WALLNUT("graphics/Plants/WallNut/huge.png"),
 
     POTATO_MINE_STILL("graphics/Plants/PotatoMine/Still.png"),
     POTATO_MINE_ARM_UP("graphics/Plants/PotatoMine/ArmUp.png"),
@@ -46,6 +89,8 @@ public enum AssetTexture {
     CHERRY_BOMB_STILL("graphics/Plants/CherryBomb/Still.png"),
     CHERRY_BOMB("graphics/Plants/CherryBomb/CherryBomb.png"),
     CHERRY_BOMB_BOOM("graphics/Plants/CherryBomb/Boom.png"),
+
+    PLANT_SHADOW("graphics/Screen/plantshadow2.png"),
 
     NORMAL_ZOMBIE_STILL("graphics/Zombies/Zombie/ZombieStill.png"),
     NORMAL_ZOMBIE("graphics/Zombies/Zombie/Zombie.png"),
@@ -66,6 +111,7 @@ public enum AssetTexture {
     BUCKETHEAD_ZOMBIE_ATTACK("graphics/Zombies/BucketheadZombie/BucketheadZombieAttack.png"),
     BUCKET("graphics/Zombies/BucketheadZombie/Zombie_bucket3.png"),
 
+    ZOMBIE_SHADOW("graphics/Screen/plantshadow.png"),
 
     SEED_BANK("graphics/Screen/SeedBank.png"),
     SUN_STILL("graphics/Screen/SunStill.png"),
@@ -76,7 +122,11 @@ public enum AssetTexture {
     SEED_PACKET_6F("graphics/Screen/SeedPacket_6f.png"),
     SEED_PACKET_5F("graphics/Screen/SeedPacket_5f.png"),
     SHOVEL_BANK("graphics/Screen/ShovelBank.png"),
-    SHOVEL("graphics/Screen/Shovel.png");
+    SHOVEL("graphics/Screen/Shovel.png"),
+
+    WALLNUT_BOWLING_STRIPE("graphics/Screen/Wallnut_bowlingstripe.png"),
+    CONVEYOR_BELT("graphics/Screen/ConveyorBelt.png"), // 传送带的履带
+    CONVEYOR_BELT_BACKDROP("graphics/Screen/ConveyorBelt_backdrop.png"); // 传送带的背景
 
     private final String filePath;
     private boolean loaded;

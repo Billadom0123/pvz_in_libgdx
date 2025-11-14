@@ -18,7 +18,7 @@ public class HomePageButton extends Actor {
     private final Texture highlightTexture;
     private final Texture shadowTexture;
     private final Sound hoverSound;
-    private Shape2D hitArea;
+    private final Shape2D hitArea;
     private final ShapeRenderer shapeRenderer;
     private boolean locked = false;
 
@@ -62,7 +62,7 @@ public class HomePageButton extends Actor {
     @Override
     public void draw(Batch batch, float parentAlpha) {
         batch.draw(texture, getX(), getY(), getWidth(), getHeight());
-        if (isLocked()) {
+        if (isLocked() && shadowTexture != null) {
             batch.draw(shadowTexture, getX(), getY(), getWidth(), getHeight());
         }
         batch.end();
@@ -73,7 +73,8 @@ public class HomePageButton extends Actor {
 //        shapeRenderer.setColor(1, 0, 0, 1); // 设置颜色为红色
 //        if (hitArea instanceof Polygon) {
 //            shapeRenderer.polygon(((Polygon) hitArea).getTransformedVertices());
-//        } else if (hitArea instanceof Rectangle rect) {
+//        } else if (hitArea instanceof Rectangle) {
+//            Rectangle rect = (Rectangle) hitArea;
 //            shapeRenderer.rect(rect.x, rect.y, rect.width, rect.height);
 //        }
 //        shapeRenderer.end();

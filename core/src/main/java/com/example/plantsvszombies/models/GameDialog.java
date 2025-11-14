@@ -13,6 +13,7 @@ import com.badlogic.gdx.utils.Timer;
 public class GameDialog {
 
     private final Table dialogTable;
+    private boolean shown = false;
 
     public GameDialog(Skin skin, String message, float cameraX, float cameraY, float cameraWidth, float cameraHeight, float duration) {
         // 创建半透明背景
@@ -46,11 +47,16 @@ public class GameDialog {
             @Override
             public void run() {
                 dialogTable.remove();
+                shown = true;
             }
         }, duration);
     }
 
     public Table getDialogTable() {
         return dialogTable;
+    }
+
+    public boolean hasShown() {
+        return shown;
     }
 }
