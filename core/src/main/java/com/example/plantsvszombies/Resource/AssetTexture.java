@@ -56,6 +56,9 @@ public enum AssetTexture {
     ALMANAC_GROUND_DAY("graphics/Screen/Almanac_GroundDay.jpg"),
     SEED_CHOOSER_BUTTON("graphics/Screen/SeedChooser_Button.png"),
     SEED_CHOOSER_BUTTON_GLOW("graphics/Screen/SeedChooser_Button_Glow.png"),
+    SEED_PACKET_FLASH("graphics/Screen/SeedPacketFlash.png"),
+    ALMANAC_INDEX_BUTTON("graphics/Screen/Almanac_IndexButton.png"),
+    ALMANAC_INDEX_BUTTON_HIGHLIGHT("graphics/Screen/Almanac_IndexButtonHighlight.png"),
 
 
 

@@ -85,6 +85,15 @@ public class PotatoMine extends BasePlant {
     }
 
     @Override
+    public void stillUpdate(float delta) {
+        super.stillUpdate(delta);
+        if (state != State.ARMED) {
+            state = State.ARMED;
+            animation = AssetAnimation.POTATO_MINE_ARMED.get(AssetMan.getInstance());
+        }
+    }
+
+    @Override
     public void drawAnimation(SpriteBatch batch) {
         if (state == State.ARMING) {
             batch.draw(animation.getFrame(armingTimer), 0, 0);

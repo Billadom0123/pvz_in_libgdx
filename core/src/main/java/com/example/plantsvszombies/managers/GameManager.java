@@ -17,7 +17,7 @@ public class GameManager {
     private int sun; // 当前太阳数量
     private float conveyorSpeed;
     private GameState gameState;
-    private boolean crazyMode = true; // 疯狂模式开关，默认为关闭，不可更改
+    private boolean crazyMode = false; // 疯狂模式开关，默认为关闭，不可更改
     private float musicMasterVolume = 0.5f;
     private float sfxMasterVolume = 0.5f;
 

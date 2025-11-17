@@ -12,6 +12,7 @@ import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.example.plantsvszombies.PvzGame;
 import com.example.plantsvszombies.Resource.AssetFont;
+import com.example.plantsvszombies.Resource.AssetMusic;
 import com.example.plantsvszombies.Resource.AssetSound;
 import com.example.plantsvszombies.Resource.AssetTexture;
 import com.example.plantsvszombies.managers.AssetMan;
@@ -53,6 +54,7 @@ public class HomeScreen implements Screen {
         HomePageButton startAdventureButton = new HomePageButton(AssetTexture.START_ADVENTURE_BUTTON.get(assetMan),
             AssetTexture.START_ADVENTURE_HIGHLIGHT.get(assetMan),
             null, AssetSound.BLEEP.get(assetMan),
+            AssetSound.GRAVE_BUTTON.get(assetMan),
             new Polygon(new float[]{0, 50, 5, 130, 70, 130, 100, 150, 240, 150, 280, 110, 360, 100, 345, 0, 0, 50}));
         startAdventureButton.setPosition(460, 390);
         startAdventureButton.setTouchable(Touchable.enabled);
@@ -67,6 +69,7 @@ public class HomeScreen implements Screen {
         HomePageButton miniGameButton = new HomePageButton(AssetTexture.MINI_GAME_BUTTON.get(assetMan),
             AssetTexture.MINI_GAME_HIGHLIGHT.get(assetMan),
             null, AssetSound.BLEEP.get(assetMan),
+            AssetSound.GRAVE_BUTTON.get(assetMan),
             new Polygon(new float[]{5, 65, 5, 135, 340, 90, 325, 5}));
         miniGameButton.setPosition(460, 295);
         miniGameButton.setTouchable(Touchable.enabled);
@@ -85,6 +88,7 @@ public class HomeScreen implements Screen {
         HomePageButton puzzleButton = new HomePageButton(AssetTexture.PUZZLE_BUTTON.get(assetMan),
             AssetTexture.PUZZLE_HIGHLIGHT.get(assetMan),
             null, AssetSound.BLEEP.get(assetMan),
+            AssetSound.GRAVE_BUTTON.get(assetMan),
             new Polygon(new float[]{5, 65, 5, 130, 310, 80, 295, 5}));
         puzzleButton.setPosition(465, 218);
         puzzleButton.setTouchable(Touchable.enabled);
@@ -93,6 +97,7 @@ public class HomeScreen implements Screen {
         HomePageButton challengeButton = new HomePageButton(AssetTexture.CHALLENGE_BUTTON.get(assetMan),
             AssetTexture.CHALLENGE_HIGHLIGHT.get(assetMan),
             null, AssetSound.BLEEP.get(assetMan),
+            AssetSound.GRAVE_BUTTON.get(assetMan),
             new Polygon(new float[]{10, 70, 10, 135, 290, 70, 280, 5}));
         challengeButton.setPosition(465, 143);
         challengeButton.setTouchable(Touchable.enabled);
@@ -101,6 +106,7 @@ public class HomeScreen implements Screen {
         HomePageButton helpButton = new HomePageButton(AssetTexture.HELP_BUTTON.get(assetMan),
             AssetTexture.HELP_HIGHLIGHT.get(assetMan),
             null, AssetSound.BLEEP.get(assetMan),
+            AssetSound.TAP1.get(assetMan),
             new Polygon(new float[]{-10, 5, -5, 30, 0, 40, 10, 55, 0, 70, 50, 70, 40, 50, 60, 5, 25, -10}));
         helpButton.setPosition(732, 53);
         helpButton.setTouchable(Touchable.enabled);
@@ -109,6 +115,7 @@ public class HomeScreen implements Screen {
         HomePageButton optionsButton = new HomePageButton(AssetTexture.OPTIONS_BUTTON.get(assetMan),
             AssetTexture.OPTIONS_HIGHLIGHT.get(assetMan),
             null, AssetSound.BLEEP.get(assetMan),
+            AssetSound.TAP1.get(assetMan),
             new Polygon(new float[]{-10, 15, 5, 35, 30, 50, 35, 75, 60, 75, 60, 50, 90, 15, 80, 0, 35, -10}));
         optionsButton.setPosition(640, 80);
         optionsButton.setTouchable(Touchable.enabled);
@@ -117,6 +124,7 @@ public class HomeScreen implements Screen {
         HomePageButton quitButton = new HomePageButton(AssetTexture.QUIT_BUTTON.get(assetMan),
             AssetTexture.QUIT_HIGHLIGHT.get(assetMan),
             null, AssetSound.BLEEP.get(assetMan),
+            AssetSound.TAP1.get(assetMan),
             new Polygon(new float[]{-20, 15, -20, 40, -5, 55, 55, 55, 65, 20, 55, 0, 10, -10}));
         quitButton.setPosition(815, 58);
         quitButton.setTouchable(Touchable.enabled);
@@ -152,13 +160,14 @@ public class HomeScreen implements Screen {
         HomePageButton almanac = new HomePageButton(AssetTexture.ALMANAC.get(assetMan),
             AssetTexture.ALMANAC_HIGHLIGHT.get(assetMan),
             null, AssetSound.BLEEP.get(assetMan),
+            AssetSound.TAP1.get(assetMan),
             new Polygon(new float[]{5, 25, 25, 95, 90, 80, 75, 30, 75, 5}));
         almanac.setPosition(370, 60);
         almanac.setTouchable(Touchable.enabled);
         almanac.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
-                game.setScreen(new AlmanacScreen(game));
+                game.setScreen(new AlmanacScreen(game, HomeScreen.this));
             }
         });
         stage.addActor(almanac);
@@ -221,6 +230,12 @@ public class HomeScreen implements Screen {
     @Override
     public void show() {
         Gdx.input.setInputProcessor(stage);
+        if (game.bgMusic != AssetMusic.MAINTHEME.get(assetMan)) game.bgMusic = AssetMusic.MAINTHEME.get(assetMan);
+        if (!game.bgMusic.isPlaying()) {
+            game.bgMusic.setLooping(true);
+            game.bgMusic.setVolume(0.5f);
+            game.bgMusic.play();
+        }
     }
 
     @Override

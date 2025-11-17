@@ -4,11 +4,9 @@ import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
-import com.badlogic.gdx.scenes.scene2d.Actor;
-import com.badlogic.gdx.scenes.scene2d.Group;
-import com.badlogic.gdx.scenes.scene2d.InputEvent;
-import com.badlogic.gdx.scenes.scene2d.InputListener;
+import com.badlogic.gdx.scenes.scene2d.*;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
+import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.utils.Align;
 import com.badlogic.gdx.utils.Array;
 import com.example.plantsvszombies.Resource.AssetSound;
@@ -59,7 +57,7 @@ public class PvzGraveButton extends Group {
 
         layout();
 
-        addListener(new InputListener() {
+        addListener(new ClickListener() {
             @Override
             public void enter(InputEvent event, float x, float y, int pointer, Actor fromActor) {
                 currentContentColor = contentDownColor;
@@ -129,6 +127,7 @@ public class PvzGraveButton extends Group {
         width += currentRight.getWidth();
 
         contentLabel.setPosition((width - contentLabel.getWidth()) / 2f, (currentLeft.getHeight() - contentLabel.getHeight()) / 2f + 2f); // 4f微调
+        contentLabel.setTouchable(Touchable.disabled);
         this.addActor(contentLabel);
 
         this.setSize(width, currentLeft.getHeight());

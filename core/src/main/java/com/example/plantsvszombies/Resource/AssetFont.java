@@ -6,23 +6,23 @@ import com.example.plantsvszombies.managers.AssetMan;
 
 public enum AssetFont {
 
-    DWARVEN_STONECRAFT_SIZE12_DEFAULT("graphics/Skin/DwarvenStoneCraftCyr.otf", new FreeTypeFontGenerator.FreeTypeFontParameter() {{
+    DWARVEN_STONECRAFT_SIZE12_DEFAULT("graphics/Skin/DwarvenStonecraftCyr.otf", new FreeTypeFontGenerator.FreeTypeFontParameter() {{
         size = 12;
     }}),
 
-    DWARVEN_STONECRAFT_SIZE20_DEFAULT("graphics/Skin/DwarvenStoneCraftCyr.otf", new FreeTypeFontGenerator.FreeTypeFontParameter() {{
+    DWARVEN_STONECRAFT_SIZE20_DEFAULT("graphics/Skin/DwarvenStonecraftCyr.otf", new FreeTypeFontGenerator.FreeTypeFontParameter() {{
         size = 20;
     }}),
 
-    DWARVEN_STONECRAFT_SIZE24_DEFAULT("graphics/Skin/DwarvenStoneCraftCyr.otf", new FreeTypeFontGenerator.FreeTypeFontParameter() {{
+    DWARVEN_STONECRAFT_SIZE24_DEFAULT("graphics/Skin/DwarvenStonecraftCyr.otf", new FreeTypeFontGenerator.FreeTypeFontParameter() {{
         size = 24;
     }}),
 
-    DWARVEN_STONECRAFT_SIZE30_DEFAULT("graphics/Skin/DwarvenStoneCraftCyr.otf", new FreeTypeFontGenerator.FreeTypeFontParameter() {{
+    DWARVEN_STONECRAFT_SIZE30_DEFAULT("graphics/Skin/DwarvenStonecraftCyr.otf", new FreeTypeFontGenerator.FreeTypeFontParameter() {{
         size = 30;
     }}),
 
-    DWARVEN_STONECRAFT_SIZE48_DEFAULT("graphics/Skin/DwarvenStoneCraftCyr.otf", new FreeTypeFontGenerator.FreeTypeFontParameter() {{
+    DWARVEN_STONECRAFT_SIZE48_DEFAULT("graphics/Skin/DwarvenStonecraftCyr.otf", new FreeTypeFontGenerator.FreeTypeFontParameter() {{
         size = 48;
     }}),
 
@@ -32,6 +32,15 @@ public enum AssetFont {
 
     BRIANNE_S_HAND_SIZE14_DEFAULT("graphics/Skin/Brianne-s-hand-1.ttf", new FreeTypeFontGenerator.FreeTypeFontParameter() {{
         size = 14;
+    }}),
+
+    BRIANNE_TOD_SIZE15_DEFAULT("graphics/Skin/BRIANNETOD.TTF", new FreeTypeFontGenerator.FreeTypeFontParameter() {{
+        size = 16;
+        spaceX = -1;
+    }}),
+
+    BRIANNE_TOD_SIZE20_DEFAULT("graphics/Skin/BRIANNETOD.TTF", new FreeTypeFontGenerator.FreeTypeFontParameter() {{
+        size = 20;
     }});
 
 

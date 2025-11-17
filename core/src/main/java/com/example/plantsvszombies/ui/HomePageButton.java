@@ -11,24 +11,23 @@ import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.InputListener;
 import com.badlogic.gdx.scenes.scene2d.Touchable;
+import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 
 public class HomePageButton extends Actor {
     private Texture texture; // 当前用于绘制的纹理
     private final Texture baseTexture; // 原始纹理，用于恢复
     private final Texture highlightTexture;
     private final Texture shadowTexture;
-    private final Sound hoverSound;
     private final Shape2D hitArea;
     private final ShapeRenderer shapeRenderer;
     private boolean locked = false;
 
     public HomePageButton(Texture texture, Texture highlightTexture, Texture shadowTexture,
-                          Sound hoverSound, Shape2D hitArea) {
+                          Sound hoverSound, Sound clickSound, Shape2D hitArea) {
         this.baseTexture = texture;
         this.texture = baseTexture;
         this.highlightTexture = highlightTexture;
         this.shadowTexture = shadowTexture;
-        this.hoverSound = hoverSound;
         this.hitArea = hitArea;
         this.shapeRenderer = new ShapeRenderer();
         if (hitArea != null) {
@@ -39,7 +38,7 @@ public class HomePageButton extends Actor {
         setSize(texture.getWidth(), texture.getHeight());
 
         // 添加悬停事件监听器：使用 enter/exit，enter 只会在 hit(...) 判定为非 null 时触发
-        addListener(new InputListener() {
+        addListener(new ClickListener() {
             @Override
             public void enter(InputEvent event, float x, float y, int pointer, Actor fromActor) {
                 // 再次确认是在 hitArea 内（冗余校验）
@@ -55,6 +54,12 @@ public class HomePageButton extends Actor {
             public void exit(InputEvent event, float x, float y, int pointer, Actor toActor) {
                 // 鼠标移出时恢复原始纹理
                 HomePageButton.this.texture = HomePageButton.this.baseTexture;
+            }
+
+            @Override
+            public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
+                if (clickSound != null)  clickSound.play();
+                return super.touchDown(event, x, y, pointer, button);
             }
         });
     }

@@ -105,7 +105,7 @@ public class GameScreen implements BaseGameScreen {
     private final Label sunLabel;     // 显示太阳数量的标签
     private PlantCard selectedCard; // 当前被玩家选中的植物卡片
     private Table tooltipTable;    // 显示卡片信息的提示框
-    private Shovel shovel;;          // 铲子UI元素
+    private Shovel shovel;          // 铲子UI元素
     private PvzGraveButton pauseButton; // 暂停按钮
     private Texture whitePixel;
     private Group modalOverlay;

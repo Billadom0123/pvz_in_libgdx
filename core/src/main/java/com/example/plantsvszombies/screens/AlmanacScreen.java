@@ -36,6 +36,7 @@ public class AlmanacScreen implements Screen {
     }
     private State state;
     private final PvzGame game;
+    private final Screen previousScreen;
 
     private float elapsedTime = 0f;
     private final AssetMan assetMan;
@@ -59,8 +60,10 @@ public class AlmanacScreen implements Screen {
     private Group plantDetailBtn;
     private Group zombieDetailBtn;
     private Group indexBtn;
+    private Group closeBtn;
 
     // 植物详情页
+    private boolean isPlantDetailsInitialized = false;
     private Array<AlmanacPlantCard> plantCards;
     private Texture cardBackground;
     private AlmanacPlantCard selectedPlantCard;
@@ -71,9 +74,10 @@ public class AlmanacScreen implements Screen {
     private Label plantCostLabel;
     private Label rechargeLabel;
 
-    public AlmanacScreen(PvzGame game) {
+    public AlmanacScreen(PvzGame game, Screen previous) {
         this.state = State.INDEX;
         this.game = game;
+        this.previousScreen = previous;
         this.assetMan = game.assetManager;
         this.camera = new OrthographicCamera();
         this.viewport = new FitViewport(WORLD_WIDTH, WORLD_HEIGHT, camera);
@@ -121,7 +125,10 @@ public class AlmanacScreen implements Screen {
             @Override
             public void clicked(InputEvent event, float x, float y) {
                 state = State.PLANT_DETAILS;
-                initPlantDetailsPage();
+                if (!isPlantDetailsInitialized) {
+                    isPlantDetailsInitialized = true;
+                    initPlantDetailsPage();
+                }
             }
         });
         plantDetailBtn.setPosition(135, 205);
@@ -136,13 +143,86 @@ public class AlmanacScreen implements Screen {
         });
         zombieDetailBtn.setPosition(500, 205);
         stage.addActor(zombieDetailBtn);
+
+        indexBtn = new Group();
+        TextureActor indexBtnBg = new TextureActor(AssetTexture.ALMANAC_INDEX_BUTTON.get(assetMan));
+        indexBtnBg.setPosition(0, 0);
+        TextureActor indexBtnGlow = new TextureActor(AssetTexture.ALMANAC_INDEX_BUTTON_HIGHLIGHT.get(assetMan));
+        indexBtnGlow.setPosition(0, 0);
+        indexBtnGlow.setVisible(false);
+        BitmapFont font14 = AssetFont.BRIANNE_TOD_SIZE15_DEFAULT.get(assetMan);
+        Label indexBtnLabel = new Label("ALMANAC INDEX", new Label.LabelStyle(font14, new Color(42/255f, 49/255f, 91/255f, 1f)));
+        indexBtnLabel.pack();
+        indexBtnLabel.setPosition((indexBtnBg.getWidth() - indexBtnLabel.getWidth()) / 2f,
+                (indexBtnBg.getHeight() - indexBtnLabel.getHeight()) / 2f);
+        indexBtn.setSize(indexBtnBg.getWidth(), indexBtnBg.getHeight());
+        indexBtn.addActor(indexBtnBg);
+        indexBtn.addActor(indexBtnGlow);
+        indexBtn.addActor(indexBtnLabel);
+        indexBtn.addListener(new ClickListener() {
+            @Override
+            public void enter(InputEvent event, float x, float y, int pointer, Actor fromActor) {
+                indexBtnGlow.setVisible(true);
+                indexBtnBg.setVisible(false);
+            }
+            @Override
+            public void exit(InputEvent event, float x, float y, int pointer, Actor toActor) {
+                indexBtnGlow.setVisible(false);
+                indexBtnBg.setVisible(true);
+            }
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                state = State.INDEX;
+            }
+        });
+
+        indexBtn.setPosition(15, 7);
+        stage.addActor(indexBtn);
+
+        closeBtn = new Group();
+        TextureActor closeBtnBg = new TextureActor(AssetTexture.ALMANAC_CLOSE_BUTTON.get(assetMan));
+        closeBtnBg.setPosition(0, 0);
+        TextureActor closeBtnHighlight = new TextureActor(AssetTexture.ALMANAC_CLOSE_BUTTON_HIGHLIGHT.get(assetMan));
+        closeBtnHighlight.setPosition(0, 0);
+        closeBtnHighlight.setVisible(false);
+        Label closeBtnLabel = new Label("CLOSE", new Label.LabelStyle(font14, new Color(42/255f, 49/255f, 91/255f, 1f)));
+        closeBtnLabel.pack();
+        closeBtnLabel.setPosition((closeBtnBg.getWidth() - closeBtnLabel.getWidth()) / 2f - 5f, // 微调X位置5f
+                (closeBtnBg.getHeight() - closeBtnLabel.getHeight()) / 2f);
+        closeBtn.setSize(closeBtnBg.getWidth(), closeBtnBg.getHeight());
+        closeBtn.addActor(closeBtnBg);
+        closeBtn.addActor(closeBtnHighlight);
+        closeBtn.addActor(closeBtnLabel);
+        closeBtn.addListener(new ClickListener() {
+            @Override
+            public void enter(InputEvent event, float x, float y, int pointer, Actor fromActor) {
+                closeBtnHighlight.setVisible(true);
+                closeBtnBg.setVisible(false);
+            }
+
+            @Override
+            public void exit(InputEvent event, float x, float y, int pointer, Actor toActor) {
+                closeBtnHighlight.setVisible(false);
+                closeBtnBg.setVisible(true);
+            }
+
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                game.setScreen(previousScreen);
+            }
+        });
+        closeBtn.setPosition(690, 7);
+        stage.addActor(closeBtn);
     }
 
     private void initPlantDetailsPage() {
         // 初始化植物详情页内容
         BitmapFont font = AssetFont.DWARVEN_STONECRAFT_SIZE30_DEFAULT.get(assetMan);
-        detailFont = AssetFont.BRIANNE_S_HAND_SIZE14_DEFAULT.get(assetMan);
+        detailFont = AssetFont.BRIANNE_TOD_SIZE15_DEFAULT.get(assetMan);
         detailFont.getData().markupEnabled = true;
+        detailFont.setUseIntegerPositions(false);
+        detailFont.getRegion().getTexture().setFilter(Texture.TextureFilter.Nearest, Texture.TextureFilter.Linear);
+        detailFont.getData().setLineHeight(detailFont.getLineHeight() - 1f);
 
         plantNameLabel = new Label("", new Label.LabelStyle(font, new Color(213/255f, 159/255f, 43/255f, 1)));
         plantNameLabel.setPosition(575, 315);
@@ -200,20 +280,20 @@ public class AlmanacScreen implements Screen {
                     new Label.LabelStyle(detailFont, new Color(0f, 0f, 139/255f, 1f)));
             descLabel.setWrap(true);
             descLabel.setWidth(plantDetailTable.getWidth());
-            plantDetailTable.add(descLabel).width(plantDetailTable.getWidth()).padBottom(10f).row();
+            plantDetailTable.add(descLabel).width(plantDetailTable.getWidth()).padBottom(4f).row();
             JsonValue tips = value.get("tips");
             for (JsonValue field = tips.child; field != null; field = field.next) {
                 Label tipLabel = new Label("[#a52a2a]" + field.name + ":[] [#FF0000]" + field.asString() + "[]",
                         new Label.LabelStyle(detailFont, Color.WHITE));
                 tipLabel.setWrap(true);
                 tipLabel.setWidth(plantDetailTable.getWidth());
-                plantDetailTable.add(tipLabel).width(plantDetailTable.getWidth()).padBottom(2f).row();
+                plantDetailTable.add(tipLabel).width(plantDetailTable.getWidth()).padBottom(-1f).row();
             }
             Label storyLabel = new Label(value.getString("story"),
                     new Label.LabelStyle(detailFont, new Color(165/255f, 42/255f, 42/255f, 1f)));
             storyLabel.setWrap(true);
             storyLabel.setWidth(plantDetailTable.getWidth());
-            plantDetailTable.add(storyLabel).width(plantDetailTable.getWidth()).padTop(10f).row();
+            plantDetailTable.add(storyLabel).width(plantDetailTable.getWidth()).padTop(4f).row();
 
             plantCostLabel.setText("[#a52a2a]Cost:[] [#FF0000]" + value.getString("cost") + "[]");
 
@@ -251,6 +331,7 @@ public class AlmanacScreen implements Screen {
             batch.begin();
             plantDetailBtn.draw(batch, 1f);
             zombieDetailBtn.draw(batch, 1f);
+            closeBtn.draw(batch, 1f);
             batch.end();
         } else if (state == State.PLANT_DETAILS) {
             // 绘制植物详情页内容
@@ -271,6 +352,8 @@ public class AlmanacScreen implements Screen {
             plantDetailTable.draw(batch, 1f);
             plantCostLabel.draw(batch, 1f);
             rechargeLabel.draw(batch, 1f);
+            indexBtn.draw(batch, 1f);
+            closeBtn.draw(batch, 1f);
             batch.end();
         }
 
