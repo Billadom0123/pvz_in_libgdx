@@ -1,33 +1,23 @@
 # PlantsVsZombies
 
-A [libGDX](https://libgdx.com/) project generated with [gdx-liftoff](https://github.com/libgdx/gdx-liftoff).
+用 [libGDX](https://libgdx.com/) 写的pvz
 
-This project was generated with a template including simple application launchers and an `ApplicationAdapter` extension that draws libGDX logo.
+- 植物有van door，向日葵，坚果
+- 僵尸只有普僵
+- 有小推车和阳光
+- 有点破烂音效，体验稍好
 
-## Platforms
 
-- `core`: Main module with the application logic shared by all platforms.
-- `lwjgl3`: Primary desktop platform using LWJGL3; was called 'desktop' in older docs.
+甲级战犯 [@Billadom0123](https://github.com/Billadom0123)，就是这个B把这种让人反胃的项目丢到GitHub上的  
+感谢 [@Foofishes](https://github.com/FooFishes) 提供理论支持  
 
-## Gradle
+~~世一大的面向对象实验还是太吃操作了~~  
 
-This project uses [Gradle](https://gradle.org/) to manage dependencies.
-The Gradle wrapper was included, so you can run Gradle tasks using `gradlew.bat` or `./gradlew` commands.
-Useful Gradle tasks and flags:
+该项目仅作参考（后续的更新**暂时**不会丢到gh上，有需要的自行联系）  
 
-- `--continue`: when using this flag, errors will not stop the tasks from running.
-- `--daemon`: thanks to this flag, Gradle daemon will be used to run chosen tasks.
-- `--offline`: when using this flag, cached dependency archives will be used.
-- `--refresh-dependencies`: this flag forces validation of all dependencies. Useful for snapshot versions.
-- `build`: builds sources and archives of every project.
-- `cleanEclipse`: removes Eclipse project data.
-- `cleanIdea`: removes IntelliJ project data.
-- `clean`: removes `build` folders, which store compiled classes and built archives.
-- `eclipse`: generates Eclipse project data.
-- `idea`: generates IntelliJ project data.
-- `lwjgl3:jar`: builds application's runnable jar, which can be found at `lwjgl3/build/libs`.
-- `lwjgl3:run`: starts the application.
-- `test`: runs unit tests (if any).
 
-Note that most tasks that are not specific to a single project can be run with `name:` prefix, where the `name` should be replaced with the ID of a specific project.
-For example, `core:clean` removes `build` folder only from the `core` project.
+- ~~不是不更，而是缓更、慢更、优更，有次序地更；让有能力的人先更，让富裕的人先更，让愿意分享资源的人先更；以先带后，以富助贫，以优扶弱，最终实现梯度更、滚动更、持续更。~~  
+- ~~不是盲更，而是精准更、科学更、高效更，有策略地更；让懂技术的人更，让善管理的人带头更，让懂教育的人辅导更；用数据决策更，用平台赋能更，用政策托底更；既包干到户地更，也网格化地更，更动态调节地更。~~  
+- ~~不是乱更，而是规划更、标准更、循环更，有节奏地更；让生态好的地区多更，让产业链全的园区集中更。~~  
+- ~~不是孤更，而是协同更、联盟更、共享更，有生态地更；让龙头带着更，让资本助推更，让高校科研伴配更。~~  
+- ~~不是一锤子更，而是迭代更、升级更、持续更，有后劲儿地更；今天的小更，明天变中更，后天变大更，老带新再更。~~
