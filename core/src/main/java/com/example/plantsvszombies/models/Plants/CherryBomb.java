@@ -4,11 +4,12 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
-import com.example.plantsvszombies.Animation.AnimationClip;
+import com.example.plantsvszombies.AssetImpl.AnimationClip;
 import com.example.plantsvszombies.Resource.AssetAnimation;
 import com.example.plantsvszombies.Resource.AssetSound;
 import com.example.plantsvszombies.Resource.AssetTexture;
 import com.example.plantsvszombies.managers.AssetMan;
+import com.example.plantsvszombies.managers.SoundManager;
 import com.example.plantsvszombies.models.DamageType;
 import com.example.plantsvszombies.screens.BaseGameScreen;
 
@@ -46,7 +47,7 @@ public class CherryBomb extends BasePlant {
     public void update(float delta) {
         super.update(delta);
         if (stateTime == 0f && !exploded) {
-            AssetMan.getInstance().playSound(AssetSound.CHERRY_BOMB_READY, .6f);
+            SoundManager.getInstance().playSound(AssetSound.CHERRY_BOMB_READY);
         }
         stateTime += delta;
         if (animation.isAnimationFinished(stateTime) && !exploded) {
@@ -82,7 +83,7 @@ public class CherryBomb extends BasePlant {
             EXPLOSION_RADIUS * 2
         );
         screen.doAoeDamage(explosionArea, 1800, DamageType.EXPLOSIVE);
-        assetMan.playSound(AssetSound.CHERRY_BOMB_EXPLODE, .6f);
+        SoundManager.getInstance().playSound(AssetSound.CHERRY_BOMB_EXPLODE);
         AnimationClip explosion = AssetAnimation.CHERRY_BOMB_BOOM.get(assetMan);
         position = new Vector2(position.x - (explosion.getWidth() - animation.getWidth()) / 2,
             position.y - (explosion.getHeight() - animation.getHeight()) / 2);

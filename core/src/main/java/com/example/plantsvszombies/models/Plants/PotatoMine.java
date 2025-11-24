@@ -6,12 +6,13 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
-import com.example.plantsvszombies.Animation.AnimationClip;
+import com.example.plantsvszombies.AssetImpl.AnimationClip;
 import com.example.plantsvszombies.Resource.AssetAnimation;
 import com.example.plantsvszombies.Resource.AssetParticle;
 import com.example.plantsvszombies.Resource.AssetSound;
 import com.example.plantsvszombies.Resource.AssetTexture;
 import com.example.plantsvszombies.managers.AssetMan;
+import com.example.plantsvszombies.managers.SoundManager;
 import com.example.plantsvszombies.models.DamageType;
 import com.example.plantsvszombies.screens.BaseGameScreen;
 
@@ -62,7 +63,7 @@ public class PotatoMine extends BasePlant {
             state = State.ARMING;
             armingTimer = 0f;
             animation = AssetAnimation.POTATO_MINE_ARM_UP.get(assetMan);
-            AssetMan.getInstance().playSound(AssetSound.POTATO_MINE_RISE, 1f);
+            SoundManager.getInstance().playSound(AssetSound.POTATO_MINE_RISE);
             ParticleEffect dig_up = AssetParticle.POTATO_MINE_RISE.get(assetMan);
             dig_up.setPosition(position.x + animation.getWidth() / 2f, position.y);
             dig_up.scaleEffect(.6f);
@@ -130,7 +131,7 @@ public class PotatoMine extends BasePlant {
         explosionEffect.scaleEffect(0.35f);
         explosionEffect.start();
         screen.addParticle(explosionEffect);
-        assetMan.playSound(AssetSound.POTATO_MINE_EXPLODE, 0.6f);
+        SoundManager.getInstance().playSound(AssetSound.POTATO_MINE_EXPLODE);
         bounds = new Rectangle(-100, -100, 0, 0); // 移出碰撞框，避免继续与僵尸碰撞
         screen.triggerCameraShake(0.25f, 6f);
         screen.doAoeDamage(explosionArea, EXPLOSION_DAMAGE, DamageType.POTATO);

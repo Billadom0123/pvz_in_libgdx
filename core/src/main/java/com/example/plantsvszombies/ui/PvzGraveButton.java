@@ -12,8 +12,9 @@ import com.badlogic.gdx.utils.Array;
 import com.example.plantsvszombies.Resource.AssetSound;
 import com.example.plantsvszombies.Resource.AssetTexture;
 import com.example.plantsvszombies.managers.AssetMan;
+import com.example.plantsvszombies.managers.SoundManager;
 
-public class PvzGraveButton extends Group {
+public class PvzGraveButton extends PressableGroup {
 
     protected Texture defaultLeft;
     protected Texture defaultMiddle;
@@ -57,7 +58,7 @@ public class PvzGraveButton extends Group {
 
         layout();
 
-        addListener(new ClickListener() {
+        addListener(new InputListener() {
             @Override
             public void enter(InputEvent event, float x, float y, int pointer, Actor fromActor) {
                 currentContentColor = contentDownColor;
@@ -75,7 +76,7 @@ public class PvzGraveButton extends Group {
             public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
                 // 再次确认是在 hitArea 内（冗余校验）
                 if (hit(x, y, true) != null) {
-                    clickSound.play();
+                    SoundManager.getInstance().playSound(clickSound);
                     currentLeft = downLeft;
                     currentMiddle = downMiddle;
                     currentRight = downRight;

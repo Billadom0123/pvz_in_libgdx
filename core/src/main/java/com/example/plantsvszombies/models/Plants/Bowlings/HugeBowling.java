@@ -5,6 +5,7 @@ import com.example.plantsvszombies.Resource.AssetAnimation;
 import com.example.plantsvszombies.Resource.AssetSound;
 import com.example.plantsvszombies.Resource.AssetTexture;
 import com.example.plantsvszombies.managers.AssetMan;
+import com.example.plantsvszombies.managers.SoundManager;
 import com.example.plantsvszombies.models.DamageType;
 import com.example.plantsvszombies.models.Zombies.BaseZombie;
 import com.example.plantsvszombies.screens.BaseGameScreen;
@@ -34,7 +35,7 @@ public class HugeBowling extends BaseBowling {
 
     @Override
     public void hit(BaseZombie zombie) {
-        AssetMan.getInstance().playSound(AssetSound.BOWLING_IMPACT, .5f);
+        SoundManager.getInstance().playSound(AssetSound.BOWLING_IMPACT);
         zombie.takeDamage(damageToZombie, DamageType.BOWLING);
     }
 }

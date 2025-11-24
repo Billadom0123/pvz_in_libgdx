@@ -9,11 +9,11 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.ParticleEffect;
 import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator;
-import com.example.plantsvszombies.Animation.AnimationClip;
+import com.badlogic.gdx.scenes.scene2d.ui.Skin;
+import com.example.plantsvszombies.AssetImpl.AnimationClip;
 import com.example.plantsvszombies.Resource.*;
 
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 public class AssetMan {
@@ -49,6 +49,7 @@ public class AssetMan {
         assetManager.finishLoading();
         AssetAnimation.loadAll(this);
         AssetFont.loadAll(this);
+        AssetSkin.loadAll(this);
     }
 
     public void loadTexture(String filePath) { assetManager.load(filePath, Texture.class); }
@@ -65,6 +66,14 @@ public class AssetMan {
 
     public BitmapFont getFont(String key) {
         return fonts.get(key);
+    }
+
+    public void loadSkin(String filepath) {
+        assetManager.load(filepath, Skin.class);
+    }
+
+    public Skin getSkin(String filepath) {
+        return assetManager.get(filepath, Skin.class);
     }
 
     public void loadSound(String filePath) { assetManager.load(filePath, Sound.class); }
@@ -102,19 +111,18 @@ public class AssetMan {
         return null;
     }
 
-    public void playSound(AssetSound sound, float volume) {
-        Sound s = sound.get(this);
-//        float multiplier = gameManager.getSfxMasterVolume();
-        if (s != null) {
-            s.play(volume);
-        }
-    }
-
-    public void playRandomSound(List<AssetSound> sounds, float volume) {
-        if (sounds.isEmpty()) return;
-        int index = (int) (Math.random() * sounds.size());
-        playSound(sounds.get(index), volume);
-    }
+//    public void playSound(AssetSound sound, float volume) {
+//        Sound s = sound.get(this);
+//        if (s != null) {
+//            s.play(volume);
+//        }
+//    }
+//
+//    public void playRandomSound(List<AssetSound> sounds, float volume) {
+//        if (sounds.isEmpty()) return;
+//        int index = MathUtils.random(0, sounds.size() - 1);
+//        playSound(sounds.get(index), volume);
+//    }
 
     public void unloadAsset(String filePath) {
         if (assetManager.isLoaded(filePath)) {
@@ -134,5 +142,7 @@ public class AssetMan {
     public void dispose() {
         assetManager.dispose();
         animations.clear();
+        particleEffects.clear();
+        fonts.clear();
     }
 }

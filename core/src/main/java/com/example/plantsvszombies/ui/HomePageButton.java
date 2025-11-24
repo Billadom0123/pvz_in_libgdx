@@ -5,15 +5,14 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Polygon;
-import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Shape2D;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
-import com.badlogic.gdx.scenes.scene2d.InputListener;
 import com.badlogic.gdx.scenes.scene2d.Touchable;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
+import com.example.plantsvszombies.managers.SoundManager;
 
-public class HomePageButton extends Actor {
+public class HomePageButton extends PressableGroup {
     private Texture texture; // 当前用于绘制的纹理
     private final Texture baseTexture; // 原始纹理，用于恢复
     private final Texture highlightTexture;
@@ -45,7 +44,7 @@ public class HomePageButton extends Actor {
                 if (hit(x, y, true) != null) {
                     HomePageButton.this.texture = HomePageButton.this.highlightTexture;
                     if (hoverSound != null) {
-                        hoverSound.play();
+                        SoundManager.getInstance().playSound(hoverSound);
                     }
                 }
             }

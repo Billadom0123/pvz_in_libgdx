@@ -1,15 +1,15 @@
 package com.example.plantsvszombies.models.Zombies;
 
 import com.badlogic.gdx.graphics.Texture;
-import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
-import com.example.plantsvszombies.Animation.AnimationClip;
+import com.example.plantsvszombies.AssetImpl.AnimationClip;
 import com.example.plantsvszombies.Resource.AssetAnimation;
 import com.example.plantsvszombies.Resource.AssetSound;
 import com.example.plantsvszombies.Resource.AssetTexture;
 import com.example.plantsvszombies.managers.AssetMan;
+import com.example.plantsvszombies.managers.SoundManager;
 import com.example.plantsvszombies.models.DamageType;
 import com.example.plantsvszombies.models.Texture.Falling;
 import com.example.plantsvszombies.screens.BaseGameScreen;
@@ -41,7 +41,7 @@ public class ConeHeadZombie extends NormalZombie {
     protected void damageToHelmet(int damage, DamageType damageType) {
         AssetMan assetMan = AssetMan.getInstance();
         if (!damageType.isIgnoreHelmet() && hasHelmet && damageType.isHaveHitSound()) {
-            assetMan.playSound(AssetSound.SPLAT_CONEHEAD, .8f);
+            SoundManager.getInstance().playSound(AssetSound.SPLAT_CONEHEAD);
         }
         super.damageToHelmet(damage, damageType);
         if (!hasHelmet) {

@@ -162,6 +162,8 @@ public class PlantCard extends Group {
         this.cooldownTimer = 0f;
     }
 
+    public void fullRecharge() { this.cooldownTimer = this.cooldown; }
+
     @Override
     public void act(float delta) {
         super.act(delta);

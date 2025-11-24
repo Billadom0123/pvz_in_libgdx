@@ -5,10 +5,11 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Rectangle;
-import com.example.plantsvszombies.Animation.AnimationClip;
+import com.example.plantsvszombies.AssetImpl.AnimationClip;
 import com.example.plantsvszombies.Resource.AssetSound;
 import com.example.plantsvszombies.Resource.AssetTexture;
 import com.example.plantsvszombies.managers.AssetMan;
+import com.example.plantsvszombies.managers.SoundManager;
 import com.example.plantsvszombies.models.DamageType;
 import com.example.plantsvszombies.models.Plants.BasePlant;
 import com.example.plantsvszombies.models.Zombies.BaseZombie;
@@ -24,7 +25,7 @@ public class BaseBowling extends BasePlant {
     protected int directionY = 0; // 移动方向，1表示向上，-1表示向下，0表示正常向右
     protected int currentRow;
     protected boolean hasHitInRow = false;
-    public Sound rollingSound;
+    public Long rollingSoundId;
     protected float rotationSpeed = 0f;
     protected boolean bounceInX = false;
 
@@ -36,9 +37,12 @@ public class BaseBowling extends BasePlant {
         this.cost = 0;
         this.health = 4000;
         this.currentRow = screen.getRow(bounds.y + bounds.height / 2f);
-        this.rollingSound = AssetSound.BOWLING_ROLLING.get(AssetMan.getInstance());
         this.rotationSpeed = -speedX * 1.5f;
         this.shadow = AssetTexture.PLANT_SHADOW.get(AssetMan.getInstance());
+    }
+
+    public void beginRolling() {
+        rollingSoundId = SoundManager.getInstance().loopSound(AssetSound.BOWLING_ROLLING);
     }
 
     @Override
@@ -80,7 +84,7 @@ public class BaseBowling extends BasePlant {
 
     public void hit(BaseZombie zombie) {
         if (!hasHitInRow) {
-            AssetMan.getInstance().playSound(AssetSound.BOWLING_IMPACT, .5f);
+            SoundManager.getInstance().playSound(AssetSound.BOWLING_IMPACT);
             if (zombie.hasShield()) {
                 zombie.takeDamage(damageToShield, DamageType.BOWLING);
             } else if (zombie.hasHelmet()) {
@@ -116,7 +120,7 @@ public class BaseBowling extends BasePlant {
     @Override
     public void dispose() {
         super.dispose();
-        rollingSound.stop();
+        SoundManager.getInstance().stopSoundInstance(AssetSound.BOWLING_ROLLING, rollingSoundId);
     }
 
     public void setRotationSpeed(float rotationSpeed) {

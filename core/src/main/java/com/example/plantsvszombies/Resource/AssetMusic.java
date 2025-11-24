@@ -1,5 +1,6 @@
 package com.example.plantsvszombies.Resource;
 
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.audio.Music;
 import com.example.plantsvszombies.managers.AssetMan;
 
@@ -26,6 +27,7 @@ public enum AssetMusic {
 
     public void load(AssetMan assetMan) {
         if (loaded) { return; }
+        Gdx.app.log("AssetMusic", "Load Music: " + name());
         assetMan.loadMusic(this.filePath);
         loaded = true;
     }

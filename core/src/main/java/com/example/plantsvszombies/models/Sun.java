@@ -9,7 +9,7 @@ import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.actions.Actions;
-import com.example.plantsvszombies.Animation.AnimationClip;
+import com.example.plantsvszombies.AssetImpl.AnimationClip;
 
 public class Sun extends Actor {
     public enum SunState {

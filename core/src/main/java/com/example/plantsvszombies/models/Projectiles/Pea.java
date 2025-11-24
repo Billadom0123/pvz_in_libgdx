@@ -6,6 +6,7 @@ import com.example.plantsvszombies.Resource.AssetAnimation;
 import com.example.plantsvszombies.Resource.AssetSound;
 import com.example.plantsvszombies.Resource.AssetTexture;
 import com.example.plantsvszombies.managers.AssetMan;
+import com.example.plantsvszombies.managers.SoundManager;
 import com.example.plantsvszombies.models.Zombies.BaseZombie;
 
 public class Pea extends BaseProjectile {
@@ -26,11 +27,8 @@ public class Pea extends BaseProjectile {
 
     @Override
     public void damage(BaseZombie zombie) {
-        if (hit) {
-            return;
-        }
+        if (hit) return;
         super.damage(zombie);
-        AssetMan assetMan = AssetMan.getInstance();
-        assetMan.playSound(AssetSound.PEA_SPLAT, .5f);
+        SoundManager.getInstance().playSound(AssetSound.PEA_SPLAT);
     }
 }

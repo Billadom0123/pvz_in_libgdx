@@ -4,6 +4,7 @@ import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.g2d.ParticleEffect;
 import com.badlogic.gdx.math.Rectangle;
+import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.example.plantsvszombies.models.DamageType;
 import com.example.plantsvszombies.models.Projectiles.BaseProjectile;
 import com.example.plantsvszombies.models.Sun;
@@ -46,4 +47,10 @@ public interface BaseGameScreen extends Screen, InputProcessor {
     int getCol(float x);
 
     void addGameDialog(String message, float duration);
+
+    void showModal(Actor actor, float overlayAlpha);
+
+    void hideModal();
+
+    void restart();
 }

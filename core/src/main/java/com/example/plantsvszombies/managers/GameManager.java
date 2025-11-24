@@ -17,9 +17,7 @@ public class GameManager {
     private int sun; // 当前太阳数量
     private float conveyorSpeed;
     private GameState gameState;
-    private boolean crazyMode = false; // 疯狂模式开关，默认为关闭，不可更改
-    private float musicMasterVolume = 0.5f;
-    private float sfxMasterVolume = 0.5f;
+    private boolean crazyMode = true; // 疯狂模式开关，默认为关闭，不可更改
 
     private GameManager() {
         resetToDefaults();
@@ -125,11 +123,5 @@ public class GameManager {
 
     public boolean isCrazyMode() { return crazyMode; }
 
-    public float getMusicMasterVolume() { return musicMasterVolume; }
-
-    public void setMusicMasterVolume(float musicMasterVolume) { this.musicMasterVolume = musicMasterVolume; }
-
-    public float getSfxMasterVolume() { return sfxMasterVolume; }
-
-    public void setSfxMasterVolume(float sfxMasterVolume) { this.sfxMasterVolume = sfxMasterVolume; }
+    public void setCrazyMode(boolean crazyMode) { this.crazyMode = crazyMode; }
 }

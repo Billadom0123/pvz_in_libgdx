@@ -1,7 +1,7 @@
 package com.example.plantsvszombies.models.Texture;
 
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import com.example.plantsvszombies.Animation.AnimationClip;
+import com.example.plantsvszombies.AssetImpl.AnimationClip;
 
 public class AnimationFalling {
     private AnimationClip animation;

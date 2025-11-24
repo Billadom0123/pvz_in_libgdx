@@ -1,0 +1,73 @@
+{
+com.badlogic.gdx.graphics.g2d.BitmapFont: {
+	DwarvenTodcraft18: {
+		file: DwarvenTodcraft18.fnt
+		scaledSize: -1
+		markupEnabled: true
+		flip: false
+	}
+	DwarvenTodcraft36BrightGreenInset: {
+		file: DwarvenTodcraft36BrightGreenInset.fnt
+		scaledSize: -1
+		markupEnabled: false
+		flip: false
+	}
+	DwarvenTodcraft36GreenInset: {
+		file: DwarvenTodcraft36GreenInset.fnt
+		scaledSize: -1
+		markupEnabled: true
+		flip: false
+	}
+}
+com.badlogic.gdx.graphics.Color: {
+	RGBA_0_0_0_255: {
+		r: 0
+		g: 0
+		b: 0
+		a: 1
+	}
+	RGBA_107_109_145_255: {
+		r: 0.41960785
+		g: 0.42745098
+		b: 0.5686275
+		a: 1
+	}
+}
+com.badlogic.gdx.scenes.scene2d.ui.Button$ButtonStyle: {
+	Giant: {
+		up: options_backtogamebutton0
+		down: options_backtogamebutton2
+	}
+}
+com.badlogic.gdx.scenes.scene2d.ui.CheckBox$CheckBoxStyle: {
+	default: {
+		checkboxOn: options_checkbox1
+		checkboxOff: options_checkbox0
+		font: DwarvenTodcraft18
+		fontColor: RGBA_107_109_145_255
+	}
+}
+com.badlogic.gdx.scenes.scene2d.ui.Label$LabelStyle: {
+	default: {
+		font: DwarvenTodcraft18
+		fontColor: RGBA_107_109_145_255
+	}
+	Green36: {
+		font: DwarvenTodcraft36GreenInset
+	}
+	GreenBright36: {
+		font: DwarvenTodcraft36BrightGreenInset
+	}
+}
+com.badlogic.gdx.scenes.scene2d.ui.Slider$SliderStyle: {
+	default-horizontal: {
+		background: options_sliderslot
+		knob: options_sliderknob2
+	}
+}
+com.badlogic.gdx.scenes.scene2d.ui.TextTooltip$TextTooltipStyle: {
+	default: {
+		label: default
+	}
+}
+}

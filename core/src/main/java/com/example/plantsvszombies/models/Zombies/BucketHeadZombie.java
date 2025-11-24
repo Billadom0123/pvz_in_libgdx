@@ -1,21 +1,20 @@
 package com.example.plantsvszombies.models.Zombies;
 
 import com.badlogic.gdx.graphics.Texture;
-import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
-import com.example.plantsvszombies.Animation.AnimationClip;
+import com.example.plantsvszombies.AssetImpl.AnimationClip;
 import com.example.plantsvszombies.Resource.AssetAnimation;
 import com.example.plantsvszombies.Resource.AssetSound;
 import com.example.plantsvszombies.Resource.AssetTexture;
 import com.example.plantsvszombies.managers.AssetMan;
+import com.example.plantsvszombies.managers.SoundManager;
 import com.example.plantsvszombies.models.DamageType;
 import com.example.plantsvszombies.models.Texture.Falling;
 import com.example.plantsvszombies.screens.BaseGameScreen;
 
 import java.util.Arrays;
-import java.util.List;
 
 public class BucketHeadZombie extends NormalZombie {
 
@@ -43,7 +42,7 @@ public class BucketHeadZombie extends NormalZombie {
     protected void damageToHelmet(int damage, DamageType damageType) {
         AssetMan assetMan = AssetMan.getInstance();
         if (!damageType.isIgnoreHelmet() && hasHelmet && damageType.isHaveHitSound()) {
-            assetMan.playRandomSound(Arrays.asList(AssetSound.SPLAT_BUCKETHEAD_1, AssetSound.SPLAT_BUCKETHEAD_2), .5f);
+            SoundManager.getInstance().playRandomSound(Arrays.asList(AssetSound.SPLAT_BUCKETHEAD_1, AssetSound.SPLAT_BUCKETHEAD_2));
         }
         super.damageToHelmet(damage, damageType);
         if (!hasHelmet) {

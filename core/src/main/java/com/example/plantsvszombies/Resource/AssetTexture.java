@@ -60,6 +60,10 @@ public enum AssetTexture {
     ALMANAC_INDEX_BUTTON("graphics/Screen/Almanac_IndexButton.png"),
     ALMANAC_INDEX_BUTTON_HIGHLIGHT("graphics/Screen/Almanac_IndexButtonHighlight.png"),
 
+    // 菜单相关
+    MENU_BACKGROUND("graphics/Skin/options_menuback.png"),
+    MENU_BACK_TO_GAME_BUTTON("graphics/Skin/options_backtogamebutton0.png"),
+
 
 
 

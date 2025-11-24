@@ -10,6 +10,7 @@ import com.example.plantsvszombies.PvzGame;
 import com.example.plantsvszombies.Resource.AssetMusic;
 import com.example.plantsvszombies.Resource.AssetTexture;
 import com.example.plantsvszombies.managers.AssetMan;
+import com.example.plantsvszombies.managers.SoundManager;
 
 public class LoadingScreen implements Screen {
 
@@ -39,10 +40,7 @@ public class LoadingScreen implements Screen {
 
     @Override
     public void show() {
-        game.bgMusic = AssetMusic.MAINTHEME.loadAndGet(assetMan);
-        game.bgMusic.setLooping(true);
-        game.bgMusic.setVolume(0.5f);
-        game.bgMusic.play();
+        SoundManager.getInstance().playMusic(AssetMusic.MAINTHEME.loadAndGet(AssetMan.getInstance()), true);
         assetMan.loadAssets();
         assetsLoaded = true;
     }

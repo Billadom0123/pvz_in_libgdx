@@ -19,7 +19,6 @@ import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
-import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.badlogic.gdx.utils.Align;
 import com.badlogic.gdx.utils.Array;
@@ -29,6 +28,7 @@ import com.example.plantsvszombies.PvzGame;
 import com.example.plantsvszombies.Resource.*;
 import com.example.plantsvszombies.managers.AssetMan;
 import com.example.plantsvszombies.managers.GameManager;
+import com.example.plantsvszombies.managers.SoundManager;
 import com.example.plantsvszombies.models.DamageType;
 import com.example.plantsvszombies.models.GameDialog;
 import com.example.plantsvszombies.models.LawnMower;
@@ -37,10 +37,7 @@ import com.example.plantsvszombies.models.Projectiles.BaseProjectile;
 import com.example.plantsvszombies.models.Sun;
 import com.example.plantsvszombies.models.Texture.Falling;
 import com.example.plantsvszombies.models.Zombies.*;
-import com.example.plantsvszombies.ui.PlantCard;
-import com.example.plantsvszombies.ui.PvzDialogBox;
-import com.example.plantsvszombies.ui.PvzGraveButton;
-import com.example.plantsvszombies.ui.Shovel;
+import com.example.plantsvszombies.ui.*;
 
 import java.util.*;
 
@@ -49,6 +46,7 @@ public class GameScreen implements BaseGameScreen {
     // --- 核心引用 ---
     private final PvzGame game; // 对主游戏类的引用，用于访问全局对象如SpriteBatch
     private final AssetMan assetManager;
+    private final SoundManager soundManager;
     private final GameManager gameManager;
 
     // --- 渲染相关 ---
@@ -108,7 +106,8 @@ public class GameScreen implements BaseGameScreen {
     private Shovel shovel;          // 铲子UI元素
     private PvzGraveButton pauseButton; // 暂停按钮
     private Texture whitePixel;
-    private Group modalOverlay;
+
+    private final Array<Group> modalStack = new Array<>(); // 替换单一模态层为栈
 
     private float endBlackOverlayAlpha = 0f; // 黑色覆盖层的透明度
     private float endWordScale = 0f; // 抖动计时器
@@ -119,6 +118,7 @@ public class GameScreen implements BaseGameScreen {
     public GameScreen(PvzGame game) {
         this.game = game;
         this.assetManager = AssetMan.getInstance();
+        this.soundManager = SoundManager.getInstance();
         this.gameManager = GameManager.getInstance();
 
         // 1. 初始化游戏相机和视口
@@ -168,12 +168,6 @@ public class GameScreen implements BaseGameScreen {
         initializeGrid();
         initializeLawnMowers();
 //        for (LawnMower l: lawnMowers) l.activate();
-
-        // 5. 将本类设置为输入处理器，这样touchDown等方法才会被调用
-        InputMultiplexer multiplexer = new InputMultiplexer();
-        multiplexer.addProcessor(uiStage);
-        multiplexer.addProcessor(this);
-        Gdx.input.setInputProcessor(multiplexer);
     }
 
     /**
@@ -218,14 +212,9 @@ public class GameScreen implements BaseGameScreen {
         shovel.setPosition(cameraMinX + 446, startY + 5 * cellHeight);
 
         BitmapFont font = AssetFont.DWARVEN_STONECRAFT_SIZE30_DEFAULT.get(assetManager);
-        pauseButton = new PvzGraveButton("Pause", font);
+        pauseButton = new PvzGraveButton("Menu", font);
         pauseButton.setPosition(cameraMaxX - pauseButton.getWidth(), cameraMaxY - pauseButton.getHeight());
-        pauseButton.addListener(new ClickListener() {
-            @Override
-            public void clicked(InputEvent event, float x, float y) {
-                pause();
-            }
-        });
+        pauseButton.setClickListener(this::pauseOnMenu);
 
 
         uiStage.addActor(topBar);
@@ -285,8 +274,6 @@ public class GameScreen implements BaseGameScreen {
         // 2. 更新游戏逻辑 (仅在游戏进行时)
         if (gameManager.getGameState() == GameManager.GameState.PLAYING || gameManager.getGameState() == GameManager.GameState.GAME_OVER) {
             updateGame(delta);
-        } else if (gameManager.getGameState() == GameManager.GameState.PAUSED) {
-            modalOverlay.act(delta);
         }
 
         // 3. 渲染游戏世界
@@ -363,7 +350,7 @@ public class GameScreen implements BaseGameScreen {
         for (Sun s : suns) s.draw(batch, 1f);
         for (GameDialog dialog : gameDialogs) dialog.getDialogTable().draw(batch, 1f);
         if (gameManager.getGameState() == GameManager.GameState.PAUSED) {
-            modalOverlay.draw(batch, 1f);
+            for (Group modal : modalStack) modal.draw(batch, 1f);
         }
         batch.end();
 
@@ -532,7 +519,7 @@ public class GameScreen implements BaseGameScreen {
         }
         if (!firstZombieSpawned) {
             firstZombieSpawned = true;
-            assetManager.playSound(AssetSound.FIRST_ZOMBIE, 0.6f);
+            soundManager.playSound(AssetSound.FIRST_ZOMBIE);
         }
     }
 
@@ -573,10 +560,7 @@ public class GameScreen implements BaseGameScreen {
     private void startGameOver(BaseZombie killer) {
         gameManager.setGameState(GameManager.GameState.GAME_OVER);
         killer.moveToDoor(1.5f, startY + 1.5f * cellHeight); // 让这个僵尸走向大门
-        game.bgMusic.stop();
-        game.bgMusic = AssetMusic.LOSE_MUSIC.get(assetManager);
-        game.bgMusic.setVolume(0.5f);
-        game.bgMusic.play();
+        soundManager.changeMusic(AssetMusic.LOSE_MUSIC, false);
         Timer.schedule(new Timer.Task() {
             @Override
             public void run() {
@@ -588,13 +572,13 @@ public class GameScreen implements BaseGameScreen {
             public void run() {
                 killer.stand();
                 killer.setAnimation(AssetAnimation.NORMAL_ZOMBIE_ATTACK.get(assetManager));
-                assetManager.playSound(AssetSound.CHOMP, 0.6f);
+                soundManager.playSound(AssetSound.CHOMP);
             }
         }, 5f, .5f, 5);
         Timer.schedule(new Timer.Task() {
             @Override
             public void run() {
-                assetManager.playSound(AssetSound.DAVE_SCREAM, 0.6f);
+                soundManager.playSound(AssetSound.DAVE_SCREAM);
                 gameManager.setGameState(GameManager.GameState.STOPPED);
             }
         }, 7.5f);
@@ -784,6 +768,21 @@ public class GameScreen implements BaseGameScreen {
         return false; // 点击了空白区域，事件未被处理
     }
 
+    @Override
+    public boolean touchUp(int screenX, int screenY, int pointer, int button) {
+        return false;
+    }
+
+    @Override
+    public boolean touchCancelled(int screenX, int screenY, int pointer, int button) {
+        return false;
+    }
+
+    @Override
+    public boolean touchDragged(int screenX, int screenY, int pointer) {
+        return false;
+    }
+
     private boolean canPlantAt(int row, int col) {
         if (row < 0 || row >= 5 || col < 0 || col >= 9) {
             return false; // 超出网格范围
@@ -811,29 +810,29 @@ public class GameScreen implements BaseGameScreen {
     private void tryLiftSeedCard(PlantCard card) {
         if (shovel.isSelected()) {
             shovel.deselect();
-            assetManager.playSound(AssetSound.TAP2, .5f);
+            soundManager.playSound(AssetSound.TAP2);
             return; // 铲子处于选中状态，取消铲子选择
         }
         if (selectedCard != null) {
             selectedCard.deselect();
             selectedCard = null;
-            assetManager.playSound(AssetSound.TAP2, .5f);
+            soundManager.playSound(AssetSound.TAP2);
             return; // 已有选中卡片，取消选择
         }
         if (!card.isSunEnough() || card.isOnCooldown()) {
-            assetManager.playSound(AssetSound.BUZZER, .5f);
+            soundManager.playSound(AssetSound.BUZZER);
             return; // 太阳不够，点击无效
         }
         card.select();
         selectedCard = card; // 选中新卡片
-        assetManager.playSound(AssetSound.SEED_LIFT, .5f); // 播放选卡音效
+        soundManager.playSound(AssetSound.SEED_LIFT);
     }
 
     private void tryLiftShovel() {
         if (selectedCard != null) {
             selectedCard.deselect();
             selectedCard = null;
-            assetManager.playSound(AssetSound.TAP2, .5f);
+            soundManager.playSound(AssetSound.TAP2);
         } else if (shovel.isSelected()) {
             shovel.deselect();
         } else {
@@ -845,7 +844,7 @@ public class GameScreen implements BaseGameScreen {
         if (sun.getState() == Sun.SunState.COLLECTED) {
             return; // 已经在收集中了，忽略重复点击
         }
-        assetManager.playSound(AssetSound.COLLECT_SUN, 0.7f);
+        soundManager.playSound(AssetSound.COLLECT_SUN);
         sun.collectTo((int) (cameraMinX + 15), (int) (startY + 5 * cellHeight + 15)); // 收集太阳
         gameManager.addSun(sun.getValue());
     }
@@ -860,6 +859,12 @@ public class GameScreen implements BaseGameScreen {
         return (int)((x - startX) / cellWidth);
     }
 
+    @Override
+    public void addGameDialog(String message, float duration) {
+        GameDialog gameDialog = new GameDialog(uiSkin, message,
+            gameCamera.position.x, gameCamera.position.y, gameCamera.viewportWidth, gameCamera.viewportHeight, duration);
+        gameDialogs.add(gameDialog);
+    }
 
     /**
      * 在指定的格子种植当前选中的植物
@@ -869,7 +874,7 @@ public class GameScreen implements BaseGameScreen {
         // 尝试花费太阳
         if (gameManager.spendSun(selectedCard.getCost())) {
             BasePlant newPlant = BasePlant.create(selectedCard.getPlantClass(), this, cell.x, cell.y);
-            assetManager.playRandomSound(Arrays.asList(AssetSound.PLANT_1, AssetSound.PLANT_2), 0.3f);
+            soundManager.playRandomSound(Arrays.asList(AssetSound.PLANT_1, AssetSound.PLANT_2));
             ParticleEffect plantEffect = AssetParticle.PLANTING.get(assetManager);
             plantEffect.setPosition(cell.x + cell.width / 2f, cell.y + 5);
             plantEffect.scaleEffect(.4f);
@@ -888,7 +893,7 @@ public class GameScreen implements BaseGameScreen {
         for (Iterator<BasePlant> it = plants.iterator(); it.hasNext();) {
             BasePlant plant = it.next();
             if (plant.getBounds().overlaps(cell)) {
-                assetManager.playSound(AssetSound.PLANT_2, .5f);
+                soundManager.playSound(AssetSound.PLANT_2);
                 it.remove();
                 break; // 一次只移除一个植物
             }
@@ -974,6 +979,11 @@ public class GameScreen implements BaseGameScreen {
         return foundHighlightedCell;
     }
 
+    @Override
+    public boolean scrolled(float amountX, float amountY) {
+        return false;
+    }
+
     // --- 其他 Screen 和 InputProcessor 的方法 ---
 
     @Override
@@ -1008,18 +1018,49 @@ public class GameScreen implements BaseGameScreen {
 
     @Override
     public void show() {
-        game.bgMusic = AssetMusic.GRASSWALK.get(assetManager);
-        if (gameManager.isCrazyMode()) game.bgMusic = AssetMusic.THE_KING_PAPERMAN.get(assetManager);
-        game.bgMusic.setLooping(true);
-        game.bgMusic.setVolume(0.5f);
-        game.bgMusic.play();
+        // 将本类设置为输入处理器，这样touchDown等方法才会被调用
+        InputMultiplexer multiplexer = new InputMultiplexer();
+        multiplexer.addProcessor(uiStage);
+        multiplexer.addProcessor(this);
+        Gdx.input.setInputProcessor(multiplexer);
+
+
+        if (gameManager.isCrazyMode()) {
+            soundManager.changeMusic(AssetMusic.THE_KING_PAPERMAN, true);
+        } else {
+            soundManager.changeMusic(AssetMusic.GRASSWALK, true);
+        }
+        if (gameManager.getGameState() == GameManager.GameState.PAUSED) soundManager.pauseMusic();
     }
 
     @Override
     public void dispose() {
+        soundManager.stopMusic();
+
+        for (ParticleEffect p : particles) {
+            p.dispose();
+        }
+        particles.clear();
+
+        // 3. 释放通过 Pixmap 创建的纹理
+        if (whitePixel != null) {
+            whitePixel.dispose();
+            whitePixel = null;
+        }
+
         uiStage.dispose();
         shapeRenderer.dispose();
-        game.bgMusic.stop();
+
+        plants.clear();
+        zombies.clear();
+        projectiles.clear();
+        suns.clear();
+        lawnMowers.clear();
+        fallings.clear();
+        gameDialogs.clear();
+        plantCards.clear();
+
+        Timer.instance().clear();
     }
 
     @Override
@@ -1040,7 +1081,7 @@ public class GameScreen implements BaseGameScreen {
             tryLiftSeedCard(plantCards.get(4));
             return true;
         } else if (keycode == Input.Keys.Q) {
-            assetManager.playSound(AssetSound.DIAMOND, .5f);
+            soundManager.playSound(AssetSound.DIAMOND);
             if (gameManager.isAutoCollect()) {
                 addGameDialog("Auto Collect has been closed!", 5f);
             } else {
@@ -1050,7 +1091,7 @@ public class GameScreen implements BaseGameScreen {
 
             return true;
         } else if (keycode == Input.Keys.W) {
-            assetManager.playSound(AssetSound.DIAMOND, .5f);
+            soundManager.playSound(AssetSound.DIAMOND);
             if (gameManager.isCardCooldownOn()) {
                 addGameDialog("Card Cooldown has been closed!", 5f);
             } else {
@@ -1059,17 +1100,10 @@ public class GameScreen implements BaseGameScreen {
             gameManager.setCardCooldown(!gameManager.isCardCooldownOn());
             return true;
         } else if (keycode == Input.Keys.S) {
-            assetManager.playSound(AssetSound.DIAMOND, .5f);
+            soundManager.playSound(AssetSound.DIAMOND);
             addGameDialog("Sun +500!", 5f);
             gameManager.addSun(500);
             return true;
-//        } else if (keycode == Input.Keys.C) {
-//            assetManager.playSound(AssetSound.DIAMOND, .5f);
-//            GameDialog gameDialog = new GameDialog(uiSkin, "Crazy Mode Activated!",
-//                gameCamera.position.x, gameCamera.position.y, gameCamera.viewportWidth, gameCamera.viewportHeight, 5f);
-//            uiStage.addActor(gameDialog.getDialogTable());
-//            beginCrazyMode();
-//            return true;
         } else if (keycode == Input.Keys.GRAVE) {
             tryLiftShovel();
             return true;
@@ -1077,10 +1111,27 @@ public class GameScreen implements BaseGameScreen {
             if (gameManager.getGameState() == GameManager.GameState.PAUSED) {
                 resume();
             } else if (gameManager.getGameState() == GameManager.GameState.PLAYING) {
-                pause();
+                pauseOnDialog();
+            }
+            return true;
+        } else if (keycode == Input.Keys.ESCAPE) {
+            if (gameManager.getGameState() == GameManager.GameState.PAUSED) {
+                resume();
+            } else if (gameManager.getGameState() == GameManager.GameState.PLAYING) {
+                pauseOnMenu();
             }
             return true;
         }
+        return false;
+    }
+
+    @Override
+    public boolean keyUp(int keycode) {
+        return false;
+    }
+
+    @Override
+    public boolean keyTyped(char character) {
         return false;
     }
 
@@ -1095,126 +1146,97 @@ public class GameScreen implements BaseGameScreen {
     }
 
     // 显示模态对话框
-    private void showModal(Actor dialog, float overlayAlpha) {
+    @Override
+    public void showModal(Actor dialog, float overlayAlpha) {
         ensureWhitePixel();
-        if (modalOverlay != null) modalOverlay.remove();
-
-        modalOverlay = new Group();
+        // 创建新层并压入栈
+        Group layer = new Group();
         float w = uiStage.getViewport().getWorldWidth();
         float h = uiStage.getViewport().getWorldHeight();
-        modalOverlay.setSize(w, h);
-        modalOverlay.setPosition(cameraMinX, cameraMinY);
-        modalOverlay.setTouchable(Touchable.enabled);
-
+        layer.setSize(w, h);
+        layer.setPosition(cameraMinX, cameraMinY);
+        layer.setTouchable(Touchable.enabled);
         Image bg = new Image(whitePixel);
         bg.setSize(w, h);
         bg.setColor(0f, 0f, 0f, overlayAlpha);
         bg.setTouchable(Touchable.enabled);
-
         bg.addListener(new InputListener() {
             @Override
             public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
-                Vector2 stageCoords = modalOverlay.localToStageCoordinates(new Vector2(x, y));
+                Vector2 stageCoords = layer.localToStageCoordinates(new Vector2(x, y));
                 Vector2 dialogLocal = dialog.stageToLocalCoordinates(stageCoords);
-                com.badlogic.gdx.scenes.scene2d.Actor hit = dialog.hit(dialogLocal.x, dialogLocal.y, true);
-                // 如果点在 dialog 内，返回 false 让事件继续传递给 dialog；否则消费事件
-                return hit == null;
+                Actor hit = dialog.hit(dialogLocal.x, dialogLocal.y, true);
+                return hit == null; // 点击空白处拦截
             }
         });
-
-        modalOverlay.addActor(bg);
-
-        // 确保 dialog 尺寸已计算（如果是 Table/Widget 可调用 validate/pref size）
+        layer.addActor(bg);
         dialog.setPosition((w - dialog.getWidth()) / 2f, (h - dialog.getHeight()) / 2f);
-        modalOverlay.addActor(dialog);
-
-        uiStage.addActor(modalOverlay);
+        layer.addActor(dialog);
+        uiStage.addActor(layer);
+        modalStack.add(layer);
     }
-
-    // 隐藏模态对话框
-    private void hideModal() {
-        if (modalOverlay != null) {
-            modalOverlay.remove();
-            modalOverlay = null;
-        }
-    }
-
-    @Override public void pause() {
-        if (gameManager.getGameState() == GameManager.GameState.PAUSED ||
-            gameManager.getGameState() == GameManager.GameState.GAME_OVER ||
-            gameManager.getGameState() == GameManager.GameState.STOPPED) {
-            return; // 已经暂停或游戏结束，忽略
-        }
-        gameManager.setGameState(GameManager.GameState.PAUSED);
-        game.bgMusic.pause();
-
-        BitmapFont font = AssetFont.DWARVEN_STONECRAFT_SIZE30_DEFAULT.get(assetManager);
-        PvzGraveButton resumeButton = new PvzGraveButton("Resume", font);
-        PvzDialogBox pauseDialog = new PvzDialogBox("Game Paused", "Click to resume game", new PvzGraveButton[] {resumeButton});
-        resumeButton.addListener(new ClickListener() {
-            @Override
-            public void clicked(InputEvent event, float x, float y) {
-                hideModal();
-                resume();
-            }
-        });
-        showModal(pauseDialog, 0f);
-        assetManager.playSound(AssetSound.PAUSE, .7f);
-    }
-    @Override public void resume() {
-        if (gameManager.getGameState() != GameManager.GameState.PAUSED) {
-            return; // 不是暂停状态，忽略
-        }
-        gameManager.setGameState(GameManager.GameState.PLAYING);
-        game.bgMusic.play();
-        hideModal();
-    }
-    @Override public void hide() { }
-
-    @Override public boolean keyUp(int keycode) { return false; }
-    @Override public boolean keyTyped(char character) { return false; }
-    @Override public boolean touchUp(int screenX, int screenY, int pointer, int button) {
-        if (Gdx.app.getType() == Application.ApplicationType.Android ||
-            Gdx.app.getType() == Application.ApplicationType.iOS) {
-            touchDown(screenX, screenY, pointer, button);
-            if (selectedCard != null) {
-                selectedCard.deselect();
-                selectedCard = null;
-            }
-            if (shovel.isSelected()) {
-                shovel.deselect();
-            }
-            return true;
-        }
-        return false;
-    }
-    @Override public boolean touchDragged(int screenX, int screenY, int pointer) {
-        mouseMoved(screenX, screenY);
-        // --- 第一步：处理UI输入（舞台与游戏共用 viewport） ---
-        Vector2 uiCoords = new Vector2(screenX, screenY);
-        uiStage.getViewport().unproject(uiCoords);
-
-        for (Sun sun : suns) {
-            if (sun.getBounds().contains(uiCoords.x, uiCoords.y)) {
-                collectSun(sun);
-                return true; // 事件被UI处理，结束
-            }
-        }
-        return false;
-    }
-    @Override public boolean touchCancelled(int screenX, int screenY, int pointer, int button) { return false; }
-    @Override public boolean scrolled(float amountX, float amountY) { return false; }
 
     @Override
-    public void addGameDialog(String message, float duration) {
-        GameDialog gameDialog = new GameDialog(uiSkin, message,
-            gameCamera.position.x, gameCamera.position.y, gameCamera.viewportWidth, gameCamera.viewportHeight, duration);
-        gameDialogs.add(gameDialog);
+    public void hideModal() {
+        if (modalStack.size == 0) return;
+        Group top = modalStack.pop();
+        top.remove();
     }
 
+    // 提供清除全部（内部使用，可选）
+    private void hideAllModals() {
+        for (Group g : modalStack) g.remove();
+        modalStack.clear();
+    }
+
+    /**
+     * 重新创建一个新的 GameScreen 实例，替换当前屏幕
+     */
+    public void restart() {
+        hideAllModals();
+        gameManager.reset();
+        game.setScreen(new GameScreen(game));
+    }
+
+    // 补回缺失的方法
+    @Override
     public void beginCrazyMode() {
         ZOMBIE_SPAWN_INTERVAL = .5f;
         SUN_SPAWN_INTERVAL = 1.0f;
         gameManager.setCardCooldown(false);
     }
+    @Override
+    public void pause() {
+        if (gameManager.getGameState() == GameManager.GameState.PAUSED ||
+            gameManager.getGameState() == GameManager.GameState.GAME_OVER ||
+            gameManager.getGameState() == GameManager.GameState.STOPPED) {
+            return;
+        }
+        gameManager.setGameState(GameManager.GameState.PAUSED);
+        soundManager.pauseSoundsAndMusic();
+    }
+    private void pauseOnDialog() {
+        pause();
+        BitmapFont font = AssetFont.DWARVEN_STONECRAFT_SIZE30_DEFAULT.get(assetManager);
+        PvzGraveButton resumeButton = new PvzGraveButton("Resume", font);
+        PvzDialogBox pauseDialog = new PvzDialogBox("Game Paused", "Click to resume game", new PvzGraveButton[]{resumeButton});
+        resumeButton.setClickListener(this::resume);
+        showModal(pauseDialog, 0f);
+        soundManager.playSound(AssetSound.PAUSE);
+    }
+    private void pauseOnMenu() {
+        pause();
+        PvzMenuPane menu = new PvzMenuPane(game, this);
+        showModal(menu, 0f);
+        soundManager.playSound(AssetSound.PAUSE);
+    }
+    @Override
+    public void resume() {
+        if (gameManager.getGameState() != GameManager.GameState.PAUSED) return;
+        gameManager.setGameState(GameManager.GameState.PLAYING);
+        hideModal();
+        soundManager.resumeSoundsAndMusic();
+    }
+
+    @Override public void hide() {}
 }

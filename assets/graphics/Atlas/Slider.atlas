@@ -1,0 +1,7 @@
+Slider.png
+size:256,64
+repeat:none
+options_sliderknob2
+bounds:2,2,22,29
+options_sliderslot
+bounds:2,33,135,10

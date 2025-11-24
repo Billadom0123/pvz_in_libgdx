@@ -7,6 +7,7 @@ import com.badlogic.gdx.scenes.scene2d.Touchable;
 import com.example.plantsvszombies.Resource.AssetSound;
 import com.example.plantsvszombies.Resource.AssetTexture;
 import com.example.plantsvszombies.managers.AssetMan;
+import com.example.plantsvszombies.managers.SoundManager;
 
 public class Shovel extends Group {
 
@@ -28,13 +29,13 @@ public class Shovel extends Group {
     }
 
     public void select() {
-        assetMan.playSound(AssetSound.SHOVEL_SELECT, .5f);
+        SoundManager.getInstance().playSound(AssetSound.SHOVEL_SELECT);
         shovelTexture.setVisible(false);
         isSelected = true;
     }
 
     public void deselect() {
-        assetMan.playSound(AssetSound.TAP2, .5f);
+        SoundManager.getInstance().playSound(AssetSound.TAP2);
         shovelTexture.setVisible(true);
         isSelected = false;
     }

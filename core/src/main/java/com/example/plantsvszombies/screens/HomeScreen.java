@@ -8,7 +8,7 @@ import com.badlogic.gdx.math.Polygon;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.scenes.scene2d.*;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
-import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
+import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.example.plantsvszombies.PvzGame;
 import com.example.plantsvszombies.Resource.AssetFont;
@@ -16,9 +16,8 @@ import com.example.plantsvszombies.Resource.AssetMusic;
 import com.example.plantsvszombies.Resource.AssetSound;
 import com.example.plantsvszombies.Resource.AssetTexture;
 import com.example.plantsvszombies.managers.AssetMan;
-import com.example.plantsvszombies.ui.HomePageButton;
-import com.example.plantsvszombies.ui.PvzDialogBox;
-import com.example.plantsvszombies.ui.PvzGraveButton;
+import com.example.plantsvszombies.managers.SoundManager;
+import com.example.plantsvszombies.ui.*;
 
 public class HomeScreen implements Screen {
     private final PvzGame game;
@@ -36,7 +35,7 @@ public class HomeScreen implements Screen {
     private final FitViewport viewport;
     private final OrthographicCamera camera;
 
-    private Group modalOverlay;
+    private final Array<Group> modalStack = new Array<>();
     private Texture whitePixel;
 
     public HomeScreen(PvzGame game) {
@@ -58,12 +57,7 @@ public class HomeScreen implements Screen {
             new Polygon(new float[]{0, 50, 5, 130, 70, 130, 100, 150, 240, 150, 280, 110, 360, 100, 345, 0, 0, 50}));
         startAdventureButton.setPosition(460, 390);
         startAdventureButton.setTouchable(Touchable.enabled);
-        startAdventureButton.addListener(new ClickListener() {
-            @Override
-            public void clicked(InputEvent event, float x, float y) {
-                game.setScreen(new GameScreen(game));
-            }
-        });
+        startAdventureButton.setClickListener(() -> game.setScreen(new GameScreen(game)));
         stage.addActor(startAdventureButton);
 
         HomePageButton miniGameButton = new HomePageButton(AssetTexture.MINI_GAME_BUTTON.get(assetMan),
@@ -73,16 +67,7 @@ public class HomeScreen implements Screen {
             new Polygon(new float[]{5, 65, 5, 135, 340, 90, 325, 5}));
         miniGameButton.setPosition(460, 295);
         miniGameButton.setTouchable(Touchable.enabled);
-        miniGameButton.addListener(l -> {
-            if (l instanceof InputEvent) {
-                InputEvent event = (InputEvent) l;
-                if (event.getType() == InputEvent.Type.touchDown) {
-                    game.setScreen(new BowlingScreen(game));
-                    return true;
-                }
-            }
-            return false;
-        });
+        miniGameButton.setClickListener(() -> game.setScreen(new BowlingScreen(game)));
         stage.addActor(miniGameButton);
 
         HomePageButton puzzleButton = new HomePageButton(AssetTexture.PUZZLE_BUTTON.get(assetMan),
@@ -119,6 +104,10 @@ public class HomeScreen implements Screen {
             new Polygon(new float[]{-10, 15, 5, 35, 30, 50, 35, 75, 60, 75, 60, 50, 90, 15, 80, 0, 35, -10}));
         optionsButton.setPosition(640, 80);
         optionsButton.setTouchable(Touchable.enabled);
+        optionsButton.setClickListener(() -> {
+            PvzMenuPane menuPane = new PvzMenuPane(game, this);
+            showModal(menuPane, 0f);
+        });
         stage.addActor(optionsButton);
 
         HomePageButton quitButton = new HomePageButton(AssetTexture.QUIT_BUTTON.get(assetMan),
@@ -128,32 +117,18 @@ public class HomeScreen implements Screen {
             new Polygon(new float[]{-20, 15, -20, 40, -5, 55, 55, 55, 65, 20, 55, 0, 10, -10}));
         quitButton.setPosition(815, 58);
         quitButton.setTouchable(Touchable.enabled);
-        quitButton.addListener(new InputListener() {
-            @Override
-            public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
-                BitmapFont dwarvenStoneCraft = AssetFont.DWARVEN_STONECRAFT_SIZE30_DEFAULT.get(assetMan);
+        quitButton.setClickListener(() -> {
+            BitmapFont dwarvenStoneCraft = AssetFont.DWARVEN_STONECRAFT_SIZE30_DEFAULT.get(assetMan);
 
-                PvzGraveButton quitButton = new PvzGraveButton("Quit", dwarvenStoneCraft);
-                PvzGraveButton cancelButton = new PvzGraveButton("Cancel", dwarvenStoneCraft);
-                PvzDialogBox dialogBox = new PvzDialogBox("Quit", "Are you sure you wish to quit the game?",
-                    new PvzGraveButton[]{quitButton, cancelButton});
+            PvzGraveButton quit = new PvzGraveButton("Quit", dwarvenStoneCraft);
+            PvzGraveButton cancel = new PvzGraveButton("Cancel", dwarvenStoneCraft);
+            PvzDialogBox dialogBox = new PvzDialogBox("Quit", "Are you sure you wish to quit the game?",
+                new PvzGraveButton[]{quit, cancel});
 
-                quitButton.addListener(new ClickListener() {
-                    @Override
-                    public void clicked(InputEvent event, float x, float y) {
-                        Gdx.app.exit();
-                    }
-                });
-                cancelButton.addListener(new ClickListener() {
-                    @Override
-                    public void clicked(InputEvent event, float x, float y) {
-                        hideModal();
-                    }
-                });
-                dialogBox.setPosition( (WORLD_WIDTH - dialogBox.getWidth()) / 2f, (WORLD_HEIGHT - dialogBox.getHeight()) / 2f);
-                showModal(dialogBox, 0f);
-                return true;
-            }
+            quit.setClickListener(() -> Gdx.app.exit());
+            cancel.setClickListener(this::hideModal);
+            dialogBox.setPosition( (WORLD_WIDTH - dialogBox.getWidth()) / 2f, (WORLD_HEIGHT - dialogBox.getHeight()) / 2f);
+            showModal(dialogBox, 0f);
         });
         stage.addActor(quitButton);
 
@@ -164,12 +139,7 @@ public class HomeScreen implements Screen {
             new Polygon(new float[]{5, 25, 25, 95, 90, 80, 75, 30, 75, 5}));
         almanac.setPosition(370, 60);
         almanac.setTouchable(Touchable.enabled);
-        almanac.addListener(new ClickListener() {
-            @Override
-            public void clicked(InputEvent event, float x, float y) {
-                game.setScreen(new AlmanacScreen(game, HomeScreen.this));
-            }
-        });
+        almanac.setClickListener(() -> game.setScreen(new AlmanacScreen(game, this)));
         stage.addActor(almanac);
     }
 
@@ -186,56 +156,47 @@ public class HomeScreen implements Screen {
     // 显示模态对话框
     private void showModal(Actor dialog, float overlayAlpha) {
         ensureWhitePixel();
-        if (modalOverlay != null) modalOverlay.remove();
-
-        modalOverlay = new Group();
+        Group layer = new Group();
         float w = stage.getViewport().getWorldWidth();
         float h = stage.getViewport().getWorldHeight();
-        modalOverlay.setSize(w, h);
-        modalOverlay.setTouchable(Touchable.enabled);
-
+        layer.setSize(w, h);
+        layer.setTouchable(Touchable.enabled);
         Image bg = new Image(whitePixel);
         bg.setSize(w, h);
         bg.setColor(0f, 0f, 0f, overlayAlpha);
         bg.setTouchable(Touchable.enabled);
-
         bg.addListener(new InputListener() {
             @Override
             public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
-                Vector2 stageCoords = modalOverlay.localToStageCoordinates(new Vector2(x, y));
+                Vector2 stageCoords = layer.localToStageCoordinates(new Vector2(x, y));
                 Vector2 dialogLocal = dialog.stageToLocalCoordinates(stageCoords);
-                com.badlogic.gdx.scenes.scene2d.Actor hit = dialog.hit(dialogLocal.x, dialogLocal.y, true);
-                // 如果点在 dialog 内，返回 false 让事件继续传递给 dialog；否则消费事件
-                return hit == null;
+                Actor hit = dialog.hit(dialogLocal.x, dialogLocal.y, true);
+                return hit == null; // 点击空白拦截
             }
         });
-
-        modalOverlay.addActor(bg);
-
-        // 确保 dialog 尺寸已计算（如果是 Table/Widget 可调用 validate/pref size）
+        layer.addActor(bg);
         dialog.setPosition((w - dialog.getWidth()) / 2f, (h - dialog.getHeight()) / 2f);
-        modalOverlay.addActor(dialog);
-
-        stage.addActor(modalOverlay);
+        layer.addActor(dialog);
+        stage.addActor(layer);
+        modalStack.add(layer);
     }
 
     // 隐藏模态对话框
-    private void hideModal() {
-        if (modalOverlay != null) {
-            modalOverlay.remove();
-            modalOverlay = null;
-        }
+    public void hideModal() {
+        if (modalStack.size == 0) return;
+        Group top = modalStack.pop();
+        top.remove();
+    }
+
+    public void hideAllModals() {
+        for (Group g : modalStack) g.remove();
+        modalStack.clear();
     }
 
     @Override
     public void show() {
         Gdx.input.setInputProcessor(stage);
-        if (game.bgMusic != AssetMusic.MAINTHEME.get(assetMan)) game.bgMusic = AssetMusic.MAINTHEME.get(assetMan);
-        if (!game.bgMusic.isPlaying()) {
-            game.bgMusic.setLooping(true);
-            game.bgMusic.setVolume(0.5f);
-            game.bgMusic.play();
-        }
+        SoundManager.getInstance().changeMusic(AssetMusic.MAINTHEME, true);
     }
 
     @Override
@@ -289,9 +250,7 @@ public class HomeScreen implements Screen {
         if (Gdx.input.getInputProcessor() == stage) {
             Gdx.input.setInputProcessor(null);
         }
-        if (game.bgMusic != null) {
-            game.bgMusic.stop();
-        }
+        SoundManager.getInstance().stopMusic();
     }
 
     @Override

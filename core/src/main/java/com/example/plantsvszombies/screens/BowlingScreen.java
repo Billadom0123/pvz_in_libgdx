@@ -5,6 +5,7 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.InputMultiplexer;
 import com.badlogic.gdx.graphics.*;
+import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.ParticleEffect;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
@@ -13,32 +14,22 @@ import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.scenes.scene2d.*;
-import com.badlogic.gdx.scenes.scene2d.ui.Image;
-import com.badlogic.gdx.scenes.scene2d.ui.Label;
-import com.badlogic.gdx.scenes.scene2d.ui.Skin;
-import com.badlogic.gdx.scenes.scene2d.ui.Table;
-import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
+import com.badlogic.gdx.scenes.scene2d.ui.*;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.example.plantsvszombies.PvzGame;
 import com.example.plantsvszombies.Resource.*;
-import com.example.plantsvszombies.managers.AssetMan;
-import com.example.plantsvszombies.managers.GameManager;
+import com.example.plantsvszombies.managers.*;
 import com.example.plantsvszombies.models.DamageType;
+import com.example.plantsvszombies.models.GameDialog;
 import com.example.plantsvszombies.models.LawnMower;
 import com.example.plantsvszombies.models.Plants.*;
-import com.example.plantsvszombies.models.Plants.Bowlings.BaseBowling;
-import com.example.plantsvszombies.models.Plants.Bowlings.BoomBowling;
-import com.example.plantsvszombies.models.Plants.Bowlings.HugeBowling;
-import com.example.plantsvszombies.models.Plants.Bowlings.WallnutBowling;
+import com.example.plantsvszombies.models.Plants.Bowlings.*;
 import com.example.plantsvszombies.models.Projectiles.BaseProjectile;
 import com.example.plantsvszombies.models.Sun;
 import com.example.plantsvszombies.models.Texture.Falling;
-import com.example.plantsvszombies.models.Zombies.BaseZombie;
-import com.example.plantsvszombies.models.Zombies.BucketHeadZombie;
-import com.example.plantsvszombies.models.Zombies.ConeHeadZombie;
-import com.example.plantsvszombies.models.Zombies.NormalZombie;
+import com.example.plantsvszombies.models.Zombies.*;
 import com.example.plantsvszombies.ui.*;
 
 import java.util.Arrays;
@@ -50,6 +41,7 @@ public class BowlingScreen implements BaseGameScreen {
     private final PvzGame game; // 对主游戏类的引用，用于访问全局对象如SpriteBatch
     private final AssetMan assetManager;
     private final GameManager gameManager;
+    private final SoundManager soundManager;
 
     // --- 渲染相关 ---
     private final OrthographicCamera gameCamera; // 游戏世界的相机
@@ -84,6 +76,7 @@ public class BowlingScreen implements BaseGameScreen {
     private final Array<LawnMower> lawnMowers;
     private final Array<Falling> fallings;
     private final Array<ParticleEffect> particles;
+    private final Array<GameDialog> gameDialogs;
 
     // --- 游戏逻辑 ---
     private float gameTime = 0f;          // 游戏进行的总时间
@@ -104,7 +97,7 @@ public class BowlingScreen implements BaseGameScreen {
     private Conveyor conveyor;
     private PvzGraveButton pauseButton; // 暂停按钮
     private Texture whitePixel;
-    private Group modalOverlay;
+    private final com.badlogic.gdx.utils.Array<Group> modalStack = new com.badlogic.gdx.utils.Array<>();
 
     private float endBlackOverlayAlpha = 0f; // 黑色覆盖层的透明度
     private float endWordScale = 0f; // 抖动计时器
@@ -116,6 +109,7 @@ public class BowlingScreen implements BaseGameScreen {
         this.game = game;
         this.assetManager = AssetMan.getInstance();
         this.gameManager = GameManager.getInstance();
+        this.soundManager = SoundManager.getInstance();
 
         // 1. 初始化游戏相机和视口
         gameCamera = new OrthographicCamera();
@@ -139,6 +133,7 @@ public class BowlingScreen implements BaseGameScreen {
         lawnMowers = new Array<>();
         fallings = new Array<>();
         particles = new Array<>();
+        gameDialogs = new Array<>();
 
         // 3. 初始化UI（与游戏共用同一 viewport，避免相机裁切后的偏移）
         uiSkin = new Skin(Gdx.files.internal("graphics/Skin/uiskin.json"));
@@ -160,12 +155,6 @@ public class BowlingScreen implements BaseGameScreen {
         gridCells = new Rectangle[5][9];
         initializeGrid();
         initializeLawnMowers();
-
-        // 5. 将本类设置为输入处理器，这样touchDown等方法才会被调用
-        InputMultiplexer multiplexer = new InputMultiplexer();
-        multiplexer.addProcessor(uiStage); // 先处理UI输入
-        multiplexer.addProcessor(this);    // 再处理游戏输入
-        Gdx.input.setInputProcessor(multiplexer);
     }
 
     private void setupUI() {
@@ -184,14 +173,9 @@ public class BowlingScreen implements BaseGameScreen {
         shovel.setPosition(cameraMinX + 600, startY + 5 * cellHeight);
 
         BitmapFont font = AssetFont.DWARVEN_STONECRAFT_SIZE30_DEFAULT.get(assetManager);
-        pauseButton = new PvzGraveButton("Pause", font);
+        pauseButton = new PvzGraveButton("Menu", font);
         pauseButton.setPosition(cameraMaxX - pauseButton.getWidth(), cameraMaxY - pauseButton.getHeight());
-        pauseButton.addListener(new ClickListener() {
-            @Override
-            public void clicked(InputEvent event, float x, float y) {
-                pause();
-            }
-        });
+        pauseButton.setClickListener(this::pauseOnMenu);
 
         uiStage.addActor(topBar);
         uiStage.addActor(tooltipTable);
@@ -244,8 +228,6 @@ public class BowlingScreen implements BaseGameScreen {
         // 2. 更新游戏逻辑 (仅在游戏进行时)
         if (gameManager.getGameState() == GameManager.GameState.PLAYING || gameManager.getGameState() == GameManager.GameState.GAME_OVER) {
             updateGame(delta);
-        } else if (gameManager.getGameState() == GameManager.GameState.PAUSED) {
-            modalOverlay.act(delta);
         }
 
         // 3. 渲染游戏世界
@@ -312,11 +294,18 @@ public class BowlingScreen implements BaseGameScreen {
             game.batch.draw(t, worldCoords.x - t.getWidth() / 2f, worldCoords.y - t.getHeight() / 2f);
         }
 
-        if (gameManager.getGameState() == GameManager.GameState.PAUSED) {
-            modalOverlay.draw(game.batch, 1f);
-        }
-
         game.batch.end();
+
+        Batch batch = uiStage.getBatch();
+        batch.setProjectionMatrix(uiStage.getCamera().combined);
+
+        batch.begin();
+        for (GameDialog dialog : gameDialogs) dialog.getDialogTable().draw(batch, 1f);
+        if (gameManager.getGameState() == GameManager.GameState.PAUSED) {
+            for (Group modal : modalStack) modal.draw(batch, 1f);
+        }
+        batch.end();
+
     }
 
     private boolean canPlantAt(int row, int col) {
@@ -347,25 +336,25 @@ public class BowlingScreen implements BaseGameScreen {
     private void tryLiftSeedCard(PlantCard card) {
         if (shovel.isSelected()) {
             shovel.deselect();
-            assetManager.playSound(AssetSound.TAP2, .5f);
+            soundManager.playSound(AssetSound.TAP2);
             return; // 铲子处于选中状态，取消铲子选择
         }
         if (selectedCard != null) {
             selectedCard.deselect();
             selectedCard = null;
-            assetManager.playSound(AssetSound.TAP2, .5f);
+            soundManager.playSound(AssetSound.TAP2);
             return; // 已有选中卡片，取消选择
         }
         card.select();
         selectedCard = card; // 选中新卡片
-        assetManager.playSound(AssetSound.SEED_LIFT, .5f); // 播放选卡音效
+        soundManager.playSound(AssetSound.SEED_LIFT);
     }
 
     private void tryLiftShovel() {
         if (selectedCard != null) {
             selectedCard.deselect();
             selectedCard = null;
-            assetManager.playSound(AssetSound.TAP2, .5f);
+            soundManager.playSound(AssetSound.TAP2);
         } else if (shovel.isSelected()) {
             shovel.deselect();
         } else {
@@ -654,7 +643,7 @@ public class BowlingScreen implements BaseGameScreen {
     private void placePlant(Rectangle cell) {
         // 传送带模式，不花费阳光
         BasePlant newPlant = BasePlant.create(selectedCard.getPlantClass(), this, cell.x, cell.y);
-        assetManager.playRandomSound(Arrays.asList(AssetSound.PLANT_1, AssetSound.PLANT_2), 0.3f);
+        soundManager.playRandomSound(Arrays.asList(AssetSound.PLANT_1, AssetSound.PLANT_2));
         ParticleEffect plantEffect = AssetParticle.PLANTING.get(assetManager);
         plantEffect.setPosition(cell.x + cell.width / 2f, cell.y + 5);
         plantEffect.scaleEffect(.4f);
@@ -663,7 +652,7 @@ public class BowlingScreen implements BaseGameScreen {
         plants.add(newPlant); // 将新植物添加到世界中
         if (newPlant instanceof BaseBowling) {
             BaseBowling bowling = (BaseBowling) newPlant;
-            bowling.rollingSound.loop();
+            bowling.beginRolling();
             if (gameManager.isCrazyMode()) {
                 bowling.setRotationSpeed(bowling.getRotationSpeed() * 5f);
                 bowling.setBounceInX(true);
@@ -681,7 +670,7 @@ public class BowlingScreen implements BaseGameScreen {
         for (Iterator<BasePlant> it = plants.iterator(); it.hasNext();) {
             BasePlant plant = it.next();
             if (plant.getBounds().overlaps(cell)) {
-                assetManager.playSound(AssetSound.PLANT_2, .5f);
+                soundManager.playSound(AssetSound.PLANT_2);
                 it.remove();
                 break; // 一次只移除一个植物
             }
@@ -795,13 +784,18 @@ public class BowlingScreen implements BaseGameScreen {
 
     @Override
     public void show() {
-        game.bgMusic = AssetMusic.MINI_GAME.get(assetManager);
+        // 5. 将本类设置为输入处理器，这样touchDown等方法才会被调用
+        InputMultiplexer multiplexer = new InputMultiplexer();
+        multiplexer.addProcessor(uiStage); // 先处理UI输入
+        multiplexer.addProcessor(this);    // 再处理游戏输入
+        Gdx.input.setInputProcessor(multiplexer);
+
         if (gameManager.isCrazyMode()) {
-            game.bgMusic = AssetMusic.HLSNW.get(assetManager);
+            soundManager.changeMusic(AssetMusic.HLSNW, true);
+        } else {
+            soundManager.changeMusic(AssetMusic.MINI_GAME, true);
         }
-        game.bgMusic.setLooping(true);
-        game.bgMusic.setVolume(0.5f);
-        game.bgMusic.play();
+        if (gameManager.getGameState() == GameManager.GameState.PAUSED) soundManager.pauseMusic();
     }
 
     @Override public void resize(int width, int height) {
@@ -824,48 +818,51 @@ public class BowlingScreen implements BaseGameScreen {
     }
 
     // 显示模态对话框
-    private void showModal(Actor dialog, float overlayAlpha) {
+    @Override
+    public void showModal(Actor dialog, float overlayAlpha) {
         ensureWhitePixel();
-        if (modalOverlay != null) modalOverlay.remove();
-
-        modalOverlay = new Group();
+        Group layer = new Group();
         float w = uiStage.getViewport().getWorldWidth();
         float h = uiStage.getViewport().getWorldHeight();
-        modalOverlay.setSize(w, h);
-        modalOverlay.setPosition(cameraMinX, cameraMinY);
-        modalOverlay.setTouchable(Touchable.enabled);
-
+        layer.setSize(w, h);
+        layer.setPosition(cameraMinX, cameraMinY);
+        layer.setTouchable(Touchable.enabled);
         Image bg = new Image(whitePixel);
         bg.setSize(w, h);
         bg.setColor(0f, 0f, 0f, overlayAlpha);
         bg.setTouchable(Touchable.enabled);
-
         bg.addListener(new InputListener() {
             @Override
             public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
-                Vector2 stageCoords = modalOverlay.localToStageCoordinates(new Vector2(x, y));
+                Vector2 stageCoords = layer.localToStageCoordinates(new Vector2(x, y));
                 Vector2 dialogLocal = dialog.stageToLocalCoordinates(stageCoords);
                 Actor hit = dialog.hit(dialogLocal.x, dialogLocal.y, true);
-                // 如果点在 dialog 内，返回 false 让事件继续传递给 dialog；否则消费事件
-                return hit == null;
+                return hit == null; // 拦截点击空白
             }
         });
-
-        modalOverlay.addActor(bg);
-
-        // 确保 dialog 尺寸已计算（如果是 Table/Widget 可调用 validate/pref size）
+        layer.addActor(bg);
         dialog.setPosition((w - dialog.getWidth()) / 2f, (h - dialog.getHeight()) / 2f);
-        modalOverlay.addActor(dialog);
-
-        uiStage.addActor(modalOverlay);
+        layer.addActor(dialog);
+        uiStage.addActor(layer);
+        modalStack.add(layer);
     }
 
     // 隐藏模态对话框
-    private void hideModal() {
-        if (modalOverlay != null) {
-            modalOverlay.remove();
-            modalOverlay = null;
-        }
+    @Override
+    public void hideModal() {
+        if (modalStack.size == 0) return;
+        Group top = modalStack.pop();
+        top.remove();
+    }
+    private void hideAllModals() {
+        for (Group g : modalStack) g.remove();
+        modalStack.clear();
+    }
+    @Override
+    public void restart() {
+        hideAllModals();
+        gameManager.reset();
+        game.setScreen(new BowlingScreen(game));
     }
 
     @Override
@@ -876,53 +873,60 @@ public class BowlingScreen implements BaseGameScreen {
             return; // 已经暂停或游戏结束，忽略
         }
         gameManager.setGameState(GameManager.GameState.PAUSED);
-        game.bgMusic.pause();
 
+        soundManager.pauseSoundsAndMusic();
+    }
+
+    private void pauseOnDialog() {
+        this.pause();
         BitmapFont font = AssetFont.DWARVEN_STONECRAFT_SIZE30_DEFAULT.get(assetManager);
         PvzGraveButton resumeButton = new PvzGraveButton("Resume", font);
         PvzDialogBox pauseDialog = new PvzDialogBox("Game Paused", "Click to resume game", new PvzGraveButton[] {resumeButton});
-        resumeButton.addListener(new ClickListener() {
-            @Override
-            public void clicked(InputEvent event, float x, float y) {
-                hideModal();
-                resume();
-            }
-        });
+        resumeButton.setClickListener(this::resume);
         showModal(pauseDialog, 0f);
-        assetManager.playSound(AssetSound.PAUSE, .7f);
-        for (BasePlant p : plants) {
-            if (p instanceof BaseBowling) {
-                ((BaseBowling) p).rollingSound.pause();
-            }
-        }
+        soundManager.playSound(AssetSound.PAUSE);
     }
+
+    private void pauseOnMenu() {
+        this.pause();
+        PvzMenuPane menu = new PvzMenuPane(game, this);
+        showModal(menu, 0f);
+        soundManager.playSound(AssetSound.PAUSE);
+    }
+
     @Override
     public void resume() {
         if (gameManager.getGameState() != GameManager.GameState.PAUSED) {
             return; // 不是暂停状态，忽略
         }
         gameManager.setGameState(GameManager.GameState.PLAYING);
-        game.bgMusic.play();
         hideModal();
-        for (BasePlant p : plants) {
-            if (p instanceof BaseBowling) {
-                ((BaseBowling) p).rollingSound.resume();
-            }
-        }
+        soundManager.resumeSoundsAndMusic();
     }
 
-    @Override public void hide() {}
+    @Override public void hide() {
+        // 清除输入处理器，避免内存泄漏
+        if (Gdx.input.getInputProcessor() != null) {
+            Gdx.input.setInputProcessor(null);
+        }
+    }
     @Override public void dispose() {}
 
 
     @Override public boolean keyDown(int keycode) {
-        if (keycode == Input.Keys.ESCAPE || keycode == Input.Keys.SPACE) {
+        if (keycode == Input.Keys.SPACE) {
             if (gameManager.getGameState() == GameManager.GameState.PAUSED) {
                 resume();
             } else if (gameManager.getGameState() == GameManager.GameState.PLAYING) {
-                pause();
+                pauseOnDialog();
             }
             return true;
+        } else if (keycode == Input.Keys.ESCAPE) {
+            if (gameManager.getGameState() == GameManager.GameState.PAUSED) {
+                resume();
+            } else if (gameManager.getGameState() == GameManager.GameState.PLAYING) {
+                pauseOnMenu();
+            }
         }
         return false;
     }

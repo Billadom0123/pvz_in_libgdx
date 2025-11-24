@@ -8,16 +8,16 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
-import com.example.plantsvszombies.Animation.AnimationClip;
+import com.example.plantsvszombies.AssetImpl.AnimationClip;
 import com.example.plantsvszombies.Resource.AssetSound;
 import com.example.plantsvszombies.managers.AssetMan;
+import com.example.plantsvszombies.managers.SoundManager;
 import com.example.plantsvszombies.models.DamageType;
 import com.example.plantsvszombies.models.Plants.BasePlant;
 import com.example.plantsvszombies.models.Texture.Falling;
 import com.example.plantsvszombies.screens.BaseGameScreen;
 
 import java.util.Arrays;
-import java.util.List;
 
 public abstract class BaseZombie {
     protected Vector2 position;
@@ -150,10 +150,10 @@ public abstract class BaseZombie {
             if (eatSoundTimer >= EAT_SOUND_INTERVAL) {
                 eatSoundTimer = 0f;
                 // 播放吃植物的声音
-                AssetMan.getInstance().playRandomSound(Arrays.asList(AssetSound.CHOMP, AssetSound.CHOMP_SOFT), 0.4f);
+                SoundManager.getInstance().playRandomSound(Arrays.asList(AssetSound.CHOMP, AssetSound.CHOMP_SOFT));
             }
             if (targetPlant.getHealth() <= 0) {
-                AssetMan.getInstance().playSound(AssetSound.GULP, 0.4f);
+                SoundManager.getInstance().playSound(AssetSound.GULP);
             }
         } else {
             // 如果没有在攻击，就从右向左移动
@@ -189,7 +189,7 @@ public abstract class BaseZombie {
                 new Vector2(MathUtils.random(-30f, 30f), MathUtils.random(100f, 200f)),
                 MathUtils.random(-90f, 90f), position.y);
             screen.addFalling(falling);
-            AssetMan.getInstance().playSound(AssetSound.LIMBS_POP, 0.5f);
+            SoundManager.getInstance().playSound(AssetSound.LIMBS_POP);
         }
     }
 
@@ -329,7 +329,7 @@ public abstract class BaseZombie {
         targetPlant = null;
         speed = 0f;
         centerBounds = new Rectangle(-100, -100, 0, 0); // 移出中心碰撞框，避免继续与植物碰撞
-        AssetMan.getInstance().playRandomSound(Arrays.asList(AssetSound.ZOMBIE_FALLING_1, AssetSound.ZOMBIE_FALLING_2), 0.3f);
+        SoundManager.getInstance().playRandomSound(Arrays.asList(AssetSound.ZOMBIE_FALLING_1, AssetSound.ZOMBIE_FALLING_2));
     }
 
     public boolean isRemovable() {

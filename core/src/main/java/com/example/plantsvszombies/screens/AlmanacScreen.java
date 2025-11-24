@@ -7,10 +7,7 @@ import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.scenes.scene2d.*;
-import com.badlogic.gdx.scenes.scene2d.ui.Image;
-import com.badlogic.gdx.scenes.scene2d.ui.Label;
-import com.badlogic.gdx.scenes.scene2d.ui.Skin;
-import com.badlogic.gdx.scenes.scene2d.ui.Table;
+import com.badlogic.gdx.scenes.scene2d.ui.*;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.utils.*;
 import com.badlogic.gdx.utils.viewport.FitViewport;
@@ -18,12 +15,15 @@ import com.example.plantsvszombies.PvzGame;
 import com.example.plantsvszombies.Resource.Almanac.AlmanacPlant;
 import com.example.plantsvszombies.Resource.AssetFont;
 import com.example.plantsvszombies.Resource.AssetMusic;
+import com.example.plantsvszombies.Resource.AssetSound;
 import com.example.plantsvszombies.Resource.AssetTexture;
 import com.example.plantsvszombies.managers.AssetMan;
+import com.example.plantsvszombies.managers.SoundManager;
 import com.example.plantsvszombies.models.Plants.BasePlant;
 import com.example.plantsvszombies.models.Plants.Sunflower;
 import com.example.plantsvszombies.models.Zombies.NormalZombie;
 import com.example.plantsvszombies.ui.AlmanacPlantCard;
+import com.example.plantsvszombies.ui.PressableGroup;
 import com.example.plantsvszombies.ui.PvzGraveButton;
 import com.example.plantsvszombies.ui.TextureActor;
 
@@ -36,6 +36,7 @@ public class AlmanacScreen implements Screen {
     }
     private State state;
     private final PvzGame game;
+    private final SoundManager soundManager;
     private final Screen previousScreen;
 
     private float elapsedTime = 0f;
@@ -57,10 +58,10 @@ public class AlmanacScreen implements Screen {
     // Index页
     private Sunflower indexSunflower;
     private NormalZombie indexZombie;
-    private Group plantDetailBtn;
-    private Group zombieDetailBtn;
-    private Group indexBtn;
-    private Group closeBtn;
+    private PressableGroup plantDetailBtn;
+    private PressableGroup zombieDetailBtn;
+    private PressableGroup indexBtn;
+    private PressableGroup closeBtn;
 
     // 植物详情页
     private boolean isPlantDetailsInitialized = false;
@@ -79,6 +80,7 @@ public class AlmanacScreen implements Screen {
         this.game = game;
         this.previousScreen = previous;
         this.assetMan = game.assetManager;
+        this.soundManager = game.soundManager;
         this.camera = new OrthographicCamera();
         this.viewport = new FitViewport(WORLD_WIDTH, WORLD_HEIGHT, camera);
 
@@ -98,7 +100,7 @@ public class AlmanacScreen implements Screen {
 
         BitmapFont font = AssetFont.DWARVEN_STONECRAFT_SIZE24_DEFAULT.get(assetMan);
 
-        plantDetailBtn = new Group();
+        plantDetailBtn = new PressableGroup();
         TextureActor plantBtnBg = new TextureActor(AssetTexture.SEED_CHOOSER_BUTTON.get(assetMan));
         plantBtnBg.setPosition(0, 0);
         TextureActor plantBtnGlow = new TextureActor(AssetTexture.SEED_CHOOSER_BUTTON_GLOW.get(assetMan));
@@ -113,7 +115,7 @@ public class AlmanacScreen implements Screen {
         plantDetailBtn.addActor(plantBtnGlow);
         plantDetailBtn.addActor(plantBtnLabel);
 
-        plantDetailBtn.addListener(new ClickListener() {
+        plantDetailBtn.addListener(new InputListener() {
             @Override
             public void enter(InputEvent event, float x, float y, int pointer, Actor fromActor) {
                 plantBtnGlow.setVisible(true);
@@ -122,29 +124,24 @@ public class AlmanacScreen implements Screen {
             public void exit(InputEvent event, float x, float y, int pointer, Actor toActor) {
                 plantBtnGlow.setVisible(false);
             }
-            @Override
-            public void clicked(InputEvent event, float x, float y) {
-                state = State.PLANT_DETAILS;
-                if (!isPlantDetailsInitialized) {
-                    isPlantDetailsInitialized = true;
-                    initPlantDetailsPage();
-                }
+        });
+        plantDetailBtn.setClickListener(() -> {
+            soundManager.playSound(AssetSound.TAP1);
+            state = State.PLANT_DETAILS;
+            if (!isPlantDetailsInitialized) {
+                isPlantDetailsInitialized = true;
+                initPlantDetailsPage();
             }
         });
         plantDetailBtn.setPosition(135, 205);
         stage.addActor(plantDetailBtn);
 
         zombieDetailBtn = new PvzGraveButton("View Zombies", font);
-        zombieDetailBtn.addListener(new ClickListener() {
-            @Override
-            public void clicked(InputEvent event, float x, float y) {
-                // 切换到僵尸详情页的逻辑
-            }
-        });
+        zombieDetailBtn.setClickListener(() -> {});
         zombieDetailBtn.setPosition(500, 205);
         stage.addActor(zombieDetailBtn);
 
-        indexBtn = new Group();
+        indexBtn = new PressableGroup();
         TextureActor indexBtnBg = new TextureActor(AssetTexture.ALMANAC_INDEX_BUTTON.get(assetMan));
         indexBtnBg.setPosition(0, 0);
         TextureActor indexBtnGlow = new TextureActor(AssetTexture.ALMANAC_INDEX_BUTTON_HIGHLIGHT.get(assetMan));
@@ -159,7 +156,7 @@ public class AlmanacScreen implements Screen {
         indexBtn.addActor(indexBtnBg);
         indexBtn.addActor(indexBtnGlow);
         indexBtn.addActor(indexBtnLabel);
-        indexBtn.addListener(new ClickListener() {
+        indexBtn.addListener(new InputListener() {
             @Override
             public void enter(InputEvent event, float x, float y, int pointer, Actor fromActor) {
                 indexBtnGlow.setVisible(true);
@@ -170,16 +167,16 @@ public class AlmanacScreen implements Screen {
                 indexBtnGlow.setVisible(false);
                 indexBtnBg.setVisible(true);
             }
-            @Override
-            public void clicked(InputEvent event, float x, float y) {
-                state = State.INDEX;
-            }
+        });
+        indexBtn.setClickListener(() -> {
+            soundManager.playSound(AssetSound.TAP1);
+            state = State.INDEX;
         });
 
         indexBtn.setPosition(15, 7);
         stage.addActor(indexBtn);
 
-        closeBtn = new Group();
+        closeBtn = new PressableGroup();
         TextureActor closeBtnBg = new TextureActor(AssetTexture.ALMANAC_CLOSE_BUTTON.get(assetMan));
         closeBtnBg.setPosition(0, 0);
         TextureActor closeBtnHighlight = new TextureActor(AssetTexture.ALMANAC_CLOSE_BUTTON_HIGHLIGHT.get(assetMan));
@@ -208,6 +205,7 @@ public class AlmanacScreen implements Screen {
 
             @Override
             public void clicked(InputEvent event, float x, float y) {
+                soundManager.playSound(AssetSound.TAP1);
                 game.setScreen(previousScreen);
             }
         });
@@ -266,6 +264,7 @@ public class AlmanacScreen implements Screen {
 
     private void showPlantDetails(AlmanacPlantCard card) {
         if (selectedPlantCard == card) return; // 已经是选中的卡片，直接返回
+        soundManager.playSound(AssetSound.TAP1);
         selectedPlantCard = card;
         cardBackground = card.getAlmanacPlant().getBackground().get(assetMan);
         selectedPlant = BasePlant.create(card.getPlantClass(), null, 590, 380);
@@ -423,13 +422,7 @@ public class AlmanacScreen implements Screen {
     @Override
     public void show() {
         Gdx.input.setInputProcessor(stage);
-        if (game.bgMusic != AssetMusic.CHOOSE_YOUR_SEEDS.get(assetMan)) {
-            if (game.bgMusic != null) game.bgMusic.stop();
-            game.bgMusic = AssetMusic.CHOOSE_YOUR_SEEDS.get(assetMan);
-            game.bgMusic.setLooping(true);
-            game.bgMusic.setVolume(0.5f);
-            game.bgMusic.play();
-        }
+        SoundManager.getInstance().changeMusic(AssetMusic.CHOOSE_YOUR_SEEDS, true);
     }
 
     @Override
@@ -451,9 +444,6 @@ public class AlmanacScreen implements Screen {
     public void hide() {
         if (Gdx.input.getInputProcessor() == stage) {
             Gdx.input.setInputProcessor(null);
-        }
-        if (game.bgMusic != null) {
-            game.bgMusic.stop();
         }
     }
 

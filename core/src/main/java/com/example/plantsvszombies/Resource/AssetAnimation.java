@@ -1,6 +1,6 @@
 package com.example.plantsvszombies.Resource;
 
-import com.example.plantsvszombies.Animation.AnimationClip;
+import com.example.plantsvszombies.AssetImpl.AnimationClip;
 import com.example.plantsvszombies.managers.AssetMan;
 
 public enum AssetAnimation {

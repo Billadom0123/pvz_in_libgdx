@@ -1,0 +1,20 @@
+
+pvz_slider.png
+size: 256, 256
+format: RGBA8888
+filter: Linear, Linear
+repeat: none
+options_sliderknob2
+  rotate: false
+  xy: 1, 93
+  size: 22, 29
+  orig: 22, 29
+  offset: 0, 0
+  index: -1
+options_sliderslot
+  rotate: false
+  xy: 1, 124
+  size: 135, 10
+  orig: 135, 10
+  offset: 0, 0
+  index: -1

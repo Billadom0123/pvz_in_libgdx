@@ -2,11 +2,12 @@ package com.example.plantsvszombies.models.Plants;
 
 
 import com.badlogic.gdx.graphics.Texture;
-import com.example.plantsvszombies.Animation.AnimationClip;
+import com.example.plantsvszombies.AssetImpl.AnimationClip;
 import com.example.plantsvszombies.Resource.AssetAnimation;
 import com.example.plantsvszombies.Resource.AssetSound;
 import com.example.plantsvszombies.Resource.AssetTexture;
 import com.example.plantsvszombies.managers.AssetMan;
+import com.example.plantsvszombies.managers.SoundManager;
 import com.example.plantsvszombies.models.Projectiles.Pea;
 import com.example.plantsvszombies.screens.BaseGameScreen;
 
@@ -48,7 +49,7 @@ public class Peashooter extends BasePlant {
         shootTimer += delta;
         if (shootTimer >= SHOOT_INTERVAL && shouldFire()) {
             shootTimer = 0; // 重置计时器
-            AssetMan.getInstance().playSound(AssetSound.PEA_SHOOT, 0.7f);
+            SoundManager.getInstance().playSound(AssetSound.PEA_SHOOT);
             fire();
         }
     }
