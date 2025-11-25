@@ -2,7 +2,6 @@ package com.example.plantsvszombies.screens;
 
 import com.badlogic.gdx.*;
 import com.badlogic.gdx.graphics.*;
-import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Polygon;
 import com.badlogic.gdx.math.Vector2;
@@ -11,7 +10,6 @@ import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.example.plantsvszombies.PvzGame;
-import com.example.plantsvszombies.Resource.AssetFont;
 import com.example.plantsvszombies.Resource.AssetMusic;
 import com.example.plantsvszombies.Resource.AssetSound;
 import com.example.plantsvszombies.Resource.AssetTexture;
@@ -118,10 +116,8 @@ public class HomeScreen implements Screen {
         quitButton.setPosition(815, 58);
         quitButton.setTouchable(Touchable.enabled);
         quitButton.setClickListener(() -> {
-            BitmapFont dwarvenStoneCraft = AssetFont.DWARVEN_STONECRAFT_SIZE30_DEFAULT.get(assetMan);
-
-            PvzGraveButton quit = new PvzGraveButton("Quit", dwarvenStoneCraft);
-            PvzGraveButton cancel = new PvzGraveButton("Cancel", dwarvenStoneCraft);
+            PvzGraveButton quit = new PvzGraveButton("   Quit   ");
+            PvzGraveButton cancel = new PvzGraveButton("  Cancel  ");
             PvzDialogBox dialogBox = new PvzDialogBox("Quit", "Are you sure you wish to quit the game?",
                 new PvzGraveButton[]{quit, cancel});
 

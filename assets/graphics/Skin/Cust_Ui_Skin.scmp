@@ -164,6 +164,126 @@ atlasData: {
 			type: FONT
 			hidden: false
 		}
+		{
+			file: C:/Users/Billadom/Desktop/pvz/assets/graphics/Skin/DwarvenTodcraft18GreenInset.png
+			bgColor: {
+				r: 1
+				g: 1
+				b: 1
+				a: 1
+			}
+			tint: null
+			tintName: null
+			name: DwarvenTodcraft18GreenInset
+			tiled: false
+			minWidth: -1
+			minHeight: -1
+			customized: false
+			tenPatchData: null
+			tvgData: null
+			type: FONT
+			hidden: false
+		}
+		{
+			file: C:/Users/Billadom/Desktop/pvz/assets/graphics/Skin/DwarvenTodcraft18Yellow.png
+			bgColor: {
+				r: 1
+				g: 1
+				b: 1
+				a: 1
+			}
+			tint: null
+			tintName: null
+			name: DwarvenTodcraft18Yellow
+			tiled: false
+			minWidth: -1
+			minHeight: -1
+			customized: false
+			tenPatchData: null
+			tvgData: null
+			type: FONT
+			hidden: false
+		}
+		{
+			file: C:/Users/Billadom/Desktop/pvz/assets/graphics/Skin/DwarvenTodcraft18BrightGreenInset.png
+			bgColor: {
+				r: 1
+				g: 1
+				b: 1
+				a: 1
+			}
+			tint: null
+			tintName: null
+			name: DwarvenTodcraft18BrightGreenInset
+			tiled: false
+			minWidth: -1
+			minHeight: -1
+			customized: false
+			tenPatchData: null
+			tvgData: null
+			type: FONT
+			hidden: false
+		}
+		{
+			file: C:/Users/Billadom/Desktop/pvz/assets/graphics/Skin/DwarvenTodcraft15.png
+			bgColor: {
+				r: 1
+				g: 1
+				b: 1
+				a: 1
+			}
+			tint: null
+			tintName: null
+			name: DwarvenTodcraft15
+			tiled: false
+			minWidth: -1
+			minHeight: -1
+			customized: false
+			tenPatchData: null
+			tvgData: null
+			type: FONT
+			hidden: false
+		}
+		{
+			file: C:/Users/Billadom/Desktop/pvz/assets/graphics/Skin/DwarvenTodCraft24.png
+			bgColor: {
+				r: 1
+				g: 1
+				b: 1
+				a: 1
+			}
+			tint: null
+			tintName: null
+			name: DwarvenTodCraft24
+			tiled: false
+			minWidth: -1
+			minHeight: -1
+			customized: false
+			tenPatchData: null
+			tvgData: null
+			type: FONT
+			hidden: false
+		}
+		{
+			file: C:/Users/Billadom/Desktop/pvz/assets/graphics/Skin/HouseofTerror28.png
+			bgColor: {
+				r: 1
+				g: 1
+				b: 1
+				a: 1
+			}
+			tint: null
+			tintName: null
+			name: HouseofTerror28
+			tiled: false
+			minWidth: -1
+			minHeight: -1
+			customized: false
+			tenPatchData: null
+			tvgData: null
+			type: FONT
+			hidden: false
+		}
 	]
 }
 jsonData: {
@@ -181,6 +301,16 @@ jsonData: {
 		{
 			class: com.ray3k.skincomposer.data.ColorData
 			color: {
+				r: 0
+				g: 0.76862746
+				b: 0
+				a: 1
+			}
+			name: RGBA_0_196_0_255
+		}
+		{
+			class: com.ray3k.skincomposer.data.ColorData
+			color: {
 				r: 0.41960785
 				g: 0.42745098
 				b: 0.5686275
@@ -188,8 +318,36 @@ jsonData: {
 			}
 			name: RGBA_107_109_145_255
 		}
+		{
+			class: com.ray3k.skincomposer.data.ColorData
+			color: {
+				r: 0.8352941
+				g: 0.62352943
+				b: 0.16862746
+				a: 1
+			}
+			name: RGBA_213_159_43_255
+		}
+		{
+			class: com.ray3k.skincomposer.data.ColorData
+			color: {
+				r: 0.8784314
+				g: 0.73333335
+				b: 0.38431373
+				a: 1
+			}
+			name: RGBA_224_187_98_255
+		}
 	]
 	fonts: [
+		{
+			class: com.ray3k.skincomposer.data.FontData
+			name: DwarvenTodcraft15
+			flip: false
+			markupEnabled: false
+			scaling: -1
+			file: C:/Users/Billadom/Desktop/pvz/assets/graphics/Skin/DwarvenTodcraft15.fnt
+		}
 		{
 			class: com.ray3k.skincomposer.data.FontData
 			name: DwarvenTodcraft18
@@ -197,6 +355,38 @@ jsonData: {
 			markupEnabled: true
 			scaling: -1
 			file: C:/Users/Billadom/Desktop/pvz/assets/graphics/Skin/DwarvenTodcraft18.fnt
+		}
+		{
+			class: com.ray3k.skincomposer.data.FontData
+			name: DwarvenTodcraft18BrightGreenInset
+			flip: false
+			markupEnabled: false
+			scaling: -1
+			file: C:/Users/Billadom/Desktop/pvz/assets/graphics/Skin/DwarvenTodcraft18BrightGreenInset.fnt
+		}
+		{
+			class: com.ray3k.skincomposer.data.FontData
+			name: DwarvenTodcraft18GreenInset
+			flip: false
+			markupEnabled: true
+			scaling: -1
+			file: C:/Users/Billadom/Desktop/pvz/assets/graphics/Skin/DwarvenTodcraft18GreenInset.fnt
+		}
+		{
+			class: com.ray3k.skincomposer.data.FontData
+			name: DwarvenTodcraft18Yellow
+			flip: false
+			markupEnabled: false
+			scaling: -1
+			file: C:/Users/Billadom/Desktop/pvz/assets/graphics/Skin/DwarvenTodcraft18Yellow.fnt
+		}
+		{
+			class: com.ray3k.skincomposer.data.FontData
+			name: DwarvenTodcraft24
+			flip: false
+			markupEnabled: false
+			scaling: -1
+			file: C:/Users/Billadom/Desktop/pvz/assets/graphics/Skin/DwarvenTodcraft24.fnt
 		}
 		{
 			class: com.ray3k.skincomposer.data.FontData
@@ -213,6 +403,22 @@ jsonData: {
 			markupEnabled: true
 			scaling: -1
 			file: C:/Users/Billadom/Desktop/pvz/assets/graphics/Skin/DwarvenTodcraft36GreenInset.fnt
+		}
+		{
+			class: com.ray3k.skincomposer.data.FontData
+			name: HouseofTerror20
+			flip: false
+			markupEnabled: false
+			scaling: 48
+			file: C:/Users/Billadom/Desktop/pvz/assets/graphics/Skin/HouseofTerror28.fnt
+		}
+		{
+			class: com.ray3k.skincomposer.data.FontData
+			name: HouseofTerror28
+			flip: false
+			markupEnabled: true
+			scaling: -1
+			file: C:/Users/Billadom/Desktop/pvz/assets/graphics/Skin/HouseofTerror28.fnt
 		}
 	]
 	freeTypeFonts: []
@@ -288,6 +494,222 @@ jsonData: {
 						name: fontColor
 						optional: true
 						value: null
+					}
+					background: {
+						type: com.badlogic.gdx.scenes.scene2d.utils.Drawable
+						name: background
+						optional: true
+						value: null
+					}
+				}
+				deletable: true
+				parent: null
+			}
+			{
+				class: com.ray3k.skincomposer.data.StyleData
+				name: Green18
+				clazz: com.badlogic.gdx.scenes.scene2d.ui.Label
+				properties: {
+					font: {
+						type: com.badlogic.gdx.graphics.g2d.BitmapFont
+						name: font
+						optional: false
+						value: DwarvenTodcraft18GreenInset
+					}
+					fontColor: {
+						type: com.badlogic.gdx.graphics.Color
+						name: fontColor
+						optional: true
+						value: null
+					}
+					background: {
+						type: com.badlogic.gdx.scenes.scene2d.utils.Drawable
+						name: background
+						optional: true
+						value: null
+					}
+				}
+				deletable: true
+				parent: null
+			}
+			{
+				class: com.ray3k.skincomposer.data.StyleData
+				name: Yellow18
+				clazz: com.badlogic.gdx.scenes.scene2d.ui.Label
+				properties: {
+					font: {
+						type: com.badlogic.gdx.graphics.g2d.BitmapFont
+						name: font
+						optional: false
+						value: DwarvenTodcraft18Yellow
+					}
+					fontColor: {
+						type: com.badlogic.gdx.graphics.Color
+						name: fontColor
+						optional: true
+						value: null
+					}
+					background: {
+						type: com.badlogic.gdx.scenes.scene2d.utils.Drawable
+						name: background
+						optional: true
+						value: null
+					}
+				}
+				deletable: true
+				parent: null
+			}
+			{
+				class: com.ray3k.skincomposer.data.StyleData
+				name: GreenBright18
+				clazz: com.badlogic.gdx.scenes.scene2d.ui.Label
+				properties: {
+					font: {
+						type: com.badlogic.gdx.graphics.g2d.BitmapFont
+						name: font
+						optional: false
+						value: DwarvenTodcraft18BrightGreenInset
+					}
+					fontColor: {
+						type: com.badlogic.gdx.graphics.Color
+						name: fontColor
+						optional: true
+						value: null
+					}
+					background: {
+						type: com.badlogic.gdx.scenes.scene2d.utils.Drawable
+						name: background
+						optional: true
+						value: null
+					}
+				}
+				deletable: true
+				parent: null
+			}
+			{
+				class: com.ray3k.skincomposer.data.StyleData
+				name: DialogContent
+				clazz: com.badlogic.gdx.scenes.scene2d.ui.Label
+				properties: {
+					font: {
+						type: com.badlogic.gdx.graphics.g2d.BitmapFont
+						name: font
+						optional: false
+						value: DwarvenTodcraft15
+					}
+					fontColor: {
+						type: com.badlogic.gdx.graphics.Color
+						name: fontColor
+						optional: true
+						value: RGBA_224_187_98_255
+					}
+					background: {
+						type: com.badlogic.gdx.scenes.scene2d.utils.Drawable
+						name: background
+						optional: true
+						value: null
+					}
+				}
+				deletable: true
+				parent: null
+			}
+			{
+				class: com.ray3k.skincomposer.data.StyleData
+				name: DialogTitle
+				clazz: com.badlogic.gdx.scenes.scene2d.ui.Label
+				properties: {
+					font: {
+						type: com.badlogic.gdx.graphics.g2d.BitmapFont
+						name: font
+						optional: false
+						value: DwarvenTodcraft24
+					}
+					fontColor: {
+						type: com.badlogic.gdx.graphics.Color
+						name: fontColor
+						optional: true
+						value: RGBA_224_187_98_255
+					}
+					background: {
+						type: com.badlogic.gdx.scenes.scene2d.utils.Drawable
+						name: background
+						optional: true
+						value: null
+					}
+				}
+				deletable: true
+				parent: null
+			}
+			{
+				class: com.ray3k.skincomposer.data.StyleData
+				name: HouseofTerror28
+				clazz: com.badlogic.gdx.scenes.scene2d.ui.Label
+				properties: {
+					font: {
+						type: com.badlogic.gdx.graphics.g2d.BitmapFont
+						name: font
+						optional: false
+						value: HouseofTerror28
+					}
+					fontColor: {
+						type: com.badlogic.gdx.graphics.Color
+						name: fontColor
+						optional: true
+						value: null
+					}
+					background: {
+						type: com.badlogic.gdx.scenes.scene2d.utils.Drawable
+						name: background
+						optional: true
+						value: null
+					}
+				}
+				deletable: true
+				parent: null
+			}
+			{
+				class: com.ray3k.skincomposer.data.StyleData
+				name: DwarvenGreen24
+				clazz: com.badlogic.gdx.scenes.scene2d.ui.Label
+				properties: {
+					font: {
+						type: com.badlogic.gdx.graphics.g2d.BitmapFont
+						name: font
+						optional: false
+						value: DwarvenTodcraft24
+					}
+					fontColor: {
+						type: com.badlogic.gdx.graphics.Color
+						name: fontColor
+						optional: true
+						value: RGBA_0_196_0_255
+					}
+					background: {
+						type: com.badlogic.gdx.scenes.scene2d.utils.Drawable
+						name: background
+						optional: true
+						value: null
+					}
+				}
+				deletable: true
+				parent: null
+			}
+			{
+				class: com.ray3k.skincomposer.data.StyleData
+				name: HouseofTerrorYellow20
+				clazz: com.badlogic.gdx.scenes.scene2d.ui.Label
+				properties: {
+					font: {
+						type: com.badlogic.gdx.graphics.g2d.BitmapFont
+						name: font
+						optional: false
+						value: HouseofTerror20
+					}
+					fontColor: {
+						type: com.badlogic.gdx.graphics.Color
+						name: fontColor
+						optional: true
+						value: RGBA_213_159_43_255
 					}
 					background: {
 						type: com.badlogic.gdx.scenes.scene2d.utils.Drawable

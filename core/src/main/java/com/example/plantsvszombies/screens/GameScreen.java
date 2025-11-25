@@ -1,7 +1,6 @@
 package com.example.plantsvszombies.screens;
 
 
-import com.badlogic.gdx.Application;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.InputMultiplexer;
@@ -29,6 +28,7 @@ import com.example.plantsvszombies.Resource.*;
 import com.example.plantsvszombies.managers.AssetMan;
 import com.example.plantsvszombies.managers.GameManager;
 import com.example.plantsvszombies.managers.SoundManager;
+import com.example.plantsvszombies.models.Crazy.DancingSun;
 import com.example.plantsvszombies.models.DamageType;
 import com.example.plantsvszombies.models.GameDialog;
 import com.example.plantsvszombies.models.LawnMower;
@@ -194,12 +194,14 @@ public class GameScreen implements BaseGameScreen {
         PlantCard wallnutCard = new PlantCard(this, uiSkin, new Wallnut(this, 0,0));
         PlantCard potatoMineCard = new PlantCard(this, uiSkin, new PotatoMine(this, 0,0));
         PlantCard cherryBombCard = new PlantCard(this, uiSkin, new CherryBomb(this, 0,0));
+        PlantCard snowPeaCard = new PlantCard(this, uiSkin, new SnowPeashooter(this, 0, 0));
 
         plantCards.add(peashooterCard);
         plantCards.add(sunflowerCard);
         plantCards.add(wallnutCard);
         plantCards.add(potatoMineCard);
         plantCards.add(cherryBombCard);
+        plantCards.add(snowPeaCard);
 
         // 将卡片添加到Table中
         topBar.add(peashooterCard).pad(1).padBottom(3).bottom();
@@ -207,12 +209,12 @@ public class GameScreen implements BaseGameScreen {
         topBar.add(wallnutCard).pad(1).padBottom(3).bottom();
         topBar.add(potatoMineCard).pad(1).padBottom(3).bottom();
         topBar.add(cherryBombCard).pad(1).padBottom(3).bottom();
+        topBar.add(snowPeaCard).pad(1).padBottom(3).bottom();
 
         shovel = new Shovel();
         shovel.setPosition(cameraMinX + 446, startY + 5 * cellHeight);
 
-        BitmapFont font = AssetFont.DWARVEN_STONECRAFT_SIZE30_DEFAULT.get(assetManager);
-        pauseButton = new PvzGraveButton("Menu", font);
+        pauseButton = new PvzGraveButton("Menu");
         pauseButton.setPosition(cameraMaxX - pauseButton.getWidth(), cameraMaxY - pauseButton.getHeight());
         pauseButton.setClickListener(this::pauseOnMenu);
 
@@ -435,7 +437,7 @@ public class GameScreen implements BaseGameScreen {
         // 更新所有游戏对象
         for (BasePlant plant : plants) plant.update(delta);
         for (BaseZombie zombie : zombies) zombie.update(delta);
-        for (BaseProjectile projectile : projectiles) projectile.update(delta);
+        for (BaseProjectile projectile : projectiles) { projectile.update(delta); }
         for (LawnMower lawnMower : lawnMowers) lawnMower.update(delta);
         for (Falling falling : fallings) falling.update(delta);
         for (ParticleEffect particleEffect : particles) particleEffect.update(delta);
@@ -487,7 +489,12 @@ public class GameScreen implements BaseGameScreen {
     }
 
     public void spawnGeneratedSun(int value, float x, float y) {
-        Sun sun = Sun.PlantGeneratedSun(value, AssetTexture.SUN_STILL.get(assetManager), AssetAnimation.SUN.get(assetManager), x, y, y - 30);
+        Sun sun;
+        if (gameManager.isCrazyMode()) {
+            sun = DancingSun.generatedDancingSun(value, AssetTexture.SUN_STILL.get(assetManager), AssetAnimation.SUN.get(assetManager), x, y, 0);
+        } else {
+            sun = Sun.PlantGeneratedSun(value, AssetTexture.SUN_STILL.get(assetManager), AssetAnimation.SUN.get(assetManager), x, y, y - 30);
+        }
         suns.add(sun);
         uiStage.addActor(sun);
     }
@@ -997,9 +1004,13 @@ public class GameScreen implements BaseGameScreen {
         uiStage.getViewport().update(width, height, false);
     }
 
-    // 让GameScreen能够生成子弹 (被Peashooter调用)
+    // 让GameScreen能够生成子弹
     public void spawnProjectile(BaseProjectile projectile) {
         projectiles.add(projectile);
+        if (projectile.getParticleEffect() != null) {
+            projectile.getParticleEffect().start();
+            particles.add(projectile.getParticleEffect());
+        }
     }
 
     public void doAoeDamage(Rectangle area, int damage, DamageType type) {
@@ -1079,6 +1090,12 @@ public class GameScreen implements BaseGameScreen {
             return true;
         } else if (keycode == Input.Keys.NUM_5) {
             tryLiftSeedCard(plantCards.get(4));
+            return true;
+        } else if (keycode == Input.Keys.NUM_6) {
+            tryLiftSeedCard(plantCards.get(5));
+            return true;
+        } else if (keycode == Input.Keys.NUM_7) {
+            tryLiftSeedCard(plantCards.get(6));
             return true;
         } else if (keycode == Input.Keys.Q) {
             soundManager.playSound(AssetSound.DIAMOND);
@@ -1217,8 +1234,7 @@ public class GameScreen implements BaseGameScreen {
     }
     private void pauseOnDialog() {
         pause();
-        BitmapFont font = AssetFont.DWARVEN_STONECRAFT_SIZE30_DEFAULT.get(assetManager);
-        PvzGraveButton resumeButton = new PvzGraveButton("Resume", font);
+        PvzGraveButton resumeButton = new PvzGraveButton("Resume");
         PvzDialogBox pauseDialog = new PvzDialogBox("Game Paused", "Click to resume game", new PvzGraveButton[]{resumeButton});
         resumeButton.setClickListener(this::resume);
         showModal(pauseDialog, 0f);

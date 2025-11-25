@@ -63,6 +63,9 @@ public abstract class BaseZombie {
     protected int helmetHealth = 0;
     protected int shieldHealth = 0;
 
+    // 减速相关
+    protected float snowTimer = 0f;
+
 
     protected Rectangle centerBounds;
     protected BaseGameScreen screen;
@@ -116,6 +119,13 @@ public abstract class BaseZombie {
      * @param delta 时间差
      */
     public void update(float delta) {
+
+        if (snowTimer > 0f) {
+            snowTimer -= delta;
+            delta /= 2f;
+            if (snowTimer < 0f) snowTimer = 0f;
+        }
+
         if (isDying) {
             dieStateTime += delta;
             // 死亡动画播完，允许移除
@@ -229,10 +239,15 @@ public abstract class BaseZombie {
             else { animation = lostHeadAnimation; }
         }
         batch.draw(animation.getFrame(stateTime), position.x, position.y);
+        if (snowTimer > 0f) {
+            batch.setColor(0f, 60/255f, 1f, 1f);
+            batch.draw(animation.getFrame(stateTime), position.x, position.y);
+            batch.setColor(1f, 1f, 1f, 1f);
+        }
         if (isHit && showHitEffect) {
             // 根据受击时间做一个从强到弱的衰减（0..1）
             float percent = hitStateTime / HIT_EFFECT_DURATION;
-            float intensity = Math.min((float) (4*(percent - Math.pow(percent, 2))), 1f);
+            float intensity = Math.min((float) (4 * (percent - Math.pow(percent, 2))), 1f);
             if (intensity > 0f) {
                 // 设置为白色并开启加法混合（GL_SRC_ALPHA, GL_ONE）
                 batch.setColor(1f, 1f, 1f, intensity);
@@ -366,5 +381,37 @@ public abstract class BaseZombie {
 
     public boolean hasShield() {
         return hasShield;
+    }
+
+    public Texture getTexture() { return texture; }
+
+    public AnimationClip getAnimation() { return animation; }
+
+    public void setPosition(float x, float y) {
+        this.centerBounds.x += x - position.x;
+        this.bounds.x += x - position.x;
+        this.position.x = x;
+        this.centerBounds.y += y - position.y;
+        this.bounds.y += y - position.y;
+        this.position.y = y;
+    }
+
+    // java
+    public void setPositionByCenter(float centerX, float centerY) {
+        if (centerBounds == null || bounds == null || position == null) return;
+        float currentCenterX = centerBounds.x + centerBounds.width * 0.5f;
+        float currentCenterY = centerBounds.y + centerBounds.height * 0.5f;
+        float dx = centerX - currentCenterX;
+        float dy = centerY - currentCenterY;
+        position.x += dx;
+        position.y += dy;
+        bounds.x += dx;
+        bounds.y += dy;
+        centerBounds.x += dx;
+        centerBounds.y += dy;
+    }
+
+    public void applySnowEffect(float duration) {
+        this.snowTimer = duration;
     }
 }

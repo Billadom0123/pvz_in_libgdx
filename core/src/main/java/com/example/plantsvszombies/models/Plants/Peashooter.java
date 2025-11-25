@@ -2,6 +2,7 @@ package com.example.plantsvszombies.models.Plants;
 
 
 import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.math.MathUtils;
 import com.example.plantsvszombies.AssetImpl.AnimationClip;
 import com.example.plantsvszombies.Resource.AssetAnimation;
 import com.example.plantsvszombies.Resource.AssetSound;
@@ -12,16 +13,9 @@ import com.example.plantsvszombies.models.Projectiles.Pea;
 import com.example.plantsvszombies.screens.BaseGameScreen;
 
 public class Peashooter extends BasePlant {
-    // 需要一个对GameScreen的引用，这样它才能调用GameScreen的方法来在世界中生成一个子弹实体
-    private float shootTimer;
-    private static final float SHOOT_INTERVAL = 1.5f; // 每2秒发射一次
 
-    public Peashooter() {
-        super();
-        this.name = "Peashooter";
-        this.cost = 100;
-        this.cooldown = 7.5f;
-    }
+    private float shootTimer;
+    private static final float SHOOT_INTERVAL = MathUtils.random(1.4f, 1.6f); // 平均每1.5秒发射一次
 
     public Peashooter(BaseGameScreen screen, Texture texture, AnimationClip animation, float x, float y) {
         super(texture, animation, x, y);
@@ -61,11 +55,11 @@ public class Peashooter extends BasePlant {
     /**
      * 开火！
      */
-    private void fire() {
+    protected void fire() {
         // 计算子弹生成的位置（在豌豆射手的嘴部）
         float projectileX = position.x + bounds.width * 2 / 3;
         float projectileY = position.y + bounds.height / 2;
         // 请求GameScreen在指定位置生成一颗子弹
-        screen.spawnProjectile(new Pea(AssetTexture.PEA_NORMAL.get(AssetMan.getInstance()), projectileX, projectileY));
+        screen.spawnProjectile(new Pea(projectileX, projectileY));
     }
 }

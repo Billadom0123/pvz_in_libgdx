@@ -2,7 +2,6 @@ package com.example.plantsvszombies.screens;
 
 import com.badlogic.gdx.*;
 import com.badlogic.gdx.graphics.*;
-import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Vector2;
@@ -12,20 +11,16 @@ import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.utils.*;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.example.plantsvszombies.PvzGame;
+import com.example.plantsvszombies.Resource.*;
 import com.example.plantsvszombies.Resource.Almanac.AlmanacPlant;
-import com.example.plantsvszombies.Resource.AssetFont;
-import com.example.plantsvszombies.Resource.AssetMusic;
-import com.example.plantsvszombies.Resource.AssetSound;
-import com.example.plantsvszombies.Resource.AssetTexture;
+import com.example.plantsvszombies.Resource.Almanac.AlmanacZombie;
 import com.example.plantsvszombies.managers.AssetMan;
 import com.example.plantsvszombies.managers.SoundManager;
 import com.example.plantsvszombies.models.Plants.BasePlant;
 import com.example.plantsvszombies.models.Plants.Sunflower;
+import com.example.plantsvszombies.models.Zombies.BaseZombie;
 import com.example.plantsvszombies.models.Zombies.NormalZombie;
-import com.example.plantsvszombies.ui.AlmanacPlantCard;
-import com.example.plantsvszombies.ui.PressableGroup;
-import com.example.plantsvszombies.ui.PvzGraveButton;
-import com.example.plantsvszombies.ui.TextureActor;
+import com.example.plantsvszombies.ui.*;
 
 public class AlmanacScreen implements Screen {
 
@@ -43,6 +38,7 @@ public class AlmanacScreen implements Screen {
     private final AssetMan assetMan;
     private final ShapeRenderer shapeRenderer = new ShapeRenderer();
     private final Skin uiSkin;
+    private final Skin pvzCustomUiSkin;
     private final Stage stage;
 
 
@@ -56,6 +52,7 @@ public class AlmanacScreen implements Screen {
     private Texture whitePixel;
 
     // Index页
+    private Label indexTitleLabel;
     private Sunflower indexSunflower;
     private NormalZombie indexZombie;
     private PressableGroup plantDetailBtn;
@@ -63,17 +60,27 @@ public class AlmanacScreen implements Screen {
     private PressableGroup indexBtn;
     private PressableGroup closeBtn;
 
+    private BitmapFont detailFont;
     // 植物详情页
     private boolean isPlantDetailsInitialized = false;
-    private Array<AlmanacPlantCard> plantCards;
-    private Texture cardBackground;
+    private Label plantTitleLabel;
+    private final Array<AlmanacPlantCard> plantCards;
+    private Texture plantCardBackground;
     private AlmanacPlantCard selectedPlantCard;
     private BasePlant selectedPlant;
     private Label plantNameLabel;
-    private BitmapFont detailFont;
     private Table plantDetailTable;
     private Label plantCostLabel;
     private Label rechargeLabel;
+
+    // 僵尸详情页
+    private boolean isZombieDetailsInitialized = false;
+    private Label zombieTitleLabel;
+    private Array<AlmanacZombieCard> zombieCards;
+    private AlmanacZombieCard selectedZombieCard;
+    private BaseZombie selectedZombie;
+    private Label zombieNameLabel;
+    private Table zombieDetailTable;
 
     public AlmanacScreen(PvzGame game, Screen previous) {
         this.state = State.INDEX;
@@ -88,13 +95,28 @@ public class AlmanacScreen implements Screen {
         camera.update();
 
         plantCards = new Array<>();
+        zombieCards = new Array<>();
 
         uiSkin = new Skin(Gdx.files.internal("graphics/Skin/uiskin.json"));
+        pvzCustomUiSkin = AssetSkin.PVZ_CUSTOM_SKIN.get(assetMan);
+
+        detailFont = AssetFont.BRIANNE_TOD_SIZE15_DEFAULT.get(assetMan);
+        detailFont.getData().markupEnabled = true;
+        detailFont.setUseIntegerPositions(false);
+        detailFont.getRegion().getTexture().setFilter(Texture.TextureFilter.Nearest, Texture.TextureFilter.Linear);
+        detailFont.getData().setLineHeight(detailFont.getLineHeight() - 1f);
+
         stage = new Stage(viewport, game.batch);
         initIndexPage();
     }
 
     private void initIndexPage() {
+        indexTitleLabel = new Label("Suburban Almanac - Index", pvzCustomUiSkin.get("HouseofTerror28", Label.LabelStyle.class));
+        indexTitleLabel.setWidth(WORLD_WIDTH);
+        indexTitleLabel.setAlignment(Align.center);
+        indexTitleLabel.setPosition(0, 525);
+        stage.addActor(indexTitleLabel);
+
         indexSunflower = new Sunflower(null, 175, 290);
         indexZombie = new NormalZombie(null, 500, 270);
 
@@ -132,12 +154,37 @@ public class AlmanacScreen implements Screen {
                 isPlantDetailsInitialized = true;
                 initPlantDetailsPage();
             }
+
+            stage.clear();
+            stage.addActor(plantTitleLabel);
+            for (AlmanacPlantCard card : plantCards) stage.addActor(card);
+            stage.addActor(plantNameLabel);
+            stage.addActor(plantDetailTable);
+            stage.addActor(plantCostLabel);
+            stage.addActor(rechargeLabel);
+            stage.addActor(indexBtn);
+            stage.addActor(closeBtn);
         });
         plantDetailBtn.setPosition(135, 205);
         stage.addActor(plantDetailBtn);
 
-        zombieDetailBtn = new PvzGraveButton("View Zombies", font);
-        zombieDetailBtn.setClickListener(() -> {});
+        zombieDetailBtn = new PvzGraveButton("View Zombies");
+        zombieDetailBtn.setClickListener(() -> {
+            soundManager.playSound(AssetSound.TAP1);
+            state = State.ZOMBIE_DETAILS;
+            if (!isZombieDetailsInitialized) {
+                isZombieDetailsInitialized = true;
+                initZombieDetails();
+            }
+
+            stage.clear();
+            stage.addActor(zombieTitleLabel);
+            for (AlmanacZombieCard zombieCard : zombieCards) stage.addActor(zombieCard);
+            stage.addActor(zombieNameLabel);
+            stage.addActor(zombieDetailTable);
+            stage.addActor(indexBtn);
+            stage.addActor(closeBtn);
+        });
         zombieDetailBtn.setPosition(500, 205);
         stage.addActor(zombieDetailBtn);
 
@@ -171,10 +218,15 @@ public class AlmanacScreen implements Screen {
         indexBtn.setClickListener(() -> {
             soundManager.playSound(AssetSound.TAP1);
             state = State.INDEX;
+
+            stage.clear();
+            stage.addActor(indexTitleLabel);
+            stage.addActor(plantDetailBtn);
+            stage.addActor(zombieDetailBtn);
+            stage.addActor(closeBtn);
         });
 
         indexBtn.setPosition(15, 7);
-        stage.addActor(indexBtn);
 
         closeBtn = new PressableGroup();
         TextureActor closeBtnBg = new TextureActor(AssetTexture.ALMANAC_CLOSE_BUTTON.get(assetMan));
@@ -214,33 +266,27 @@ public class AlmanacScreen implements Screen {
     }
 
     private void initPlantDetailsPage() {
-        // 初始化植物详情页内容
-        BitmapFont font = AssetFont.DWARVEN_STONECRAFT_SIZE30_DEFAULT.get(assetMan);
-        detailFont = AssetFont.BRIANNE_TOD_SIZE15_DEFAULT.get(assetMan);
-        detailFont.getData().markupEnabled = true;
-        detailFont.setUseIntegerPositions(false);
-        detailFont.getRegion().getTexture().setFilter(Texture.TextureFilter.Nearest, Texture.TextureFilter.Linear);
-        detailFont.getData().setLineHeight(detailFont.getLineHeight() - 1f);
 
-        plantNameLabel = new Label("", new Label.LabelStyle(font, new Color(213/255f, 159/255f, 43/255f, 1)));
-        plantNameLabel.setPosition(575, 315);
+        plantTitleLabel = new Label("Suburban Almanac - Plants", pvzCustomUiSkin.get("HouseofTerrorYellow20", Label.LabelStyle.class));
+        plantTitleLabel.setWidth(WORLD_WIDTH);
+        plantTitleLabel.setAlignment(Align.center);
+        plantTitleLabel.setPosition(0, 537);
+
+        plantNameLabel = new Label("Plant", pvzCustomUiSkin.get("Yellow18", Label.LabelStyle.class));
+        plantNameLabel.setPosition(575, 305);
         plantNameLabel.setWidth(100f);
         plantNameLabel.setAlignment(Align.center);
-        stage.addActor(plantNameLabel);
 
         plantDetailTable = new Table();
         plantDetailTable.setPosition(490, 295);
         plantDetailTable.setWidth(260f);
         plantDetailTable.top();
-        stage.addActor(plantDetailTable);
 
         plantCostLabel = new Label("Cost: ", new Label.LabelStyle(detailFont, Color.WHITE));
         plantCostLabel.setPosition(490, 60);
-        stage.addActor(plantCostLabel);
 
         rechargeLabel = new Label("Recharge: ", new Label.LabelStyle(detailFont, Color.WHITE));
         rechargeLabel.setPosition(680, 60);
-        stage.addActor(rechargeLabel);
 
         int gapX = 52; // 卡片之间的水平间距
         int startX = 26; // 起始X位置
@@ -262,12 +308,51 @@ public class AlmanacScreen implements Screen {
         showPlantDetails(plantCards.get(0));
     }
 
+    private void initZombieDetails() {
+
+        zombieTitleLabel = new Label("Suburban Almanac - Zombies", pvzCustomUiSkin.get("DwarvenGreen24", Label.LabelStyle.class));
+        zombieTitleLabel.setWidth(WORLD_WIDTH);
+        zombieTitleLabel.setAlignment(Align.center);
+        zombieTitleLabel.setPosition(0, 535);
+
+
+        zombieNameLabel = new Label("Zombie", pvzCustomUiSkin.get("Green18", Label.LabelStyle.class));
+        zombieNameLabel.setPosition(580, 235);
+        zombieNameLabel.setWidth(100f);
+        zombieNameLabel.setAlignment(Align.center);
+
+        zombieDetailTable = new Table();
+        zombieDetailTable.setPosition(495, 230);
+        zombieDetailTable.setWidth(260f);
+        zombieDetailTable.top();
+
+
+        int gapX = 85; // 卡片之间的水平间距
+        int startX = 20; // 起始X位置
+        int startY = 438; // 起始Y位置
+
+        for (AlmanacZombie zombie : AlmanacZombie.values()) {
+            AlmanacZombieCard zombieCard = new AlmanacZombieCard(zombie);
+            zombieCard.setPosition(startX, startY);
+            zombieCard.addListener(new ClickListener() {
+                @Override
+                public void clicked(InputEvent event, float x, float y) {
+                    showZombieDetails(zombieCard);
+                }
+            });
+            zombieCards.add(zombieCard);
+            stage.addActor(zombieCard);
+            startX += gapX;
+        }
+        showZombieDetails(zombieCards.get(0));
+    }
+
     private void showPlantDetails(AlmanacPlantCard card) {
         if (selectedPlantCard == card) return; // 已经是选中的卡片，直接返回
         soundManager.playSound(AssetSound.TAP1);
         selectedPlantCard = card;
-        cardBackground = card.getAlmanacPlant().getBackground().get(assetMan);
-        selectedPlant = BasePlant.create(card.getPlantClass(), null, 590, 380);
+        plantCardBackground = card.getAlmanacPlant().getBackground().get(assetMan);
+        selectedPlant = BasePlant.create(card.getAlmanacPlant().getPlantClass(), null, 590, 380);
         String jsonFilePath = card.getAlmanacPlant().getJsonFilePath();
         if (jsonFilePath != null && !jsonFilePath.isEmpty()) {
             String jsonContent = Gdx.files.internal(jsonFilePath).readString();
@@ -302,6 +387,40 @@ public class AlmanacScreen implements Screen {
         }
     }
 
+    private void showZombieDetails(AlmanacZombieCard card) {
+        if (selectedZombieCard == card) return;
+        soundManager.playSound(AssetSound.TAP1);
+        selectedZombieCard = card;
+        selectedZombie = BaseZombie.create(card.getZombieClass(), null, 590, 380);
+        selectedZombie.setPositionByCenter(640, 380);
+        String jsonFilePath = card.getAlmanacZombie().getJsonFilePath();
+        if (jsonFilePath != null && !jsonFilePath.isEmpty()) {
+            String jsonContent = Gdx.files.internal(jsonFilePath).readString();
+            JsonReader reader = new JsonReader();
+            JsonValue value = reader.parse(jsonContent);
+            zombieNameLabel.setText(value.getString("name"));
+            zombieDetailTable.clear();
+            Label descLabel = new Label(value.getString("description"),
+                new Label.LabelStyle(detailFont, new Color(40/255f, 50/255f, 90/255f, 1f)));
+            descLabel.setWrap(true);
+            descLabel.setWidth(zombieDetailTable.getWidth());
+            zombieDetailTable.add(descLabel).width(zombieDetailTable.getWidth()).padBottom(4f).row();
+            JsonValue tips = value.get("tips");
+            for (JsonValue field = tips.child; field != null; field = field.next) {
+                Label tipLabel = new Label("[#8f431b]" + field.name + ":[] [#cc241d]" + field.asString() + "[]",
+                    new Label.LabelStyle(detailFont, Color.WHITE));
+                tipLabel.setWrap(true);
+                tipLabel.setWidth(zombieDetailTable.getWidth());
+                zombieDetailTable.add(tipLabel).width(zombieDetailTable.getWidth()).padBottom(-1f).row();
+            }
+            Label storyLabel = new Label(value.getString("story"),
+                new Label.LabelStyle(detailFont, new Color(143/255f, 67/255f, 27/255f, 1f)));
+            storyLabel.setWrap(true);
+            storyLabel.setWidth(zombieDetailTable.getWidth());
+            zombieDetailTable.add(storyLabel).width(zombieDetailTable.getWidth()).padTop(4f).row();
+        }
+    }
+
     @Override
     public void render(float delta) {
         update(delta);
@@ -324,38 +443,64 @@ public class AlmanacScreen implements Screen {
             indexZombie.drawAnimation(game.batch);
             game.batch.end();
 
-            Batch batch = stage.getBatch();
-            batch.setProjectionMatrix(stage.getCamera().combined);
+//            Batch batch = stage.getBatch();
+//            batch.setProjectionMatrix(stage.getCamera().combined);
+//
+//            batch.begin();
+//            plantDetailBtn.draw(batch, 1f);
+//            zombieDetailBtn.draw(batch, 1f);
+//            closeBtn.draw(batch, 1f);
+//            batch.end();
 
-            batch.begin();
-            plantDetailBtn.draw(batch, 1f);
-            zombieDetailBtn.draw(batch, 1f);
-            closeBtn.draw(batch, 1f);
-            batch.end();
+
         } else if (state == State.PLANT_DETAILS) {
             // 绘制植物详情页内容
             game.batch.begin();
             game.batch.draw(AssetTexture.ALMANAC_PLANT_BACK.get(assetMan), 0, 0, WORLD_WIDTH, WORLD_HEIGHT);
-            game.batch.draw(cardBackground, 525, 300);
+            game.batch.draw(plantCardBackground, 525, 300);
             game.batch.draw(AssetTexture.ALMANAC_PLANT_CARD.get(assetMan), 465, 30);
             selectedPlant.drawShadow(game.batch);
             selectedPlant.drawAnimation(game.batch);
             game.batch.end();
 
-            Batch batch = stage.getBatch();
-            batch.setProjectionMatrix(stage.getCamera().combined);
+//            Batch batch = stage.getBatch();
+//            batch.setProjectionMatrix(stage.getCamera().combined);
+//
+//            batch.begin();
+//            for (AlmanacPlantCard card : plantCards) card.draw(batch, 1f);
+//            plantNameLabel.draw(batch, 1f);
+//            plantDetailTable.draw(batch, 1f);
+//            plantCostLabel.draw(batch, 1f);
+//            rechargeLabel.draw(batch, 1f);
+//            indexBtn.draw(batch, 1f);
+//            closeBtn.draw(batch, 1f);
+//            batch.end();
 
-            batch.begin();
-            for (AlmanacPlantCard card : plantCards) card.draw(batch, 1f);
-            plantNameLabel.draw(batch, 1f);
-            plantDetailTable.draw(batch, 1f);
-            plantCostLabel.draw(batch, 1f);
-            rechargeLabel.draw(batch, 1f);
-            indexBtn.draw(batch, 1f);
-            closeBtn.draw(batch, 1f);
-            batch.end();
+
+        } else if (state == State.ZOMBIE_DETAILS) {
+            // 绘制僵尸详情页内容
+            game.batch.begin();
+            game.batch.draw(AssetTexture.ALMANAC_ZOMBIE_BACK.get(assetMan), 0, 0, WORLD_WIDTH, WORLD_HEIGHT);
+            game.batch.draw(AssetTexture.ALMANAC_GROUND_DAY.get(assetMan), 525, 280);
+            game.batch.draw(AssetTexture.ALMANAC_ZOMBIE_CARD.get(assetMan), 465, 30);
+            selectedZombie.drawShadow(game.batch);
+            selectedZombie.drawAnimation(game.batch);
+            game.batch.end();
+//
+//            Batch batch = stage.getBatch();
+//            batch.setProjectionMatrix(stage.getCamera().combined);
+
+//            batch.begin();
+//            AlmanacZombieCard nor = new AlmanacZombieCard(AlmanacZombie.NORMAL_ZOMBIE);
+//            nor.setPosition(200, 300);
+//            nor.draw(batch, 1f);
+//
+//            indexBtn.draw(batch, 1f);
+//            closeBtn.draw(batch, 1f);
+//            batch.end();
         }
 
+        stage.draw();
     }
 
     public void update(float delta) {
@@ -363,6 +508,7 @@ public class AlmanacScreen implements Screen {
         indexSunflower.stillUpdate(delta);
         indexZombie.stillUpdate(delta);
         if (selectedPlantCard != null) selectedPlant.stillUpdate(delta);
+        if (selectedZombieCard != null) selectedZombie.stillUpdate(delta);
     }
 
     private void ensureWhitePixel() {
@@ -396,7 +542,7 @@ public class AlmanacScreen implements Screen {
             public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
                 Vector2 stageCoords = modalOverlay.localToStageCoordinates(new Vector2(x, y));
                 Vector2 dialogLocal = dialog.stageToLocalCoordinates(stageCoords);
-                com.badlogic.gdx.scenes.scene2d.Actor hit = dialog.hit(dialogLocal.x, dialogLocal.y, true);
+                Actor hit = dialog.hit(dialogLocal.x, dialogLocal.y, true);
                 // 如果点在 dialog 内，返回 false 让事件继续传递给 dialog；否则消费事件
                 return hit == null;
             }

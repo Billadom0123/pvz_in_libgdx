@@ -11,7 +11,7 @@ public class WallnutBowling extends BaseBowling {
     public WallnutBowling(BaseGameScreen screen, float x, float y) {
         super(screen,
             AssetTexture.NORMAL_WALLNUT_STILL.get(AssetMan.getInstance()),
-            AssetAnimation.WALL_NUT.get(AssetMan.getInstance()),
+            AssetAnimation.WALLNUT.get(AssetMan.getInstance()),
               x, y);
         this.name = "Wallnut Bowling";
         this.health = 4000;

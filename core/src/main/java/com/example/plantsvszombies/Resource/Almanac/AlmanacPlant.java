@@ -9,12 +9,13 @@ public enum AlmanacPlant {
     SUNFLOWER(Sunflower.class, "Almanac/Plant/Sunflower.json", AssetTexture.ALMANAC_GROUND_DAY),
     CHERRY_BOMB(CherryBomb.class, "Almanac/Plant/CherryBomb.json", AssetTexture.ALMANAC_GROUND_DAY),
     WALL_NUT(Wallnut.class, "Almanac/Plant/Wallnut.json", AssetTexture.ALMANAC_GROUND_DAY),
-    POTATO_MINE(PotatoMine.class, "Almanac/Plant/PotatoMine.json", AssetTexture.ALMANAC_GROUND_DAY);
+    POTATO_MINE(PotatoMine.class, "Almanac/Plant/PotatoMine.json", AssetTexture.ALMANAC_GROUND_DAY),
+    SNOW_PEA(SnowPeashooter.class, "Almanac/Plant/SnowPea.json", AssetTexture.ALMANAC_GROUND_DAY);
 
 
-    private Class<? extends BasePlant> plantClass;
-    private String jsonFilePath;
-    private AssetTexture background;
+    private final Class<? extends BasePlant> plantClass;
+    private final String jsonFilePath;
+    private final AssetTexture background;
 
     AlmanacPlant(Class<? extends BasePlant> plantClass, String jsonFilePath, AssetTexture background) {
         this.plantClass = plantClass;

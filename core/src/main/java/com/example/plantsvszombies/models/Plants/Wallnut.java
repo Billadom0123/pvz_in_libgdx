@@ -36,7 +36,7 @@ public class Wallnut extends BasePlant {
     public Wallnut(BaseGameScreen screen, float x, float y) {
         this(screen,
             AssetTexture.NORMAL_WALLNUT_STILL.get(AssetMan.getInstance()),
-            AssetAnimation.WALL_NUT.get(AssetMan.getInstance()),
+            AssetAnimation.WALLNUT.get(AssetMan.getInstance()),
             x, y);
         this.shadow = AssetTexture.PLANT_SHADOW.get(AssetMan.getInstance());
     }
@@ -49,9 +49,9 @@ public class Wallnut extends BasePlant {
         super.update(delta);
         AssetMan assetMan = AssetMan.getInstance();
         if (health <= maxHealth * 0.33f) {
-            animation = AssetAnimation.WALL_NUT_CRACKED2.get(assetMan);
+            animation = AssetAnimation.WALLNUT_CRACKED2.get(assetMan);
         } else if (health <= maxHealth * 0.66f) {
-            animation = AssetAnimation.WALL_NUT_CRACKED1.get(assetMan);
+            animation = AssetAnimation.WALLNUT_CRACKED1.get(assetMan);
         }
     }
 }

@@ -59,6 +59,10 @@ public enum AssetTexture {
     SEED_PACKET_FLASH("graphics/Screen/SeedPacketFlash.png"),
     ALMANAC_INDEX_BUTTON("graphics/Screen/Almanac_IndexButton.png"),
     ALMANAC_INDEX_BUTTON_HIGHLIGHT("graphics/Screen/Almanac_IndexButtonHighlight.png"),
+    ALMANAC_ZOMBIE_BACK("graphics/Screen/Almanac_ZombieBack.jpg"),
+    ALMANAC_ZOMBIE_CARD("graphics/Screen/Almanac_ZombieCard.png"),
+    ALMANAC_ZOMBIE_WINDOW_BORDER("graphics/Screen/Almanac_ZombieWindow2.png"),
+    ALMANAC_ZOMBIE_WINDOW_BG("graphics/Screen/Almanac_ZombieWindow.png"),
 
     // 菜单相关
     MENU_BACKGROUND("graphics/Skin/options_menuback.png"),
@@ -98,6 +102,11 @@ public enum AssetTexture {
     CHERRY_BOMB_BOOM("graphics/Plants/CherryBomb/Boom.png"),
 
     PLANT_SHADOW("graphics/Screen/plantshadow2.png"),
+
+    SNOW_PEASHOOTER_STILL("graphics/Plants/SnowPea/Still.png"),
+    SNOW_PEASHOOTER("graphics/Plants/SnowPea/SnowPea.png"),
+    SNOW_PEA_NORMAL("graphics/Bullets/SnowPea/ProjectileSnowPea.png"),
+    SNOW_PEA_SPLAT("graphics/Bullets/SnowPea/SnowPea_splats.png"),
 
     NORMAL_ZOMBIE_STILL("graphics/Zombies/Zombie/ZombieStill.png"),
     NORMAL_ZOMBIE("graphics/Zombies/Zombie/Zombie.png"),

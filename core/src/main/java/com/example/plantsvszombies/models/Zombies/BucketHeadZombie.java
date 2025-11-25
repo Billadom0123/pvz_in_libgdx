@@ -19,7 +19,6 @@ import java.util.Arrays;
 public class BucketHeadZombie extends NormalZombie {
 
     private static final int BUCKET_HEAD_HEALTH = 1100;
-    private int bucketHeadHealth = BUCKET_HEAD_HEALTH;
 
     public BucketHeadZombie(Texture texture, AnimationClip animation, float x, float y) {
         super(texture, animation, x, y);
@@ -61,6 +60,4 @@ public class BucketHeadZombie extends NormalZombie {
             screen.addFalling(falling);
         }
     }
-
-    public boolean isBucketGone() { return bucketHeadHealth <= 0; }
 }

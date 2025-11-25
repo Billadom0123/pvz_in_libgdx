@@ -172,8 +172,7 @@ public class BowlingScreen implements BaseGameScreen {
         shovel = new Shovel();
         shovel.setPosition(cameraMinX + 600, startY + 5 * cellHeight);
 
-        BitmapFont font = AssetFont.DWARVEN_STONECRAFT_SIZE30_DEFAULT.get(assetManager);
-        pauseButton = new PvzGraveButton("Menu", font);
+        pauseButton = new PvzGraveButton("Menu");
         pauseButton.setPosition(cameraMaxX - pauseButton.getWidth(), cameraMaxY - pauseButton.getHeight());
         pauseButton.setClickListener(this::pauseOnMenu);
 
@@ -879,8 +878,7 @@ public class BowlingScreen implements BaseGameScreen {
 
     private void pauseOnDialog() {
         this.pause();
-        BitmapFont font = AssetFont.DWARVEN_STONECRAFT_SIZE30_DEFAULT.get(assetManager);
-        PvzGraveButton resumeButton = new PvzGraveButton("Resume", font);
+        PvzGraveButton resumeButton = new PvzGraveButton("Resume");
         PvzDialogBox pauseDialog = new PvzDialogBox("Game Paused", "Click to resume game", new PvzGraveButton[] {resumeButton});
         resumeButton.setClickListener(this::resume);
         showModal(pauseDialog, 0f);

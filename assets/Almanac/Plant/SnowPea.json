@@ -1,0 +1,10 @@
+{
+  "name": "Snow Pea",
+  "description": "Snow Peas shoot frozen peas that damage and slow the enemy.",
+  "tips": {
+    "Damage": "normal, slows zombies"
+  },
+  "story": "Folks often tell Snow Pea how \"cool\" he is, or exhort him to \"chill out.\" They tell him to \"stay frosty.\" Snow Pea just rolls his eyes. He's heard'em all.",
+  "cost": 175,
+  "recharge": "fast"
+}

@@ -4,58 +4,100 @@ size: 2048, 2048
 format: RGBA8888
 filter: Linear, Linear
 repeat: none
+DwarvenTodCraft24
+  rotate: false
+  xy: 692, 805
+  size: 494, 494
+  orig: 494, 494
+  offset: 0, 0
+  index: -1
+DwarvenTodcraft15
+  rotate: false
+  xy: 1671, 1589
+  size: 351, 338
+  orig: 351, 338
+  offset: 0, 0
+  index: -1
+DwarvenTodcraft18BrightGreenInset
+  rotate: false
+  xy: 692, 413
+  size: 403, 390
+  orig: 403, 390
+  offset: 0, 0
+  index: -1
+DwarvenTodcraft18GreenInset
+  rotate: false
+  xy: 1, 49
+  size: 403, 390
+  orig: 403, 390
+  offset: 0, 0
+  index: -1
+DwarvenTodcraft18Yellow
+  rotate: false
+  xy: 1266, 1639
+  size: 403, 390
+  orig: 403, 390
+  offset: 0, 0
+  index: -1
 DwarvenTodcraft36BrightGreenInset
   rotate: false
-  xy: 1, 144
+  xy: 1, 441
   size: 689, 793
   orig: 689, 793
   offset: 0, 0
   index: -1
 DwarvenTodcraft36GreenInset
   rotate: false
-  xy: 1, 939
+  xy: 1, 1236
   size: 689, 793
   orig: 689, 793
   offset: 0, 0
   index: -1
+HouseofTerror28
+  rotate: false
+  xy: 692, 1301
+  size: 572, 728
+  orig: 572, 728
+  offset: 0, 0
+  index: -1
 options_backtogamebutton0
   rotate: false
-  xy: 1, 42
+  xy: 1671, 1929
   size: 360, 100
   orig: 360, 100
   offset: 0, 0
   index: -1
 options_backtogamebutton2
   rotate: false
-  xy: 692, 1632
+  xy: 1266, 1537
   size: 360, 100
   orig: 360, 100
   offset: 0, 0
   index: -1
 options_checkbox0
   rotate: false
-  xy: 1054, 1693
+  xy: 1188, 1260
   size: 42, 39
   orig: 42, 39
   offset: 0, 0
   index: -1
 options_checkbox1
   rotate: false
-  xy: 1, 1
+  xy: 1097, 764
   size: 42, 39
   orig: 42, 39
   offset: 0, 0
   index: -1
 options_sliderknob2
   rotate: false
-  xy: 363, 113
+  xy: 406, 410
   size: 22, 29
   orig: 22, 29
   offset: 0, 0
   index: -1
 options_sliderslot
   rotate: false
-  xy: 692, 1620
+  xy: 1, 37
   size: 135, 10
   orig: 135, 10
   offset: 0, 0

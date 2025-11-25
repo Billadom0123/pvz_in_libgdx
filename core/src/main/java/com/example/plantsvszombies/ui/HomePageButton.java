@@ -18,7 +18,6 @@ public class HomePageButton extends PressableGroup {
     private final Texture highlightTexture;
     private final Texture shadowTexture;
     private final Shape2D hitArea;
-    private final ShapeRenderer shapeRenderer;
     private boolean locked = false;
 
     public HomePageButton(Texture texture, Texture highlightTexture, Texture shadowTexture,
@@ -28,7 +27,6 @@ public class HomePageButton extends PressableGroup {
         this.highlightTexture = highlightTexture;
         this.shadowTexture = shadowTexture;
         this.hitArea = hitArea;
-        this.shapeRenderer = new ShapeRenderer();
         if (hitArea != null) {
             if (hitArea instanceof Polygon) {
                 ((Polygon)this.hitArea).setPosition(getX(), getY());
@@ -57,7 +55,7 @@ public class HomePageButton extends PressableGroup {
 
             @Override
             public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
-                if (clickSound != null)  clickSound.play();
+                if (clickSound != null)  SoundManager.getInstance().playSound(clickSound);
                 return super.touchDown(event, x, y, pointer, button);
             }
         });

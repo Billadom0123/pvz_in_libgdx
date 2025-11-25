@@ -35,7 +35,7 @@ public class Sunflower extends BasePlant {
     public Sunflower(BaseGameScreen screen, Texture texture, AnimationClip animation, float x, float y) {
         super(screen, texture, animation, x, y);
         this.name = "SunFlower";
-        this.sunProduceTimer = 0f;
+        this.sunProduceTimer = 20f; // 初始时让它快产生太阳
         this.cost = 50;
         this.cooldown = 7.5f;
     }
@@ -43,7 +43,7 @@ public class Sunflower extends BasePlant {
     public Sunflower(BaseGameScreen screen, float x, float y) {
         this(screen,
             AssetTexture.SUNFLOWER_STILL.get(AssetMan.getInstance()),
-            AssetAnimation.SUN_FLOWER.get(AssetMan.getInstance()),
+            AssetAnimation.SUNFLOWER.get(AssetMan.getInstance()),
             x, y);
         this.shadow = AssetTexture.PLANT_SHADOW.get(AssetMan.getInstance());
     }
@@ -78,13 +78,13 @@ public class Sunflower extends BasePlant {
             // 这里可以添加具体的动画绘制代码
             float alpha = MathUtils.sin((sunProduceTimer - (SUN_PRODUCE_INTERVAL - WINDOW)) / WINDOW * MathUtils.PI / 2f);
             batch.setColor(1, 1, 1, alpha);
-            batch.draw(AssetAnimation.SUN_FLOWER_BRIGHT.get(AssetMan.getInstance()).getFrame(stateTime), position.x, position.y);
+            batch.draw(AssetAnimation.SUNFLOWER_BRIGHT.get(AssetMan.getInstance()).getFrame(stateTime), position.x, position.y);
             batch.setColor(1,1,1,1);
         } else if (state == State.FADING) {
             // 绘制淡出效果
             float alpha = MathUtils.cos((sunProduceTimer) / WINDOW * MathUtils.PI / 2f);
             batch.setColor(1, 1, 1, alpha);
-            batch.draw(AssetAnimation.SUN_FLOWER_BRIGHT.get(AssetMan.getInstance()).getFrame(stateTime), position.x, position.y);
+            batch.draw(AssetAnimation.SUNFLOWER_BRIGHT.get(AssetMan.getInstance()).getFrame(stateTime), position.x, position.y);
             batch.setColor(1, 1, 1, 1);
         }
     }

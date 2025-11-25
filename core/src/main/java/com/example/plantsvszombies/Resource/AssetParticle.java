@@ -8,7 +8,8 @@ public enum AssetParticle {
     PLANTING("graphics/Particles/Planting.p", "graphics/Particles/dirtsmall"),
     POTATO_MINE_RISE("graphics/Particles/PotatoMine_Up.p", "graphics/Particles/dirtsmall"),
     POTATO_MINE_EXPLODE("graphics/Particles/PotatoMine_Explode.p", "graphics/Particles/potatomine"),
-    SEED_PACKET_FLASH("graphics/Particles/SeedPacketFlash.p", "graphics/Particles/seedpacket");
+    SEED_PACKET_FLASH("graphics/Particles/SeedPacketFlash.p", "graphics/Particles/seedpacket"),
+    SNOW_PEA("graphics/Particles/SnowPea.p", "graphics/Particles/Snowflakes");
 
 
     private final String filePath;

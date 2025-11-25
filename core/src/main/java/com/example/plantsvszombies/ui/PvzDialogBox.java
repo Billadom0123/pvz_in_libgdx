@@ -1,16 +1,21 @@
 // java
 package com.example.plantsvszombies.ui;
 
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.GlyphLayout;
+import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.scenes.scene2d.Group;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.InputListener;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
+import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.utils.Align;
 import com.example.plantsvszombies.Resource.AssetFont;
+import com.example.plantsvszombies.Resource.AssetSkin;
 import com.example.plantsvszombies.Resource.AssetTexture;
 import com.example.plantsvszombies.managers.AssetMan;
 
@@ -36,10 +41,10 @@ public class PvzDialogBox extends Group {
     private PvzGraveButton[] graveButtons;
 
     // 布局参数
-    private float contentMaxWidth = 320f; // 内容文字最大宽度（固定宽以触发换行）
+    private float contentMaxWidth = 250f; // 内容文字最大宽度（固定宽以触发换行）
     private static final float GAP_X = 16f;   // 内容区左右内边距
     private static final float PAD_Y = 20f;   // 内容区上下内边距
-    private static final float GAP_Y = 12f;    // 标题与内容之间的垂直间距
+    private static final float GAP_Y = 30f;    // 标题与内容之间的垂直间距
     private static final float HEADER_OVERLAP = 20f; // header 覆盖到框内的像素
 
     public PvzDialogBox(String title, String content, PvzGraveButton[] buttons) {
@@ -85,39 +90,37 @@ public class PvzDialogBox extends Group {
     public void layout(String title, String content) {
         clearChildren();
 
-        BitmapFont titleFont = AssetFont.DWARVEN_STONECRAFT_SIZE48_DEFAULT.get(AssetMan.getInstance());
-        BitmapFont contentFont = AssetFont.DWARVEN_STONECRAFT_SIZE30_DEFAULT.get(AssetMan.getInstance());
-//        contentFont.getData().setLineHeight(contentFont.getLineHeight() + 5f);
+        Skin uiSkin = AssetSkin.PVZ_CUSTOM_SKIN.get(AssetMan.getInstance());
 
-        titleLabel = new Label(title, new Label.LabelStyle(titleFont, new Color(224/255f, 187/255f, 98/255f, 1)));
+        titleLabel = new Label(title, uiSkin.get("DialogTitle", Label.LabelStyle.class));
         titleLabel.setAlignment(Align.center);
 
-        contentLabel = new Label(content, new Label.LabelStyle(contentFont, new Color(224/255f, 187/255f, 98/255f, 1)));
+        contentLabel = new Label(content, uiSkin.get("DialogContent", Label.LabelStyle.class));
         contentLabel.setWrap(true);
         contentLabel.setWidth(contentMaxWidth); // 固定宽度触发换行
         contentLabel.setAlignment(Align.center);
 //        contentLabel.invalidateHierarchy();
         String contentText = content == null ? "" : content;
-        GlyphLayout gl = new GlyphLayout(contentFont, contentText);
+        GlyphLayout gl = new GlyphLayout();
+        gl.setText(contentLabel.getStyle().font, contentText);
         float naturalContentW = Math.max(1f, gl.width); // 自然宽度（单行、不限宽）
         float targetContentW = Math.min(naturalContentW, contentMaxWidth); // 仅超出才夹到上限
 
         contentLabel.setWidth(targetContentW);
         contentLabel.invalidateHierarchy(); // 让 getPrefHeight 按当前宽度重算
-        float contentPrefH = contentLabel.getPrefHeight();
 
         float titlePrefW = titleLabel.getPrefWidth();
         float titlePrefH = titleLabel.getPrefHeight();
 
         // 2) 计算内容区所需尺寸（由 Label 决定）
-        float desiredInnerW = Math.max(targetContentW, titlePrefW) - 100f;
-        float desiredInnerH = contentPrefH + GAP_Y;
+        float desiredInnerW = Math.max(targetContentW, titlePrefW) - 150f;
+        float desiredInnerH = contentLabel.getHeight() + GAP_Y;
 
         // 3) 计算需要的中间列/行数（按中间块尺寸取整）
         float tileW = centerMiddle.getWidth();
         float tileH = centerMiddle.getHeight();
-        int cols = Math.max(1, (int)Math.ceil(desiredInnerW / tileW));
-        int rows = Math.max(1, (int)Math.ceil(desiredInnerH / tileH));
+        int cols = Math.max(0, (int)Math.ceil(desiredInnerW / tileW));
+        int rows = Math.max(0, (int)Math.ceil(desiredInnerH / tileH));
 
         float innerW = cols * tileW;
         float innerH = rows * tileH;
@@ -128,6 +131,7 @@ public class PvzDialogBox extends Group {
         float bottomH = bottomLeft.getHeight();
 
         float totalW = leftW + innerW + rightW;
+        contentLabel.setWidth(totalW - 70f);
         float baseH = bottomH + innerH + topH;
         float headerY = baseH - HEADER_OVERLAP;
         float totalH = headerY + header.getHeight();
@@ -179,8 +183,8 @@ public class PvzDialogBox extends Group {
         float contentAreaX = leftW;
         float contentAreaW = innerW;
 
-        float titleY = headerY - PAD_Y - titlePrefH; // 标题在 header 下方
-        float contentY = titleY - GAP_Y - contentPrefH;
+        float titleY = headerY - PAD_Y - titleLabel.getHeight(); // 标题在 header 下方
+        float contentY = titleY - GAP_Y - contentLabel.getHeight();
 
         // 标题横向占满内容区，文本居中
         titleLabel.setSize(contentAreaW, titlePrefH);
@@ -210,6 +214,20 @@ public class PvzDialogBox extends Group {
         // 7) 最终大小
         setSize(totalW, totalH);
     }
+//
+//    @Override
+//    public void draw(Batch batch, float parentAlpha) {
+//        super.draw(batch, parentAlpha);
+//        batch.end();
+//        shapeRenderer.setProjectionMatrix(batch.getProjectionMatrix());
+//        shapeRenderer.begin(ShapeRenderer.ShapeType.Line);
+//        shapeRenderer.setColor(Color.RED);
+//        shapeRenderer.rect(titleLabel.getX(), titleLabel.getY(), titleLabel.getWidth(), titleLabel.getHeight());
+//        shapeRenderer.setColor(Color.GREEN);
+//        shapeRenderer.rect(contentLabel.getX(), contentLabel.getY(), contentLabel.getWidth(), contentLabel.getHeight());
+//        shapeRenderer.end();
+//        batch.begin();
+//    }
 
     // 动态修改内容最大宽度并重排
     public void setContentMaxWidth(float maxWidth) {

@@ -1,9 +1,39 @@
 {
 com.badlogic.gdx.graphics.g2d.BitmapFont: {
+	DwarvenTodcraft15: {
+		file: DwarvenTodcraft15.fnt
+		scaledSize: -1
+		markupEnabled: false
+		flip: false
+	}
 	DwarvenTodcraft18: {
 		file: DwarvenTodcraft18.fnt
 		scaledSize: -1
 		markupEnabled: true
+		flip: false
+	}
+	DwarvenTodcraft18BrightGreenInset: {
+		file: DwarvenTodcraft18BrightGreenInset.fnt
+		scaledSize: -1
+		markupEnabled: false
+		flip: false
+	}
+	DwarvenTodcraft18GreenInset: {
+		file: DwarvenTodcraft18GreenInset.fnt
+		scaledSize: -1
+		markupEnabled: true
+		flip: false
+	}
+	DwarvenTodcraft18Yellow: {
+		file: DwarvenTodcraft18Yellow.fnt
+		scaledSize: -1
+		markupEnabled: false
+		flip: false
+	}
+	DwarvenTodcraft24: {
+		file: DwarvenTodcraft24.fnt
+		scaledSize: -1
+		markupEnabled: false
 		flip: false
 	}
 	DwarvenTodcraft36BrightGreenInset: {
@@ -18,6 +48,18 @@ com.badlogic.gdx.graphics.g2d.BitmapFont: {
 		markupEnabled: true
 		flip: false
 	}
+	HouseofTerror20: {
+		file: HouseofTerror28.fnt
+		scaledSize: 48
+		markupEnabled: false
+		flip: false
+	}
+	HouseofTerror28: {
+		file: HouseofTerror28.fnt
+		scaledSize: -1
+		markupEnabled: true
+		flip: false
+	}
 }
 com.badlogic.gdx.graphics.Color: {
 	RGBA_0_0_0_255: {
@@ -26,10 +68,28 @@ com.badlogic.gdx.graphics.Color: {
 		b: 0
 		a: 1
 	}
+	RGBA_0_196_0_255: {
+		r: 0
+		g: 0.76862746
+		b: 0
+		a: 1
+	}
 	RGBA_107_109_145_255: {
 		r: 0.41960785
 		g: 0.42745098
 		b: 0.5686275
+		a: 1
+	}
+	RGBA_213_159_43_255: {
+		r: 0.8352941
+		g: 0.62352943
+		b: 0.16862746
+		a: 1
+	}
+	RGBA_224_187_98_255: {
+		r: 0.8784314
+		g: 0.73333335
+		b: 0.38431373
 		a: 1
 	}
 }
@@ -57,6 +117,34 @@ com.badlogic.gdx.scenes.scene2d.ui.Label$LabelStyle: {
 	}
 	GreenBright36: {
 		font: DwarvenTodcraft36BrightGreenInset
+	}
+	Green18: {
+		font: DwarvenTodcraft18GreenInset
+	}
+	Yellow18: {
+		font: DwarvenTodcraft18Yellow
+	}
+	GreenBright18: {
+		font: DwarvenTodcraft18BrightGreenInset
+	}
+	DialogContent: {
+		font: DwarvenTodcraft15
+		fontColor: RGBA_224_187_98_255
+	}
+	DialogTitle: {
+		font: DwarvenTodcraft24
+		fontColor: RGBA_224_187_98_255
+	}
+	HouseofTerror28: {
+		font: HouseofTerror28
+	}
+	DwarvenGreen24: {
+		font: DwarvenTodcraft24
+		fontColor: RGBA_0_196_0_255
+	}
+	HouseofTerrorYellow20: {
+		font: HouseofTerror20
+		fontColor: RGBA_213_159_43_255
 	}
 }
 com.badlogic.gdx.scenes.scene2d.ui.Slider$SliderStyle: {

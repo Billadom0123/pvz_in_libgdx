@@ -16,24 +16,24 @@ public class Sun extends Actor {
         GENERATED, FALLING, ON_GROUND, COLLECTED
     }
 
-    private int value;
-    private final Texture texture;
-    private final Rectangle bounds;
-    private SunState state;
-    private AnimationClip animation;
-    private float stateTime = 0f;
+    protected int value;
+    protected final Texture texture;
+    protected final Rectangle bounds;
+    protected SunState state;
+    protected AnimationClip animation;
+    protected float stateTime = 0f;
 
-    private final float fallSpeed = 100f;
-    private final float groundY;
+    protected final float fallSpeed = 100f;
+    protected final float groundY;
     public boolean active = true;
 
-    private float stillTime = 0f;
+    protected float stillTime = 0f;
 
-    private final Vector2 arcStart = new Vector2();
-    private final Vector2 arcCtrl = new Vector2();
-    private final Vector2 arcEnd = new Vector2();
-    private float arcTimer = 0f;
-    private float arcDuration = 0.6f; // 出场抛物线时长，可按需要调整
+    protected final Vector2 arcStart = new Vector2();
+    protected final Vector2 arcCtrl = new Vector2();
+    protected final Vector2 arcEnd = new Vector2();
+    protected float arcTimer = 0f;
+    protected float arcDuration = 0.6f; // 出场抛物线时长，可按需要调整
 
     public Sun(Texture texture, float startX, float startY, float groundY) {
         this(25, texture, null, startX, startY, groundY);

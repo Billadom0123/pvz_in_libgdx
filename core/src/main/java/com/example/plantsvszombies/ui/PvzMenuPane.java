@@ -17,7 +17,6 @@ import com.example.plantsvszombies.Resource.AssetSound;
 import com.example.plantsvszombies.Resource.AssetTexture;
 import com.example.plantsvszombies.managers.AssetMan;
 import com.example.plantsvszombies.managers.GameManager;
-import com.example.plantsvszombies.managers.ScreenManager;
 import com.example.plantsvszombies.managers.SoundManager;
 import com.example.plantsvszombies.screens.AlmanacScreen;
 import com.example.plantsvszombies.screens.BaseGameScreen;
@@ -140,27 +139,37 @@ public class PvzMenuPane extends Group {
         }
 
         if (state == State.IN_GAME) {
-            BitmapFont font = AssetFont.DWARVEN_STONECRAFT_SIZE24_DEFAULT.get(assetMan);
-            PvzGraveButton almanacButton = new PvzGraveButton("View Almanac", font);
+            PvzGraveButton almanacButton = new PvzGraveButton("View Almanac");
             almanacButton.setPosition(background.getX() + (background.getWidth() - almanacButton.getWidth()) / 2f, 220);
             almanacButton.setClickListener(() -> game.setScreen(new AlmanacScreen(game, screen)));
             addActor(almanacButton);
 
-            PvzGraveButton restartButton = new PvzGraveButton("Restart Level", font);
+            PvzGraveButton restartButton = new PvzGraveButton("Restart Level");
             restartButton.setPosition(background.getX() + (background.getWidth() - restartButton.getWidth()) / 2f, 175);
             restartButton.setClickListener(() -> {
-                ((BaseGameScreen)screen).restart();
+                PvzGraveButton restart = new PvzGraveButton("RESTART");
+                PvzGraveButton cancel = new PvzGraveButton("CANCEL");
+                PvzDialogBox dialogBox = new PvzDialogBox("Restart Level?",
+                    "Do you want to try this level again from the beginning?",
+                    new PvzGraveButton[]{restart, cancel});
+
+                restart.setClickListener(() -> {
+                    ((BaseGameScreen)screen).restart();
+                });
+
+                cancel.setClickListener(() -> ((BaseGameScreen)screen).hideModal());
+
+                ((BaseGameScreen)screen).showModal(dialogBox, 0f);
             });
             addActor(restartButton);
 
-            PvzGraveButton mainMenuButton = new PvzGraveButton("  Main Menu  ", font);
+            PvzGraveButton mainMenuButton = new PvzGraveButton("  Main Menu  ");
             mainMenuButton.setPosition(background.getX() + (background.getWidth() - mainMenuButton.getWidth()) / 2f, 130);
             mainMenuButton.setClickListener(() -> {
-                BitmapFont font30 = AssetFont.DWARVEN_STONECRAFT_SIZE30_DEFAULT.get(assetMan);
-                PvzGraveButton leave = new PvzGraveButton("Leave", font30);
-                PvzGraveButton cancel = new PvzGraveButton("Cancel", font30);
+                PvzGraveButton leave = new PvzGraveButton("  LEAVE  ");
+                PvzGraveButton cancel = new PvzGraveButton("  CANCEL  ");
                 PvzDialogBox dialogBox = new PvzDialogBox("Leave Game?",
-                    "Do you want to return to the main menu? \n Your game will not be saved.",
+                    "Do you want to return to the main menu? \n \n Your game will not be saved.",
                     new PvzGraveButton[]{leave, cancel});
 
                 leave.setClickListener(() -> {
@@ -199,12 +208,10 @@ public class PvzMenuPane extends Group {
             @Override
             public void enter(InputEvent event, float x, float y, int pointer, Actor fromActor) {
                 closeLabel.setStyle(skin.get("GreenBright36", Label.LabelStyle.class));
-                super.enter(event, x, y, pointer, fromActor);
             }
             @Override
             public void exit(InputEvent event, float x, float y, int pointer, Actor toActor) {
                 closeLabel.setStyle(skin.get("Green36", Label.LabelStyle.class));
-                super.exit(event, x, y, pointer, toActor);
             }
         });
         closeButton.setClickListener(() -> {

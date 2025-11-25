@@ -17,7 +17,6 @@ import com.example.plantsvszombies.screens.BaseGameScreen;
 public class ConeHeadZombie extends NormalZombie {
 
     private static final int CONE_HEAD_HEALTH = 370;
-    private int coneHeadHealth = CONE_HEAD_HEALTH;
 
     public ConeHeadZombie(Texture texture, AnimationClip animation, float x, float y) {
         super(texture, animation, x, y);
@@ -60,6 +59,4 @@ public class ConeHeadZombie extends NormalZombie {
             screen.addFalling(falling);
         }
     }
-
-    public boolean isConeGone() { return coneHeadHealth <= 0; }
 }
