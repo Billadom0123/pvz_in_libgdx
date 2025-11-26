@@ -7,17 +7,17 @@ public class GameManager {
 
     // 游戏状态枚举
     public enum GameState {
-        PLAYING, PAUSED, GAME_OVER, STOPPED
+        PREVIEWING, CHOOSING, READYING, PLAYING, PAUSED, GAME_OVER, STOPPED, WON
     }
 
     private static final int DEFAULT_SUN = 100;
     private static final float DEFAULT_CONVEYOR_SPEED = 1.0f;
-    private boolean autoCollect = true;
+    private boolean autoCollect = false;
     private boolean cardCooldown = true;
     private int sun; // 当前太阳数量
     private float conveyorSpeed;
     private GameState gameState;
-    private boolean crazyMode = true; // 疯狂模式开关，默认为关闭，不可更改
+    private boolean crazyMode = false; // 疯狂模式开关，默认为关闭
 
     private GameManager() {
         resetToDefaults();
@@ -36,7 +36,7 @@ public class GameManager {
         this.cardCooldown = true;
         this.sun = DEFAULT_SUN;
         this.conveyorSpeed = DEFAULT_CONVEYOR_SPEED;
-        this.gameState = GameState.PLAYING;
+        this.gameState = GameState.PREVIEWING;
     }
 
     /**

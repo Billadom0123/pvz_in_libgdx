@@ -338,6 +338,16 @@ jsonData: {
 			}
 			name: RGBA_224_187_98_255
 		}
+		{
+			class: com.ray3k.skincomposer.data.ColorData
+			color: {
+				r: 0.9647059
+				g: 0.03529412
+				b: 0.03529412
+				a: 1
+			}
+			name: RGBA_246_9_9_255
+		}
 	]
 	fonts: [
 		{
@@ -710,6 +720,33 @@ jsonData: {
 						name: fontColor
 						optional: true
 						value: RGBA_213_159_43_255
+					}
+					background: {
+						type: com.badlogic.gdx.scenes.scene2d.utils.Drawable
+						name: background
+						optional: true
+						value: null
+					}
+				}
+				deletable: true
+				parent: null
+			}
+			{
+				class: com.ray3k.skincomposer.data.StyleData
+				name: ReadySetPlant
+				clazz: com.badlogic.gdx.scenes.scene2d.ui.Label
+				properties: {
+					font: {
+						type: com.badlogic.gdx.graphics.g2d.BitmapFont
+						name: font
+						optional: false
+						value: HouseofTerror28
+					}
+					fontColor: {
+						type: com.badlogic.gdx.graphics.Color
+						name: fontColor
+						optional: true
+						value: RGBA_246_9_9_255
 					}
 					background: {
 						type: com.badlogic.gdx.scenes.scene2d.utils.Drawable

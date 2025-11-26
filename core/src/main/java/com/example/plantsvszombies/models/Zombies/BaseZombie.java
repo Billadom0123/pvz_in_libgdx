@@ -412,6 +412,7 @@ public abstract class BaseZombie {
     }
 
     public void applySnowEffect(float duration) {
+        if (snowTimer <= 0f) SoundManager.getInstance().playSound(AssetSound.FROZEN);
         this.snowTimer = duration;
     }
 }

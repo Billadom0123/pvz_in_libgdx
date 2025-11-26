@@ -50,7 +50,7 @@ public abstract class BaseProjectile {
             // 匀速向右移动
             position.x += speed * delta;
             bounds.setX(position.x);
-            updateParticleEffect();
+            if (particleEffect != null) updateParticleEffect();
             // 如果飞出屏幕右侧，则标记为待移除
             if (position.x > GameScreen.WORLD_WIDTH) finish();
         }
@@ -63,7 +63,7 @@ public abstract class BaseProjectile {
 
     private void finish() {
         active = false;
-        particleEffect.allowCompletion();
+        if (particleEffect != null) particleEffect.allowCompletion();
     }
 
     public void damage(BaseZombie zombie) {

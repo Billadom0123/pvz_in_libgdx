@@ -6,7 +6,6 @@ import com.badlogic.gdx.Input;
 import com.badlogic.gdx.InputMultiplexer;
 import com.badlogic.gdx.graphics.*;
 import com.badlogic.gdx.graphics.g2d.Batch;
-import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.ParticleEffect;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
@@ -36,6 +35,7 @@ import com.example.plantsvszombies.models.Plants.*;
 import com.example.plantsvszombies.models.Projectiles.BaseProjectile;
 import com.example.plantsvszombies.models.Sun;
 import com.example.plantsvszombies.models.Texture.Falling;
+import com.example.plantsvszombies.models.Util.ConditionalExecutor;
 import com.example.plantsvszombies.models.Zombies.*;
 import com.example.plantsvszombies.ui.*;
 
@@ -61,6 +61,14 @@ public class GameScreen implements BaseGameScreen {
     private final float cameraMaxX;
     private final float cameraMinY;
     private final float cameraMaxY;
+
+    private boolean isCameraMoving = false; // 标记相机是否正在移动
+    private float cameraTargetX;
+    private float cameraLerpSpeed = 50f; // 控制移动速度
+    private float cameraMoveDuration = 0f;    // 平滑移动总时长（秒），<=0 表示未使用平滑模式
+    private float cameraMoveElapsed = 0f;     // 已经过的时间
+    private float cameraStartX = 0f;          // 平滑移动起始 X
+    private boolean cameraSmoothMode = false; // 是否使用平滑时长模式
 
     private float cameraShakeTime = 0f;
     private float cameraShakeDuration = 0f;
@@ -95,11 +103,13 @@ public class GameScreen implements BaseGameScreen {
     private float SUN_SPAWN_INTERVAL = 12.0f; // 太阳生成间隔
     private boolean firstZombieSpawned = false;
     private boolean firstWaveSpawned = false;
-    private boolean isCameraMoving = false; // 标记相机是否正在移动
+    private ConditionalExecutor conditionalExecutor;
+
 
     // --- UI 相关 ---
     private final Skin uiSkin;
     private final Stage uiStage;      // UI专属的舞台
+    private Table topBar;
     private final Label sunLabel;     // 显示太阳数量的标签
     private PlantCard selectedCard; // 当前被玩家选中的植物卡片
     private Table tooltipTable;    // 显示卡片信息的提示框
@@ -146,6 +156,7 @@ public class GameScreen implements BaseGameScreen {
         particles = new Array<>();
         plantCards = new Array<>();
         gameDialogs = new Array<>();
+        conditionalExecutor = new ConditionalExecutor();
 
         // 3. 初始化UI（与游戏共用同一 viewport，避免相机裁切后的偏移）
         uiSkin = new Skin(Gdx.files.internal("graphics/Skin/uiskin.json"));
@@ -166,7 +177,7 @@ public class GameScreen implements BaseGameScreen {
         // 4. 初始化游戏网格及参数
         gridCells = new Rectangle[5][9];
         initializeGrid();
-        initializeLawnMowers();
+//        initializeLawnMowers();
 //        for (LawnMower l: lawnMowers) l.activate();
     }
 
@@ -176,7 +187,7 @@ public class GameScreen implements BaseGameScreen {
      * @return 返回sunLabel的引用，方便后续更新
      */
     private Label setupUI() {
-        Table topBar = new Table(); // 使用Table来布局UI
+        topBar = new Table(); // 使用Table来布局UI
         topBar.top().left(); // 对齐到舞台的左上角
         topBar.setPosition(cameraMinX, startY + 6 * cellHeight - 15);
 
@@ -223,6 +234,11 @@ public class GameScreen implements BaseGameScreen {
         uiStage.addActor(tooltipTable);
         uiStage.addActor(shovel);
         uiStage.addActor(pauseButton);
+
+        topBar.setVisible(false);
+        shovel.setVisible(false);
+        pauseButton.setVisible(false);
+
         tooltipTable.pack();
         return label;
     }
@@ -242,8 +258,61 @@ public class GameScreen implements BaseGameScreen {
         Texture lawnMowerTexture = AssetTexture.LAWNMOWER.get(assetManager);
         for (int row = 0; row < 5; row++) {
             float yPosition = gridCells[row][0].y;
-            lawnMowers.add(new LawnMower(lawnMowerTexture, startX - cellWidth, yPosition + 15));
+            Timer.schedule(new Timer.Task() {
+                @Override
+                public void run() {
+                    lawnMowers.add(new LawnMower(lawnMowerTexture, startX - 2 * cellWidth, yPosition + 15));
+                }
+            }, row * .1f);
         }
+    }
+
+    private void readyingGame() {
+        Skin skin = AssetSkin.PVZ_CUSTOM_SKIN.get(assetManager);
+        Label readySetPlant = new Label("READY...", skin.get("ReadySetPlant", Label.LabelStyle.class));
+        readySetPlant.setWidth(800);
+        readySetPlant.setAlignment(Align.center);
+        readySetPlant.setFontScale(2f);
+        readySetPlant.setPosition(cameraMinX,
+            gameCamera.position.y - readySetPlant.getHeight() / 2f);
+        uiStage.addActor(readySetPlant);
+
+        initializeLawnMowers();
+
+        soundManager.playSound(AssetSound.READY_SET_PLANT);
+        Timer.schedule(new Timer.Task() {
+            @Override
+            public void run() {
+                readySetPlant.setFontScale(1.5f);
+                readySetPlant.setText("SET...");
+            }
+        }, 0.5f);
+        Timer.schedule(new Timer.Task() {
+            @Override
+            public void run() {
+                readySetPlant.setFontScale(3f);
+                readySetPlant.setText("PLANT!");
+            }
+        }, 1f);
+        Timer.schedule(new Timer.Task() {
+            @Override
+            public void run() {
+                gameManager.setGameState(GameManager.GameState.PLAYING);
+                if (gameManager.isCrazyMode()) {
+                    soundManager.changeMusic(AssetMusic.THE_KING_PAPERMAN, true);
+                } else {
+                    soundManager.changeMusic(AssetMusic.GRASSWALK, true);
+                }
+                displayFullUI();
+                readySetPlant.setVisible(false);
+            }
+        }, 2.5f);
+    }
+
+    private void displayFullUI() {
+        topBar.setVisible(true);
+        shovel.setVisible(true);
+        pauseButton.setVisible(true);
     }
 
     /**
@@ -254,19 +323,44 @@ public class GameScreen implements BaseGameScreen {
     @Override
     public void render(float delta) {
 
-        if (isCameraMoving) {
-            float targetX = startX + 3.5f * cellWidth;
-            float lerpSpeed = 50f; // 控制移动速度
-            gameCamera.position.x -= lerpSpeed * delta;
-
-            // 检查是否到达目标位置
-            if (gameCamera.position.x <= targetX) {
-                gameCamera.position.x = targetX; // 确保精确到达
-                isCameraMoving = false; // 停止移动
-            }
-            gameCamera.update();
-        }
+        applyCameraMove(delta);
         applyCameraShake(delta);
+
+        if (gameManager.getGameState() == GameManager.GameState.PREVIEWING) {
+            moveCameraToXSmooth(cameraMinX + 9f * cellWidth, 2f);
+            if (!isCameraMoving) {
+                Timer.schedule(new Timer.Task() {
+                    @Override
+                    public void run() {
+                        gameManager.setGameState(GameManager.GameState.CHOOSING);
+                    }
+                }, 1f);
+            }
+        }
+
+        if (gameManager.getGameState() == GameManager.GameState.CHOOSING) {
+            // Todo: 选卡页面
+            moveCameraToXSmooth((cameraMinX + cameraMaxX) / 2f, 2f);
+            if (!isCameraMoving) {
+                gameManager.setGameState(GameManager.GameState.READYING);
+                Timer.schedule(new Timer.Task() {
+                    @Override
+                    public void run() {
+                        soundManager.pauseMusic();
+                        readyingGame();
+                    }
+                }, 1f);
+
+            }
+        }
+
+        if (gameManager.getGameState() == GameManager.GameState.READYING) {
+            for (LawnMower lawnMower : lawnMowers) {
+                if (lawnMower.getPosition().x <= startX - cellWidth) {
+                    lawnMower.getPosition().x += 2 * cellWidth * delta; // 平滑移动到位置
+                }
+            }
+        }
 
 
         // 1. 清理屏幕
@@ -286,7 +380,7 @@ public class GameScreen implements BaseGameScreen {
         game.batch.begin();
         // 绘制背景
         game.batch.draw(AssetTexture.MAP_0.get(assetManager), 0, 0, WORLD_WIDTH, WORLD_HEIGHT);
-        game.batch.draw(AssetTexture.SEED_BANK.get(assetManager), cameraMinX, startY + 5 * cellHeight - 15); // 绘制种子银行背景
+        if (gameTime > 0f) game.batch.draw(AssetTexture.SEED_BANK.get(assetManager), cameraMinX, startY + 5 * cellHeight - 15); // 绘制种子银行背景
         // 绘制所有游戏对象
 
         game.batch.end();
@@ -409,6 +503,79 @@ public class GameScreen implements BaseGameScreen {
         this.cameraShakeMagnitude = magnitude;
         // 记录触发时的相机位置（支持在相机移动时触发）
         this.cameraShakeOrigin.set(gameCamera.position.x, gameCamera.position.y);
+    }
+
+    private void moveCameraToX(float targetX, float lerpSpeed) {
+        if (isCameraMoving) return; // 如果相机正在移动，忽略新的移动请求
+        if (Math.abs(gameCamera.position.x - targetX) <= 1f) {
+            gameCamera.position.x = targetX;
+            gameCamera.update();
+            return;
+        }
+        this.cameraTargetX = targetX;
+        this.cameraLerpSpeed = lerpSpeed;
+        this.isCameraMoving = true;
+        // 退出平滑模式，避免与时长模式冲突
+        this.cameraSmoothMode = false;
+        this.cameraMoveDuration = 0f;
+        this.cameraMoveElapsed = 0f;
+    }
+
+    public void moveCameraToXSmooth(float targetX, float durationSeconds) {
+        if (isCameraMoving) return; // 如果相机正在移动，忽略新的移动请求
+        if (Math.abs(gameCamera.position.x - targetX) <= 0.01f || durationSeconds <= 0f) {
+            gameCamera.position.x = targetX;
+            gameCamera.update();
+            // 清理状态
+            this.isCameraMoving = false;
+            this.cameraSmoothMode = false;
+            this.cameraMoveDuration = 0f;
+            this.cameraMoveElapsed = 0f;
+            return;
+        }
+
+        this.cameraStartX = gameCamera.position.x;
+        this.cameraTargetX = targetX;
+        this.cameraMoveDuration = Math.max(0.0001f, durationSeconds);
+        this.cameraMoveElapsed = 0f;
+        this.cameraSmoothMode = true;
+        this.isCameraMoving = true;
+    }
+
+    private void applyCameraMove(float delta) {
+        if (!isCameraMoving) return;
+
+        if (cameraSmoothMode && cameraMoveDuration > 0f) {
+            cameraMoveElapsed += delta;
+            float t = cameraMoveElapsed / cameraMoveDuration;
+            if (t >= 1f) {
+                // 结束平滑移动
+                gameCamera.position.x = cameraTargetX;
+                isCameraMoving = false;
+                cameraSmoothMode = false;
+                cameraMoveDuration = 0f;
+                cameraMoveElapsed = 0f;
+            } else {
+                // easing: smoothstep（更平滑的加速/减速）
+                float eased = t * t * (3f - 2f * t);
+                gameCamera.position.x = MathUtils.lerp(cameraStartX, cameraTargetX, eased);
+            }
+            gameCamera.update();
+        } else {
+            // 速率模式（保持旧逻辑）
+            gameCamera.position.x += cameraLerpSpeed * delta;
+            boolean reached;
+            if (cameraLerpSpeed >= 0f) {
+                reached = gameCamera.position.x >= cameraTargetX;
+            } else {
+                reached = gameCamera.position.x <= cameraTargetX;
+            }
+            if (reached || Math.abs(gameCamera.position.x - cameraTargetX) <= 1f) {
+                gameCamera.position.x = cameraTargetX;
+                isCameraMoving = false;
+            }
+            gameCamera.update();
+        }
     }
 
     // 新增每帧应用抖动的方法（在 render 或 updateGame 中调用）
@@ -571,7 +738,7 @@ public class GameScreen implements BaseGameScreen {
         Timer.schedule(new Timer.Task() {
             @Override
             public void run() {
-                isCameraMoving = true;
+                moveCameraToX(startX + 3.5f * cellWidth, 50f);
             }
         }, 2f);
         Timer.schedule(new Timer.Task() {
@@ -1036,11 +1203,7 @@ public class GameScreen implements BaseGameScreen {
         Gdx.input.setInputProcessor(multiplexer);
 
 
-        if (gameManager.isCrazyMode()) {
-            soundManager.changeMusic(AssetMusic.THE_KING_PAPERMAN, true);
-        } else {
-            soundManager.changeMusic(AssetMusic.GRASSWALK, true);
-        }
+        soundManager.changeMusic(AssetMusic.CHOOSE_YOUR_SEEDS, true);
         if (gameManager.getGameState() == GameManager.GameState.PAUSED) soundManager.pauseMusic();
     }
 
@@ -1097,7 +1260,8 @@ public class GameScreen implements BaseGameScreen {
         } else if (keycode == Input.Keys.NUM_7) {
             tryLiftSeedCard(plantCards.get(6));
             return true;
-        } else if (keycode == Input.Keys.Q) {
+        }
+        if (keycode == Input.Keys.Q) {
             soundManager.playSound(AssetSound.DIAMOND);
             if (gameManager.isAutoCollect()) {
                 addGameDialog("Auto Collect has been closed!", 5f);

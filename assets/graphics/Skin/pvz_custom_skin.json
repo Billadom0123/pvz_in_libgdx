@@ -92,6 +92,12 @@ com.badlogic.gdx.graphics.Color: {
 		b: 0.38431373
 		a: 1
 	}
+	RGBA_246_9_9_255: {
+		r: 0.9647059
+		g: 0.03529412
+		b: 0.03529412
+		a: 1
+	}
 }
 com.badlogic.gdx.scenes.scene2d.ui.Button$ButtonStyle: {
 	Giant: {
@@ -145,6 +151,10 @@ com.badlogic.gdx.scenes.scene2d.ui.Label$LabelStyle: {
 	HouseofTerrorYellow20: {
 		font: HouseofTerror20
 		fontColor: RGBA_213_159_43_255
+	}
+	ReadySetPlant: {
+		font: HouseofTerror28
+		fontColor: RGBA_246_9_9_255
 	}
 }
 com.badlogic.gdx.scenes.scene2d.ui.Slider$SliderStyle: {

@@ -167,7 +167,7 @@ public class PvzMenuPane extends Group {
             mainMenuButton.setPosition(background.getX() + (background.getWidth() - mainMenuButton.getWidth()) / 2f, 130);
             mainMenuButton.setClickListener(() -> {
                 PvzGraveButton leave = new PvzGraveButton("  LEAVE  ");
-                PvzGraveButton cancel = new PvzGraveButton("  CANCEL  ");
+                PvzGraveButton cancel = new PvzGraveButton(" CANCEL ");
                 PvzDialogBox dialogBox = new PvzDialogBox("Leave Game?",
                     "Do you want to return to the main menu? \n \n Your game will not be saved.",
                     new PvzGraveButton[]{leave, cancel});

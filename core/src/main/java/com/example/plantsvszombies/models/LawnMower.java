@@ -58,4 +58,6 @@ public class LawnMower {
     public LawnMowerState getState() {
         return state;
     }
+
+    public Vector2 getPosition() { return position; }
 }

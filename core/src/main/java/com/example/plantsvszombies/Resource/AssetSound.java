@@ -37,7 +37,9 @@ public enum AssetSound {
     BOWLING_IMPACT("graphics/audio/bowlingimpact.ogg"), // 保龄球撞击音效
     PAUSE("graphics/audio/pause.ogg"), // 暂停游戏音效
     GRAVE_BUTTON("graphics/audio/gravebutton.ogg"), // 墓碑样式按钮音效
-    BUTTON_CLICK("graphics/audio/buttonclick.ogg"); // 普通按钮点击音效
+    BUTTON_CLICK("graphics/audio/buttonclick.ogg"), // 普通按钮点击音效
+    FROZEN("graphics/audio/frozen.ogg"), // 冰冻音效
+    READY_SET_PLANT("graphics/audio/readysetplant.ogg"); // 准备种植音效
 
     private final String filePath;
     private boolean loaded;
